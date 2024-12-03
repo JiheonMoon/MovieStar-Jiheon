@@ -78,19 +78,19 @@ const ReviewItem = ({
       <span className="review-user">{item.user}</span>
       <StarRating rating={item.rate} size={15} readOnly />
       <span className="review-text">{item.review}</span>
-      <span className="review-date">{item.date}</span>
+      <span className="review-date">{item.reviewDate}</span>
       {username === item.user && (
         <div className="review-actions">
           <button className="review-edit-button" onClick={() => onEdit(item)}>
             수정
           </button>
-          <button className="review-delete-button" onClick={() => onRemove(item.id)}>
+          <button className="review-delete-button" onClick={() => onRemove(item.reviewId)}>
             삭제
           </button>
         </div>
       )}
     </div>
-    {editable && editState.id === item.id && (
+    {editable && editState.reviewId === item.reviewId && (
       <div className="review-edit-form">
         <StarRating
           rating={editState.rate}
@@ -163,7 +163,7 @@ const MovieDetail = ({ movie, onClose }) => {
   const [reviewList, setReviewList] = useState([]);
   const [editable, setEditable] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(3);
-  const [editState, setEditState] = useState({ id: -1, rate: 5, review: "" });
+  const [editState, setEditState] = useState({ reviewId: -1, rate: 5, review: "" });
   const { user } = useContext(AppContext)
 
   useEffect(() => {
@@ -184,11 +184,11 @@ const MovieDetail = ({ movie, onClose }) => {
       return;
     }
     const newReview = {
-      id: reviewList.length + 1,
+      reviewId: reviewList.length + 1,
       user: user.userNick,
       rate,
       review,
-      date: moment().format("MM/DD HH:mm"),
+      reviewDate: moment().format("MM/DD HH:mm"),
     };
     if (!review) {
       alert("리뷰 내용을 입력해주세요")
@@ -203,9 +203,9 @@ const MovieDetail = ({ movie, onClose }) => {
     }
   };
 
-  const handleRemove = (id) => {
+  const handleRemove = (reviewId) => {
     if (window.confirm("삭제 하시겠습니까?")) {
-      setReviewList((prev) => prev.filter((item) => item.id !== id));
+      setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId));
       // 삭제 후 더보기 상태 조정
       setVisibleReviews(Math.min(visibleReviews, reviewList.length - 1));
     }
@@ -213,26 +213,26 @@ const MovieDetail = ({ movie, onClose }) => {
 
   const handleEdit = (item) => {
     setEditable(true);
-    setEditState({ id: item.id, rate: item.rate, review: item.review });
+    setEditState({ reviewId: item.reviewId, rate: item.rate, review: item.review });
   };
 
   const updateReview = () => {
     if (window.confirm("수정 하시겠습니까?")) {
       setReviewList((prev) =>
         prev.map((item) =>
-          item.id === editState.id
+          item.reviewId === editState.reviewId
             ? { ...item, rate: editState.rate, review: editState.review }
             : item
         )
       );
       setEditable(false);
-      setEditState({ id: -1, rate: 5, review: "" });
+      setEditState({ reviewId: -1, rate: 5, review: "" });
     }
   };
 
   const cancelEdit = () => {
     setEditable(false);
-    setEditState({ id: -1, rate: 5, review: "" });
+    setEditState({ reviewId: -1, rate: 5, review: "" });
   };
 
   const loadMoreReviews = () => {
@@ -288,7 +288,7 @@ const MovieDetail = ({ movie, onClose }) => {
                 <ul className="review-list">
                   {reviewList.slice(0, visibleReviews).map((item) => (
                     <ReviewItem
-                      key={item.id}
+                      key={item.reviewId}
                       item={item}
                       onEdit={handleEdit}
                       onRemove={handleRemove}
@@ -299,7 +299,7 @@ const MovieDetail = ({ movie, onClose }) => {
                       }}
                       updateReview={updateReview}
                       cancelEdit={cancelEdit}
-                      username={user.username}
+                      username={user.userNick}
                     />
                   ))}
                 </ul>

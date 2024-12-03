@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchMovieDetails, fetchMovieCredits } from "../api/tmdb";
 import { FaStar } from "react-icons/fa";
 import moment from "moment";
-import "../css/App.css";
 import "../css/detail/Detail.css"
 import "../css/detail/Review.css"
 import "../css/detail/Modal.css"

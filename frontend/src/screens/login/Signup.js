@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/login/LoginScreen.css"
 
@@ -14,9 +14,40 @@ const Signup = () => {
 
   const [message, setMessage] = useState("")
 
+  const [disabled, setDisabled] = useState(true)
+
+  useEffect(() => {
+    const emailCheck = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/ //이메일 식별 정규식
+
+    // 서버 요청 또는 로직 추가
+    if (!formData.userName) {
+      setMessage("아이디를 입력해주세요")
+      setDisabled(true)
+    } else if (!formData.userEmail) {
+      setMessage("이메일을 입력해주세요.");
+      setDisabled(true)
+    } else if (!emailCheck.test(formData.userEmail)) {
+      setMessage("이메일 형식을 확인해주세요.");
+      setDisabled(true)
+    } else if (!formData.userNick) {
+      setMessage("닉네임을 입력해주세요.");
+      setDisabled(true)
+    } else if (!formData.userPwd) {
+      setMessage("비밀번호를 입력해주세요.");
+      setDisabled(true)
+    } else if (formData.userPwd !== formData.userPwdCheck) {
+      setMessage("비밀번호가 일치하지 않습니다.")
+      setDisabled(true)
+    } else{
+      setMessage("")
+      setDisabled(false)
+    }
+  }, [formData])
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
   };
 
   // 화면이동 함수
@@ -24,14 +55,8 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // 서버 요청 또는 로직 추가
-    if (!formData.userEmail) {
-      setMessage("이메일을 입력해주세요.");
-    } else if (!formData.userPwd) {
-      setMessage("비밀번호를 입력해주세요.");
-    } else if (formData.userPwd !== formData.userPwdCheck) {
-      setMessage("비밀번호가 일치하지 않습니다.")
-    } else {
+
+    if (!disabled) {
       // 회원가입 정보를 localStorage에 저장
       const newUser = {
         userName: formData.userName,
@@ -40,7 +65,7 @@ const Signup = () => {
         userNick: formData.userNick,
         userLikeList: [],
       };
-      localStorage.setItem("user", JSON.stringify(newUser));
+      localStorage.setItem(localStorage.length + 1, JSON.stringify(newUser));
 
       alert("회원가입 완료")
       navigate("/login")
@@ -110,7 +135,7 @@ const Signup = () => {
           required
         />
 
-        <button type="submit">회원가입</button>
+        <button type="submit" disabled={disabled}>회원가입</button>
       </form>
       {message && <p>{message}</p>}
     </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_KEY = "17601d518dbaec78cb1800616a38ad67"; // TMDB API 키
+const API_KEY = process.env.REACT_APP_TMDB_API_KEY; // TMDB API 키
 const API_URL = "https://api.themoviedb.org/3"; // TMDB API 기본 URL
 
 // Axios 인스턴스 생성
@@ -68,5 +68,17 @@ export const fetchTopRatedMovies = async () => {
   } catch (error) {
     console.error("Error fetching top rated movies:", error);
     return [];
+  }
+};
+
+//출연진 목록을 가져오는 함수
+export const fetchMovieCredits = async (movieId) => {
+  try {
+    const response = await instance.get(`/movie/${movieId}/credits`);
+    console.log("API 응답 데이터:", response.data); // 응답 데이터 구조 확인
+    return response.data; // cast 배열을 가져오는 대신 전체 데이터를 반환
+  } catch (error) {
+    console.error("Error fetching movie credits:", error);
+    return { cast: [] }; // 오류 발생 시 기본값 설정
   }
 };

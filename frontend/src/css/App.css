@@ -58,8 +58,8 @@ input {
 
 .top-recommendation-poster {
   width: 100%;
-  height: auto;
-  max-width: 1000px;
+  height: 100%;
+  object-fit: cover;
   border-radius: 10px;
   filter: brightness(50%);
 }
@@ -167,6 +167,7 @@ input {
   font-weight: bold;
 }
 
+
 /* 상세 페이지 스타일 */
 .movie-detail {
   text-align: center;
@@ -177,7 +178,7 @@ input {
 
 .detail-container {
   padding: 40px;
-  width: 40%;
+  
   margin-left: 10%;
   background: linear-gradient(to right, rgba(12,12,12,1), rgba(12,12,12,0));
   height: 100vh;
@@ -267,12 +268,15 @@ input {
 
 /* ReviewList 스타일 */
 .review-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 400px;
+  overflow-y: auto; 
+  scrollbar-width: none;
 }
 
-.review-item-container {
+-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -335,4 +339,182 @@ input {
   display: flex;
   gap: 2px;
   margin-left: 10px;
+}
+
+/* 모달 섹션 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* 포스터와 상세정보 비율 */
+  gap: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  width: 70%; /* 너비를 적절히 설정 */
+  max-width: 800px; /* 최대 너비 제한 */
+  height: auto; /* 높이를 자동으로 설정 */
+  max-height: 80vh; /* 높이 제한 해제 */
+  overflow-y: auto;
+  scrollbar-width: none;
+  position: relative; /* 닫기 버튼과 정렬을 위해 */
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 25px;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  z-index: 10; /* 모달 내부에서 상단 레이어 */
+}
+
+.modal-close:hover {
+  transform: scale(1.2); /* 닫기 버튼 호버 효과 */
+}
+
+
+.modal-movie-poster {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  flex-direction: column;
+  display: flex;
+  gap: 15px;
+}
+
+.modal-movie-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* 상세정보 간 간격 */
+}
+
+.modal-movie-details h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.modal-movie-details p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 5px 0;
+}
+
+
+.review-form {
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 변경 */
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.review-form h3 {
+  margin-bottom: 10px;
+}
+
+.star-rating {
+  align-self: flex-start; /* 왼쪽 정렬 */
+  margin-bottom: 10px;
+}
+
+.review-input-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.review-input {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.review-submit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* 리뷰 리스트 반응형 그리드 */
+.review-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.review-item-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #2b2b2b;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.review-user {
+  font-weight: bold;
+}
+
+.review-text {
+  flex-grow: 1;
+  word-wrap: break-word;
+}
+
+.review-date {
+  font-size: 0.9em;
+  color: lightgray;
+}
+
+.review-edit-button,
+.review-delete-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+/* 상세페이지 댓글 더보기 버튼 */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.load-more-button {
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.load-more-button:hover {
+  background-color: #444;
 }

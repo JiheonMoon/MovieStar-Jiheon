@@ -43,12 +43,15 @@ const LoginScreen = () => {
     e.preventDefault()
 
     // localStorage에서 유저 정보 가져오기
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = JSON.parse(
+      localStorage.getItem(
+        Object.keys(window.localStorage).find(
+        key => JSON.parse(localStorage.getItem(key)).userName === formData.userName
+      )))
 
     // 유저 정보 확인
     if (
       storedUser && 
-      storedUser.userName === formData.userName && 
       storedUser.userPwd=== formData.userPwd
     ) {
       // 로그인 성공 시

@@ -175,6 +175,7 @@ const MovieDetail = ({ movie, onClose }) => {
     };
 
     fetchDetails();
+    console.log(user)
   }, [movie]);
   
   const averageRating = calculateAverageRating(reviewList);

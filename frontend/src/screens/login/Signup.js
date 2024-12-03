@@ -34,8 +34,11 @@ const Signup = () => {
     } else {
       // 회원가입 정보를 localStorage에 저장
       const newUser = {
-        username: formData.userEmail,
-        password: formData.userPwd,
+        userName: formData.userName,
+        userPwd: formData.userPwd,
+        userEmail: formData.userEmail,
+        userNick: formData.userNick,
+        userLikeList: [],
       };
       localStorage.setItem("user", JSON.stringify(newUser));
 
@@ -48,35 +51,38 @@ const Signup = () => {
     <div className="signup-container">
       <h2>회원가입</h2>
 
-      <label htmlFor="userName">아이디</label>
-      <input
-        type="text"
-        id="userName"
-        name="userName"
-        value={formData.userName}
-        onChange={handleChange}
-        placeholder="이메일을 입력하세요"
-        required
-      />
 
-
-      <label htmlFor="userEmail">이메일</label>
-      <input
-        type="text"
-        id="userEmail"
-        name="userEmail"
-        value={formData.userEmail}
-        onChange={handleChange}
-        placeholder="이메일을 입력하세요"
-        required
-      />
 
       <form onSubmit={handleSubmit}>
-        <label htmlFor="nickname">닉네임</label>
+        <label htmlFor="userName">아이디</label>
         <input
           type="text"
-          id="nickname"
-          value={formData.nickname}
+          id="userName"
+          name="userName"
+          value={formData.userName}
+          onChange={handleChange}
+          placeholder="이메일을 입력하세요"
+          required
+        />
+
+
+        <label htmlFor="userEmail">이메일</label>
+        <input
+          type="text"
+          id="userEmail"
+          name="userEmail"
+          value={formData.userEmail}
+          onChange={handleChange}
+          placeholder="이메일을 입력하세요"
+          required
+        />
+
+        <label htmlFor="userNick">닉네임</label>
+        <input
+          type="text"
+          id="userNick"
+          name="userNick"
+          value={formData.userNick}
           onChange={handleChange}
           placeholder="닉네임을 입력하세요"
           required

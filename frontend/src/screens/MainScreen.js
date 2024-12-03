@@ -104,7 +104,7 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
         setNowPlayingMovies(nowPlaying);
         setTopRatedMovies(topRated);
       };
-  
+      
       fetchMovies();
     }, []);
 

@@ -6,7 +6,7 @@ import logo from "../../logo/logo.png"
 import axios from "axios"
 
 const LoginScreen = () => {
-    const [formData, setFormData] = useState({ username: "", password: "" })
+    const [formData, setFormData] = useState({ userName: "", userPwd: "" })
     const [error, setError] = useState("")
     const { setUser } = useContext(AppContext)
     const navigate = useNavigate()
@@ -48,11 +48,16 @@ const LoginScreen = () => {
     // 유저 정보 확인
     if (
       storedUser && 
-      storedUser.username === formData.username && 
-      storedUser.password === formData.password
+      storedUser.userName === formData.userName && 
+      storedUser.userPwd=== formData.userPwd
     ) {
       // 로그인 성공 시
-      setUser({ username: formData.username, likeList:[], }) // 사용자 정보를 Context에 저장
+      setUser({ 
+        userName: storedUser.userName,
+        userEmail: storedUser.userEmail,
+        userNick: storedUser.userNick,
+        userLikeList: storedUser.userLikeList,
+      }) // 사용자 정보를 Context에 저장
       navigate("/home"); // MainScreen으로 이동
     } else {
       // 에러 메시지 출력
@@ -71,22 +76,22 @@ const LoginScreen = () => {
         {/* 로그인 폼 */}
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="input-group">
-            <label htmlFor="username">아이디</label>
+            <label htmlFor="userName">아이디</label>
             <input
               type="text"
-              id="username"
+              id="userName"
               placeholder="아이디를 입력하세요"
-              value={formData.username}
+              value={formData.userName}
               onChange={handleChange}
             />
           </div>
           <div className="input-group">
-            <label htmlFor="password">비밀번호</label>
+            <label htmlFor="userPwd">비밀번호</label>
             <input
               type="password"
-              id="password"
+              id="userPwd"
               placeholder="비밀번호를 입력하세요"
-              value={formData.password}
+              value={formData.userPwd}
               onChange={handleChange}
             />
           </div>

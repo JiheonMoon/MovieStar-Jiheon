@@ -6,7 +6,10 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     userEmail: "",
     userPwd: "",
-    userPwdCheck: ""
+    userPwdCheck: "",
+    userNick: "",
+    userName: "",
+    userLikeList: [],
   })
 
   const [message, setMessage] = useState("")
@@ -22,13 +25,13 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // 서버 요청 또는 로직 추가
-    if(!formData.userEmail){
+    if (!formData.userEmail) {
       setMessage("이메일을 입력해주세요.");
-    } else if(!formData.userPwd){
+    } else if (!formData.userPwd) {
       setMessage("비밀번호를 입력해주세요.");
-    } else if(formData.userPwd !== formData.userPwdCheck){
+    } else if (formData.userPwd !== formData.userPwdCheck) {
       setMessage("비밀번호가 일치하지 않습니다.")
-    } else{
+    } else {
       // 회원가입 정보를 localStorage에 저장
       const newUser = {
         username: formData.userEmail,
@@ -44,25 +47,38 @@ const Signup = () => {
   return (
     <div className="signup-container">
       <h2>회원가입</h2>
+
+      <label htmlFor="userName">아이디</label>
+      <input
+        type="text"
+        id="userName"
+        name="userName"
+        value={formData.userName}
+        onChange={handleChange}
+        placeholder="이메일을 입력하세요"
+        required
+      />
+
+
+      <label htmlFor="userEmail">이메일</label>
+      <input
+        type="text"
+        id="userEmail"
+        name="userEmail"
+        value={formData.userEmail}
+        onChange={handleChange}
+        placeholder="이메일을 입력하세요"
+        required
+      />
+
       <form onSubmit={handleSubmit}>
-        {/* <label htmlFor="nickname">닉네임</label> */}
-        {/* <input
+        <label htmlFor="nickname">닉네임</label>
+        <input
           type="text"
           id="nickname"
           value={formData.nickname}
           onChange={handleChange}
           placeholder="닉네임을 입력하세요"
-          required
-        /> */}
-
-        <label htmlFor="userEmail">이메일(ID)</label>
-        <input
-          type="text"
-          id="userEmail"
-          name="userEmail"
-          value={formData.userEmail}
-          onChange={handleChange}
-          placeholder="이메일을 입력하세요"
           required
         />
 

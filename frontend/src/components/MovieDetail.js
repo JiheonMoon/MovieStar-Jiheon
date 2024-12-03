@@ -175,17 +175,17 @@ const MovieDetail = ({ movie, onClose }) => {
     fetchDetails();
     console.log(user)
   }, [movie]);
-  
+
   const averageRating = calculateAverageRating(reviewList);
 
   const addReview = () => {
-    if(!user){
+    if (!user) {
       alert("로그인한 유저만 리뷰를 등록 가능합니다")
       return;
     }
     const newReview = {
       id: reviewList.length + 1,
-      user: user.username,
+      user: user.userNick,
       rate,
       review,
       date: moment().format("MM/DD HH:mm"),
@@ -247,70 +247,76 @@ const MovieDetail = ({ movie, onClose }) => {
         <button className="modal-close" onClick={onClose}>
           &times;
         </button>
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          alt={movie.title}
-          className="modal-movie-poster"
-        />
-        <div className="modal-movie-details">
-          <h1>{movie.title}</h1>
-          <p>{movie.overview}</p>
-          <p><strong>개봉일:</strong> {movie.release_date}</p>
-          <p><strong>평점:</strong> {movie.vote_average}</p>
 
-          <h3>출연진</h3>
+        <div className="modal-movie">
+          <div className="modal-movie-container">
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              className="modal-movie-poster"
+            />
+            <div className="modal-movie-details">
+              <h1>{movie.title}</h1>
+              <p>{movie.overview}</p>
+              <p><strong>개봉일:</strong> {movie.release_date}</p>
+              <p><strong>평점:</strong> {movie.vote_average}</p>
 
-          {/* 출연진 목록 추가 */}
-          <ActorList actors={actor} />
+              <h3>출연진</h3>
 
-          {/* 리뷰 작성 폼 */}
-          <ReviewForm
-            rate={rate}
-            setRate={setRate}
-            review={review}
-            setReview={setReview}
-            addReview={addReview}
-          />
+              {/* 출연진 목록 추가 */}
+              <ActorList actors={actor} />
+            </div>
+          </div>
+          <div>
+            {/* 리뷰 작성 폼 */}
+            <ReviewForm
+              rate={rate}
+              setRate={setRate}
+              review={review}
+              setReview={setReview}
+              addReview={addReview}
+            />
 
-          {/* 사용자 리뷰 */}
-          <h3>사용자 리뷰</h3>
-          <strong>유저 평점: </strong> {averageRating}
+            {/* 사용자 리뷰 */}
+            <h3>사용자 리뷰</h3>
+            <strong>유저 평점: </strong> {averageRating}
 
-          {reviewList.length === 0 ? (
-            <p>등록된 리뷰가 없습니다.</p>
-          ) : (
-            <>
-              <ul className="review-list">
-                {reviewList.slice(0, visibleReviews).map((item) => (
-                  <ReviewItem
-                    key={item.id}
-                    item={item}
-                    onEdit={handleEdit}
-                    onRemove={handleRemove}
-                    editable={editable}
-                    editState={{
-                      ...editState,
-                      setEditState,
-                    }}
-                    updateReview={updateReview}
-                    cancelEdit={cancelEdit}
-                    username={user.username}
-                  />
-                ))}
-              </ul>
+            {reviewList.length === 0 ? (
+              <p>등록된 리뷰가 없습니다.</p>
+            ) : (
+              <>
+                <ul className="review-list">
+                  {reviewList.slice(0, visibleReviews).map((item) => (
+                    <ReviewItem
+                      key={item.id}
+                      item={item}
+                      onEdit={handleEdit}
+                      onRemove={handleRemove}
+                      editable={editable}
+                      editState={{
+                        ...editState,
+                        setEditState,
+                      }}
+                      updateReview={updateReview}
+                      cancelEdit={cancelEdit}
+                      username={user.username}
+                    />
+                  ))}
+                </ul>
 
-              {visibleReviews < reviewList.length && (
-                <div className="load-more-container">
-                  <button
-                    className="load-more-button"
-                    onClick={loadMoreReviews}
-                  >
-                    더보기 ({visibleReviews} / {reviewList.length})
-                  </button>
-                </div>
-              )}
-            </>
-          )}
+                {visibleReviews < reviewList.length && (
+                  <div className="load-more-container">
+                    <button
+                      className="load-more-button"
+                      onClick={loadMoreReviews}
+                    >
+                      더보기 ({visibleReviews} / {reviewList.length})
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
 
           {/* 하단 여백 확보 */}
           <div style={{ height: '20px' }}></div>

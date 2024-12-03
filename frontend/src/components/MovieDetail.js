@@ -44,16 +44,20 @@ const StarRating = ({ rating, setRating, size = 30, readOnly }) => (
 );
 
 // 리뷰 작성 폼 컴포넌트
+
 const ReviewForm = ({ reviewRating, setReviewRate, reviewContent, setReviewContent, addReview }) => (
   <div className="review-form">
     <h3>리뷰 작성</h3>
     <StarRating rating={reviewRating} setRating={setReviewRate} />
+
     <div className="review-input-container">
       <input
         className="review-input"
         placeholder="리뷰 내용을 입력해주세요"
+
         value={reviewContent}
         onChange={(e) => setReviewContent(e.target.value)}
+
       />
       <button className="review-submit-button" onClick={addReview}>
         올리기
@@ -75,27 +79,33 @@ const ReviewItem = ({
 }) => (
   <li className="review-item">
     <div className="review-item-container">
+
       <span className="review-user">{item.userId}</span>
       <StarRating rating={item.reviewRating} size={15} readOnly />
       <span className="review-text">{item.reviewContent}</span>
       <span className="review-date">{item.reviewDate}</span>
       {username === item.userId && (
+
         <div className="review-actions">
           <button className="review-edit-button" onClick={() => onEdit(item)}>
             수정
           </button>
+
           <button className="review-delete-button" onClick={() => onRemove(item.reviewId)}>
+
             삭제
           </button>
         </div>
       )}
     </div>
+
     {editable && editState.reviewId === item.reviewId && (
       <div className="review-edit-form">
         <StarRating
           rating={editState.reviewRating}
           setRating={(newRate) =>
             editState.setEditState((prev) => ({ ...prev, reviewRating: newRate }))
+
           }
           size={15}
         />
@@ -103,11 +113,13 @@ const ReviewItem = ({
           type="text"
           className="review-edit-input"
           placeholder="리뷰 내용을 입력해주세요"
+
           value={editState.reviewContent}
           onChange={(e) =>
             editState.setEditState((prev) => ({
               ...prev,
               reviewContent: e.target.value,
+
             }))
           }
         />
@@ -151,19 +163,23 @@ const ReviewItem = ({
 // 평균 평점 계산 함수
 const calculateAverageRating = (reviews) => {
   if (reviews.length === 0) return 0;
+
   const total = reviews.reduce((acc, cur) => acc + cur.reviewRating, 0);
+
   return (total / reviews.length).toFixed(2); // 소수점 2자리까지 표시
 };
 
 // 메인 MovieDetail 컴포넌트
 const MovieDetail = ({ movie, onClose }) => {
   const [actor, setActor] = useState([]); // 출연진 상태 추가
+
   const [reviewRating, setReviewRate] = useState(5);
   const [reviewContent, setReviewContent] = useState("");
   const [reviewList, setReviewList] = useState([]);
   const [editable, setEditable] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [editState, setEditState] = useState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
+
   const { user } = useContext(AppContext)
 
   useEffect(() => {
@@ -184,6 +200,7 @@ const MovieDetail = ({ movie, onClose }) => {
       return;
     }
     const newReview = {
+
       reviewId: reviewList.length + 1,
       userId: user.userNick,
       reviewRating,
@@ -191,21 +208,26 @@ const MovieDetail = ({ movie, onClose }) => {
       reviewDate: moment().format("MM/DD HH:mm"),
     };
     if (!reviewContent) {
+
       alert("리뷰 내용을 입력해주세요")
       return;
     }
     if (window.confirm("등록 하시겠습니까?")) {
       setReviewList((prev) => [newReview, ...prev]);
+
       setReviewContent("");
       setReviewRate(5);
+
       // 새 리뷰 추가 시 더보기 상태 초기화
       setVisibleReviews(3);
     }
   };
 
+
   const handleRemove = (reviewId) => {
     if (window.confirm("삭제 하시겠습니까?")) {
       setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId));
+
       // 삭제 후 더보기 상태 조정
       setVisibleReviews(Math.min(visibleReviews, reviewList.length - 1));
     }
@@ -213,26 +235,34 @@ const MovieDetail = ({ movie, onClose }) => {
 
   const handleEdit = (item) => {
     setEditable(true);
+
     setEditState({ reviewId: item.reviewId, reviewRating: item.reviewRating, reviewContent: item.reviewContent });
+
   };
 
   const updateReview = () => {
     if (window.confirm("수정 하시겠습니까?")) {
       setReviewList((prev) =>
         prev.map((item) =>
+
           item.reviewId === editState.reviewId
             ? { ...item, reviewRating: editState.reviewRating, reviewContent: editState.reviewContent }
+
             : item
         )
       );
       setEditable(false);
+
       setEditState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
+
     }
   };
 
   const cancelEdit = () => {
     setEditable(false);
+
     setEditState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
+
   };
 
   const loadMoreReviews = () => {
@@ -270,10 +300,12 @@ const MovieDetail = ({ movie, onClose }) => {
           <div>
             {/* 리뷰 작성 폼 */}
             <ReviewForm
+
               reviewRating={reviewRating}
               setReviewRate={setReviewRate}
               reviewContent={reviewContent}
               setReviewContent={setReviewContent}
+
               addReview={addReview}
             />
 
@@ -288,7 +320,9 @@ const MovieDetail = ({ movie, onClose }) => {
                 <ul className="review-list">
                   {reviewList.slice(0, visibleReviews).map((item) => (
                     <ReviewItem
+
                       key={item.reviewId}
+
                       item={item}
                       onEdit={handleEdit}
                       onRemove={handleRemove}
@@ -299,7 +333,9 @@ const MovieDetail = ({ movie, onClose }) => {
                       }}
                       updateReview={updateReview}
                       cancelEdit={cancelEdit}
+
                       username={user.userNick}
+
                     />
                   ))}
                 </ul>

@@ -18,9 +18,10 @@ import "./css/main/FirstPage.css"
 // 앱의 루트 컴포넌트 - 라우터 설정
 const App = () => {
   const [user, setUser] = useState(null)
+  const [reviews, setReviews] = useState([])
 
   return (
-    <AppContext.Provider value={{ user, setUser }}>
+    <AppContext.Provider value={{ user, setUser, reviews, setReviews }}>
       <Router>
         <Routes>
           {/* 기본 경로는 홈페이지 */}

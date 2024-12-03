@@ -52,7 +52,7 @@ const LoginScreen = () => {
       storedUser.password === formData.password
     ) {
       // 로그인 성공 시
-      setUser({ username: formData.username}) // 사용자 정보를 Context에 저장
+      setUser({ username: formData.username, likeList:[], }) // 사용자 정보를 Context에 저장
       navigate("/home"); // MainScreen으로 이동
     } else {
       // 에러 메시지 출력

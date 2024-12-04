@@ -2,6 +2,8 @@ package com.korea.moviestar.entity;
 
 import java.util.Date;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,5 +33,6 @@ public class ReviewEntity {
 	private UserEntity user;
 	private int reviewRating;
 	private String reviewContent;
+	@CreationTimestamp
 	private Date reviewDate;
 }

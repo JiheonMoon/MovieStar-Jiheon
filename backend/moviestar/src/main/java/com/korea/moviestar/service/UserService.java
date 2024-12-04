@@ -76,6 +76,20 @@ public class UserService {
 		}
 	}
 	
+	public UserDTO deleteLike(String userId, int movieId) {
+		int user = Integer.parseInt(userId);
+		Optional<UserEntity> origin = repository.findById(user);
+		if(origin.isPresent()) {
+			UserEntity entity = origin.get();
+			List<Integer> newList = entity.getUserLikeList();
+			newList.remove(Integer.valueOf(movieId));
+			entity.setUserLikeList(newList);
+			return new UserDTO(repository.save(entity));
+		}else {
+			return null;
+		}
+	}
+	
 	public UserDTO update(UserDTO dto) {
 		Optional<UserEntity> origin = repository.findById(dto.getUserId());
 		if(origin.isPresent()) {

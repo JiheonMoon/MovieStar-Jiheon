@@ -4,6 +4,7 @@ package com.korea.moviestar.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Arrays;
@@ -85,13 +86,19 @@ public class UserController {
 		return ResponseEntity.ok().body(response);
 	}
 	
-	@PutMapping("/like")
+	@PutMapping("/private/like")
 	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @RequestBody int movieId){
 		UserDTO response = service.addLike(userId, movieId);
 		return ResponseEntity.ok().body(response);
 	}
 	
-	@PutMapping("/modify")
+	@DeleteMapping("/private/dislike")
+	public ResponseEntity<?> dislikeMovie(@AuthenticationPrincipal String userId, @RequestBody int movieId){
+		UserDTO response = service.deleteLike(userId, movieId);
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@PutMapping("/private/modify")
 	public ResponseEntity<?> modifyUser(@RequestBody UserDTO dto){
 		dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
 		UserDTO response = service.update(dto);

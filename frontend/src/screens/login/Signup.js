@@ -76,6 +76,21 @@ const Signup = () => {
 
       alert("회원가입 완료")
       navigate("/login")
+
+      // 서버로 회원가입 요청(백엔드 연결 시 위 코드 다음과 같이 수정)
+    //   const response = await fetch("/api/signup", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(formData),
+    //   });
+
+    //   if (response.ok) {
+    //     alert("회원가입 완료");
+    //     navigate("/login");
+    //   } else {
+    //     setMessage("회원가입 중 오류가 발생했습니다.");
+    //   }
+    // }
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { act, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet,FlatList } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { fetchMovieDetails, fetchMovieCredits } from '../api/tmdb';

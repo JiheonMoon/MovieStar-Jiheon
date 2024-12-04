@@ -85,7 +85,7 @@ const HomeScreen = () => {
             horizontal
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleNavigateToDetail(item.id)} style={styles.movieItem}>
+              <TouchableOpacity onPress={() => handleNavigateToDetail(item.id)} style={styles.movieItem} >
                 <Image source={{ uri: `https://image.tmdb.org/t/p/w500${item.poster_path}` }} style={styles.movieImage} />
                 <Text style={styles.movieTitle}>{item.title}</Text>
               </TouchableOpacity>

@@ -3,6 +3,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen from "../screen/HomeScreen";
 import MainScreen from "../screen/MainScreen";
 import DetailScreen from "../screen/DetailScreen";
+import LoginScreen from "../screen/LoginScreen";
 import { TouchableOpacity } from "react-native";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
 
@@ -31,8 +32,8 @@ const DrawerNavigator = () => {
                 drawerType:'slide' ,
             })}
         >
-            <Drawer.Screen name="Main" component={MainScreen}
-                    options={{title:'Main', headerShown: false,  }}/>
+            <Drawer.Screen name="Main" component={MainScreen} 
+                    options={{ headerShown: false,  }}/>
             <Drawer.Screen name="Home" component={HomeScreen}
                     options={{
                         title:'Movie',
@@ -44,14 +45,23 @@ const DrawerNavigator = () => {
                         headerTitleStyle:{color:'#fff',fontSize:20},
                         
                     }} />
+            <Drawer.Screen name="Login" component={LoginScreen}
+                    options={{
+                        title:'Login',
+                        headerTintColor : '#fff',
+                        headerStyle:{
+                            backgroundColor:'black',
+                            height:60,
+                        },
+                        headerTitleStyle:{color:'#fff',fontSize:20},
+                        
+                    }}/>
             <Drawer.Screen name="Detail" component={DetailScreen}
                 options={{title:'MovieDetail', headerShown: false,  }}/>
             {/*
-            <Drawer.Screen name="Main" component={MainScreen} 
-                    options={{title:'Login'}}/>
             
             <Drawer.Screen name="Main" component={MainScreen} 
-                    options={{title:'Logout'}}/>
+                    options={{ headerShown: false,  }}/>
 
             <Drawer.Screen name="Main" component={MainScreen}
                     options={{title:'SignUp'}}/>

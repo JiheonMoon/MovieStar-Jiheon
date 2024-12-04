@@ -8,6 +8,7 @@ import LoginScreen from "./screens/login/LoginScreen.js";
 import FindId from "./screens/login/FindId.js";
 import FindPassword from "./screens/login/FindPassword.js";
 import Signup from "./screens/login/Signup.js"
+import Mypage from "./screens/MyPage.js";
 
 import "./App.css";
 import "./css/main/Header.css"
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/find-id" element={<FindId />} />
           <Route path="/find-password" element={<FindPassword />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/mypage" element={<Mypage />} />
         </Routes>
       </Router>
     </AppContext.Provider>

@@ -59,4 +59,31 @@ public class UserService {
 			return null;
 		}
 	}
+	
+	public UserDTO addLike(String userId, int movieId) {
+		int user = Integer.parseInt(userId);
+		Optional<UserEntity> origin = repository.findById(user);
+		if(origin.isPresent()) {
+			UserEntity entity = origin.get();
+			List<Integer> newList = entity.getUserLikeList();
+			newList.add(movieId);
+			entity.setUserLikeList(newList);
+			return new UserDTO(repository.save(entity));
+		}else {
+			return null;
+		}
+	}
+	
+	public UserDTO update(UserDTO dto) {
+		Optional<UserEntity> origin = repository.findById(dto.getUserId());
+		if(origin.isPresent()) {
+			UserEntity entity = origin.get();
+			entity.setUserName(dto.getUserName());
+			entity.setUserNick(dto.getUserNick());
+			entity.setUserEmail(dto.getUserEmail());
+			entity.setUserPwd(dto.getUserPwd());
+			return new UserDTO(repository.save(entity));
+		}
+		return null;
+	}
 }

@@ -2,6 +2,7 @@ package com.korea.moviestar.entity;
 
 import java.util.List;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,5 +27,6 @@ public class UserEntity {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
-	private int[] userLikeList;
+	@ElementCollection
+	private List<Integer> userLikeList;
 }

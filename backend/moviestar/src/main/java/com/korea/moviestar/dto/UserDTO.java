@@ -19,7 +19,7 @@ public class UserDTO {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
-	private int[] userLikeList;
+	private List<Integer> userLikeList;
 	private String token;
 	
 	public UserDTO(UserEntity entity) {

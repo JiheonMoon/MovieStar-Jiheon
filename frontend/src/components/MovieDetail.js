@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchMovieDetails, fetchMovieCredits } from "../api/tmdb";
-import { FaStar } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import moment from "moment";
 import "../css/detail/Detail.css"
 import "../css/detail/Review.css"
@@ -179,8 +179,9 @@ const MovieDetail = ({ movie, onClose }) => {
   const [editable, setEditable] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [editState, setEditState] = useState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
+  const [isLiked,setIsLiked] = useState((movie.id));
 
-  const { user } = useContext(AppContext)
+  const { user , addLikeMovie , removeLikeMovie , isMovieLiked } = useContext(AppContext)
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -271,6 +272,13 @@ const MovieDetail = ({ movie, onClose }) => {
 
   if (!movie) return <div>Loading...</div>;
 
+  const handleLikeToggle = () => {
+    if(!user) {
+      alert("로그인 후 좋아요를 할 수 있습니다.");
+      return;
+    }
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -286,7 +294,23 @@ const MovieDetail = ({ movie, onClose }) => {
               className="modal-movie-poster"
             />
             <div className="modal-movie-details">
-              <h1>{movie.title}</h1>
+              <h1>
+                {movie.title}
+                {user && (
+                  <button
+                    onClick={handleLikeToggle}
+                    style={{
+                      background:'none',
+                      border:'none',
+                      cursor:'pointer',
+                      height:5,
+                      width:5
+                    }}
+                  >
+                    {isLiked ? <FaHeart color="red"/> : <FaRegHeart color="gray" />}
+                  </button>
+                )}
+              </h1>
               <p>{movie.overview}</p>
               <p><strong>개봉일:</strong> {movie.release_date}</p>
               <p><strong>평점:</strong> {movie.vote_average}</p>

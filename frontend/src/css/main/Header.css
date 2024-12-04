@@ -23,7 +23,7 @@
   
   .main-header button {
     right: 100px; /* 우측 여백 */
-    padding: 10px 20px;
+    padding: 10px 10px;
     font-size: 14px;
     background-color: #d81f26; /* 버튼 색상 */
     color: white;

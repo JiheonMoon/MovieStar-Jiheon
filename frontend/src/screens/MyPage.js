@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { IoHome } from "react-icons/io5";
 import '../css/main/MyPage.css';
 
 const MyPage = () => {
@@ -24,6 +25,11 @@ const MyPage = () => {
         navigate('/login');
         return null;
     }
+
+    // 홈으로 이동하는 함수
+    const navigateToHome = () => {
+        navigate("/home");
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -134,6 +140,15 @@ const MyPage = () => {
 
     return (
         <div className="mypage-container">
+            <div className='home-button-container'>
+                <button
+                    className="home-button"
+                    onClick={navigateToHome}
+                >
+                    <IoHome />
+                </button>
+            </div>
+
             <h1>마이페이지</h1>
             
             <div className="mypage-tabs">

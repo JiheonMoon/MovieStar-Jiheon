@@ -25,6 +25,11 @@ const MyPage = () => {
         return null;
     }
 
+    // 홈으로 이동하는 함수
+    const navigateToHome = () => {
+        navigate("/home");
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -134,6 +139,15 @@ const MyPage = () => {
 
     return (
         <div className="mypage-container">
+            <div className='home-button-container'>
+                <button
+                    className="home-button"
+                    onClick={navigateToHome}
+                >
+                    홈으로 돌아가기
+                </button>
+            </div>
+
             <h1>마이페이지</h1>
             
             <div className="mypage-tabs">

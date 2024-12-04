@@ -88,3 +88,23 @@
     background-color: #f2dede;
     color: #a94442;
 }
+
+/* .home-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+} */
+
+.home-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: #0056b3;
+}

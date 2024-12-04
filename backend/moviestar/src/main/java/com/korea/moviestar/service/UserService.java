@@ -20,4 +20,9 @@ public class UserService {
 		List<UserEntity> entities = repository.findAll();
 		return entities.stream().map(UserDTO::new).collect(Collectors.toList());
 	}
+	
+	public UserDTO createUser(UserDTO dto) {
+		UserEntity entity = repository.save(UserDTO.toEntity(dto));
+		return new UserDTO(entity);
+	}
 }

@@ -26,5 +26,5 @@ public class UserEntity {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
-	private List<Integer> userLikeList;
+	private int[] userLikeList;
 }

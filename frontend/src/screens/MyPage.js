@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { IoHome } from "react-icons/io5";
 import '../css/main/MyPage.css';
 
 const MyPage = () => {
@@ -144,7 +145,7 @@ const MyPage = () => {
                     className="home-button"
                     onClick={navigateToHome}
                 >
-                    홈으로 돌아가기
+                    <IoHome />
                 </button>
             </div>
 

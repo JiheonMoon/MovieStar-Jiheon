@@ -1,8 +1,10 @@
 package com.korea.moviestar.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.korea.moviestar.dto.UserDTO;
@@ -23,6 +25,22 @@ public class UserService {
 	
 	public UserDTO createUser(UserDTO dto) {
 		UserEntity entity = repository.save(UserDTO.toEntity(dto));
-		return new UserDTO(entity);
+		UserDTO response = UserDTO.builder()
+			.userId(entity.getUserId())
+			.userEmail(entity.getUserEmail())
+			.userNick(entity.getUserNick())
+			.userName(entity.getUserName())
+			.userLikeList(entity.getUserLikeList())
+			.build();
+		return response;
+	}
+	
+	public UserDTO findUser(UserDTO dto, final PasswordEncoder encoder) {
+		UserEntity origin = repository.findByUserName(dto.getUserName());
+		if(origin != null && encoder.matches(dto.getUserPwd(), origin.getUserPwd())) {
+			return new UserDTO(origin);
+		}else {
+			return null;
+		}
 	}
 }

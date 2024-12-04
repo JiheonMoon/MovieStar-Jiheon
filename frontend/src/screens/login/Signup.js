@@ -86,7 +86,7 @@ const Signup = () => {
           name="userName"
           value={formData.userName}
           onChange={handleChange}
-          placeholder="이메일을 입력하세요"
+          placeholder="아이디를 입력하세요"
           required
         />
 

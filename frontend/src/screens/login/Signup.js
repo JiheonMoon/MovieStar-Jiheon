@@ -16,9 +16,16 @@ const Signup = () => {
 
   const [disabled, setDisabled] = useState(true)
 
-  useEffect(() => {
-    const emailCheck = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/ //이메일 식별 정규식
+  // 화면이동 함수
+  const navigate = useNavigate()
 
+  useEffect(() => {
+    // 이메일 식별 정규식
+    const emailCheck = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/
+    
+    // 비밀번호 정규식
+    const passwordCheck = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    
     // 서버 요청 또는 로직 추가
     if (!formData.userName) {
       setMessage("아이디를 입력해주세요")
@@ -35,6 +42,9 @@ const Signup = () => {
     } else if (!formData.userPwd) {
       setMessage("비밀번호를 입력해주세요.");
       setDisabled(true)
+    } else if(!passwordCheck.test(formData.userPwd)) {
+      setMessage("비밀번호는 최소 8자이며 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.")
+      setDisabled(true)
     } else if (formData.userPwd !== formData.userPwdCheck) {
       setMessage("비밀번호가 일치하지 않습니다.")
       setDisabled(true)
@@ -49,9 +59,6 @@ const Signup = () => {
     setFormData({ ...formData, [name]: value });
     
   };
-
-  // 화면이동 함수
-  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -69,6 +76,21 @@ const Signup = () => {
 
       alert("회원가입 완료")
       navigate("/login")
+
+      // 서버로 회원가입 요청(백엔드 연결 시 위 코드 다음과 같이 수정)
+    //   const response = await fetch("/api/signup", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(formData),
+    //   });
+
+    //   if (response.ok) {
+    //     alert("회원가입 완료");
+    //     navigate("/login");
+    //   } else {
+    //     setMessage("회원가입 중 오류가 발생했습니다.");
+    //   }
+    // }
     }
   };
 

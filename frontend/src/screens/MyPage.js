@@ -1,19 +1,19 @@
-import React,{useState,useContext} from "react";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
+import '../css/main/MyPage.css';
 
-const Mypage = () => {
-    const {user,setUser} = useContext(AppContext);
+const MyPage = () => {
+    const { user, setUser } = useContext(AppContext);
     const navigate = useNavigate();
-    const [isEditing , setIsEditing] = useState();
-    const [editedUser,setEditedUser] = useState({
-        userName: user?.userName || '',
-        userNick: user?.userNick || '' ,
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedUser, setEditedUser] = useState({
+        userNick: user?.userNick || '',
         userEmail: user?.userEmail || ''
-    }); 
+    });
 
-    //로그인되지 않은 경우 리다이렉트
-    if(!user) {
+    // 로그인되지 않은 경우 리다이렉트
+    if (!user) {
         navigate('/login');
         return null;
     }
@@ -21,24 +21,51 @@ const Mypage = () => {
     const handleLogout = () => {
         setUser(null);
         navigate('/home');
-    }
+    };
 
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
-    }
+    };
 
     const handleInputChange = (e) => {
-        const {name,value} = e.target;
+        const { name, value } = e.target;
         setEditedUser(prev => ({
             ...prev,
-            [name]:value
+            [name]: value
         }));
-    }
+    };
 
     const handleSaveProfile = () => {
-        
-    }
+        // 로컬 스토리지의 사용자 정보 업데이트
+        const storedUsers = Object.keys(localStorage)
+            .filter(key => localStorage.getItem(key).includes('"userName":"' + user.userName + '"'))
+            .map(key => JSON.parse(localStorage.getItem(key)));
 
+        if (storedUsers.length > 0) {
+            const updatedUser = {
+                ...storedUsers[0],
+                userNick: editedUser.userNick,
+                userEmail: editedUser.userEmail
+            };
+
+            // 로컬 스토리지 업데이트
+            localStorage.setItem(
+                Object.keys(localStorage).find(
+                    key => JSON.parse(localStorage.getItem(key)).userName === user.userName
+                ),
+                JSON.stringify(updatedUser)
+            );
+
+            // 컨텍스트 사용자 정보 업데이트
+            setUser(prev => ({
+                ...prev,
+                userNick: editedUser.userNick,
+                userEmail: editedUser.userEmail
+            }));
+
+            setIsEditing(false);
+        }
+    };
 
     return (
         <div className="mypage-container">
@@ -48,20 +75,20 @@ const Mypage = () => {
                 {isEditing ? (
                     <div className="profile-edit">
                         <div>
-                            <label>아이디</label>
-                            <input 
-                                type="nickName" 
-                                name="userName"
-                                value={editedUser.userName}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div>
                             <label>닉네임</label>
                             <input 
                                 type="text" 
                                 name="userNick"
                                 value={editedUser.userNick}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <label>이메일</label>
+                            <input 
+                                type="email" 
+                                name="userEmail"
+                                value={editedUser.userEmail}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -89,7 +116,7 @@ const Mypage = () => {
                         {user.userLikeList.map(movie => (
                             <div key={movie.id} className="liked-movie-item">
                                 <img 
-                                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
+                                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
                                     alt={movie.title} 
                                 />
                                 <p>{movie.title}</p>
@@ -108,8 +135,4 @@ const Mypage = () => {
     );
 };
 
-export default Mypage;
-
-
-
-
+export default MyPage;

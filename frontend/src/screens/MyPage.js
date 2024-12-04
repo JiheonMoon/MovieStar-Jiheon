@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import '../css/main/MyPage.css';
@@ -6,11 +6,18 @@ import '../css/main/MyPage.css';
 const MyPage = () => {
     const { user, setUser } = useContext(AppContext);
     const navigate = useNavigate();
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedUser, setEditedUser] = useState({
+    const [activeTab, setActiveTab] = useState('profile');
+    const [formData, setFormData] = useState({
+        userPwd: user?.userName || '',
+        newUserName: user?.userName || '',
         userNick: user?.userNick || '',
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
         userEmail: user?.userEmail || ''
     });
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
 
     // 로그인되지 않은 경우 리다이렉트
     if (!user) {
@@ -18,96 +25,211 @@ const MyPage = () => {
         return null;
     }
 
-    const handleLogout = () => {
-        setUser(null);
-        navigate('/home');
-    };
-
-    const handleEditToggle = () => {
-        setIsEditing(!isEditing);
-    };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setEditedUser(prev => ({
+        setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+        setMessage(''); // 입력 시 메시지 초기화
     };
 
-    const handleSaveProfile = () => {
-        // 로컬 스토리지의 사용자 정보 업데이트
-        const storedUsers = Object.keys(localStorage)
-            .filter(key => localStorage.getItem(key).includes('"userName":"' + user.userName + '"'))
-            .map(key => JSON.parse(localStorage.getItem(key)));
+    const validateProfileUpdate = () => {
+        if (!formData.newUserName || !formData.userNick) {
+            setMessage('아이디와 닉네임을 모두 입력해주세요.');
+            setMessageType('error');
+            return false;
+        }
+        return true;
+    };
 
-        if (storedUsers.length > 0) {
+    const validatePasswordUpdate = () => {
+        if (!formData.currentPassword || !formData.newPassword || !formData.confirmNewPassword) {
+            setMessage('모든 비밀번호 입력란을 채워주세요.');
+            setMessageType('error');
+            return false;
+        }
+        if (formData.newPassword !== formData.confirmNewPassword) {
+            setMessage('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+            setMessageType('error');
+            return false;
+        }
+        return true;
+    };
+
+    const updateProfile = () => {
+        if (!validateProfileUpdate()) return;
+
+        // 로컬 스토리지의 사용자 정보 업데이트
+        const storageKey = Object.keys(localStorage).find(
+            key => JSON.parse(localStorage.getItem(key)).userName === user.userName
+        );
+
+        if (storageKey) {
+            const storedUser = JSON.parse(localStorage.getItem(storageKey));
+            
+            // 새로운 정보로 업데이트
             const updatedUser = {
-                ...storedUsers[0],
-                userNick: editedUser.userNick,
-                userEmail: editedUser.userEmail
+                ...storedUser,
+                userName: formData.newUserName,
+                userNick: formData.userNick,
+                userEmail: formData.userEmail
             };
 
             // 로컬 스토리지 업데이트
-            localStorage.setItem(
-                Object.keys(localStorage).find(
-                    key => JSON.parse(localStorage.getItem(key)).userName === user.userName
-                ),
-                JSON.stringify(updatedUser)
-            );
+            localStorage.setItem(storageKey, JSON.stringify(updatedUser));
 
             // 컨텍스트 사용자 정보 업데이트
             setUser(prev => ({
                 ...prev,
-                userNick: editedUser.userNick,
-                userEmail: editedUser.userEmail
+                userName: formData.newUserName,
+                userNick: formData.userNick,
+                userEmail: formData.userEmail
             }));
 
-            setIsEditing(false);
+            setMessage('프로필이 성공적으로 업데이트되었습니다.');
+            setMessageType('success');
+        }
+    };
+
+    const updatePassword = () => {
+        if (!validatePasswordUpdate()) return;
+
+        // 로컬 스토리지의 사용자 정보 업데이트
+        const storageKey = Object.keys(localStorage).find(
+            key => JSON.parse(localStorage.getItem(key)).userName === user.userName
+        );
+
+        if (storageKey) {
+            const storedUser = JSON.parse(localStorage.getItem(storageKey));
+            
+            // 현재 비밀번호 확인
+            if (storedUser.userPwd !== formData.currentPassword) {
+                setMessage('현재 비밀번호가 일치하지 않습니다.');
+                setMessageType('error');
+                return;
+            }
+
+            // 새로운 정보로 업데이트
+            const updatedUser = {
+                ...storedUser,
+                userPwd: formData.newPassword
+            };
+
+            // 로컬 스토리지 업데이트
+            localStorage.setItem(storageKey, JSON.stringify(updatedUser));
+
+            // 입력 필드 초기화
+            setFormData(prev => ({
+                ...prev,
+                currentPassword: '',
+                newPassword: '',
+                confirmNewPassword: ''
+            }));
+
+            setMessage('비밀번호가 성공적으로 변경되었습니다.');
+            setMessageType('success');
         }
     };
 
     return (
         <div className="mypage-container">
             <h1>마이페이지</h1>
-            <div className="profile-section">
-                <h2>프로필 정보</h2>
-                {isEditing ? (
-                    <div className="profile-edit">
-                        <div>
-                            <label>닉네임</label>
-                            <input 
-                                type="text" 
-                                name="userNick"
-                                value={editedUser.userNick}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div>
-                            <label>이메일</label>
-                            <input 
-                                type="email" 
-                                name="userEmail"
-                                value={editedUser.userEmail}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div className="profile-actions">
-                            <button onClick={handleSaveProfile}>저장</button>
-                            <button onClick={handleEditToggle}>취소</button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="profile-view">
-                        <p><strong>아이디:</strong> {user.userName}</p>
-                        <p><strong>닉네임:</strong> {user.userNick}</p>
-                        <p><strong>이메일:</strong> {user.userEmail}</p>
-                        <div className="profile-actions">
-                            <button onClick={handleEditToggle}>프로필 수정</button>
-                        </div>
-                    </div>
-                )}
+            
+            <div className="mypage-tabs">
+                <button 
+                    className={activeTab === 'profile' ? 'active' : ''}
+                    onClick={() => setActiveTab('profile')}
+                >
+                    프로필 수정
+                </button>
+                <button 
+                    className={activeTab === 'password' ? 'active' : ''}
+                    onClick={() => setActiveTab('password')}
+                >
+                    비밀번호 변경
+                </button>
             </div>
+
+            {activeTab === 'profile' && (
+                <div className="profile-edit-section">
+                    <h2>프로필 수정</h2>
+                    <div className="input-group">
+                        <label>아이디</label>
+                        <input
+                            type="text"
+                            name="newUserName"
+                            value={formData.newUserName}
+                            onChange={handleInputChange}
+                            placeholder="새 아이디 입력"
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>닉네임</label>
+                        <input
+                            type="text"
+                            name="userNick"
+                            value={formData.userNick}
+                            onChange={handleInputChange}
+                            placeholder="새 닉네임 입력"
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>이메일</label>
+                        <input
+                            type="email"
+                            name="userEmail"
+                            value={formData.userEmail}
+                            onChange={handleInputChange}
+                            placeholder="새 이메일 입력"
+                        />
+                    </div>
+                    <button onClick={updateProfile}>프로필 업데이트</button>
+                </div>
+            )}
+
+            {activeTab === 'password' && (
+                <div className="password-edit-section">
+                    <h2>비밀번호 변경</h2>
+                    <div className="input-group">
+                        <label>현재 비밀번호</label>
+                        <input
+                            type="password"
+                            name="currentPassword"
+                            value={formData.currentPassword}
+                            onChange={handleInputChange}
+                            placeholder="현재 비밀번호 입력"
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>새 비밀번호</label>
+                        <input
+                            type="password"
+                            name="newPassword"
+                            value={formData.newPassword}
+                            onChange={handleInputChange}
+                            placeholder="새 비밀번호 입력"
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>새 비밀번호 확인</label>
+                        <input
+                            type="password"
+                            name="confirmNewPassword"
+                            value={formData.confirmNewPassword}
+                            onChange={handleInputChange}
+                            placeholder="새 비밀번호 다시 입력"
+                        />
+                    </div>
+                    <button onClick={updatePassword}>비밀번호 변경</button>
+                </div>
+            )}
+
+            {message && (
+                <div className={`message ${messageType}`}>
+                    {message}
+                </div>
+            )}
 
             <div className="liked-movies-section">
                 <h2>좋아요 표시한 영화</h2>
@@ -126,10 +248,6 @@ const MyPage = () => {
                 ) : (
                     <p>좋아요 표시한 영화가 없습니다.</p>
                 )}
-            </div>
-
-            <div className="mypage-actions">
-                <button onClick={handleLogout} className="logout-button">로그아웃</button>
             </div>
         </div>
     );

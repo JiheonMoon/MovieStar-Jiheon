@@ -90,6 +90,11 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     const handleLogout = () => {
         setUser(null) // 사용자 로그아웃 처리
     }
+
+    // 마이페이지로 이동하는 함수
+    const navigateToMyPage = () => {
+        navigate("/mypage")
+    }
   
     // 컴포넌트 마운트 시 영화 데이터 초기 로딩
     useEffect(() => {
@@ -143,7 +148,10 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
             />
             {/* 로그인, 로그아웃 버튼 */}
             { user ? (
+              <>
+                <button onClick={navigateToMyPage}>마이페이지</button>
                 <button onClick={handleLogout}>로그아웃</button>
+              </>
             ) : (
                 <button onClick={navigateToLoginScreen}>로그인</button>
             )}

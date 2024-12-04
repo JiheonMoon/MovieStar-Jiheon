@@ -1,5 +1,11 @@
 package com.korea.moviestar.controller;
 
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,13 +16,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.korea.moviestar.dto.ResponseDTO;
 import com.korea.moviestar.dto.UserDTO;
+
 import com.korea.moviestar.entity.UserEntity;
 import com.korea.moviestar.security.TokenProvider;
+
 import com.korea.moviestar.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,9 +35,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("user")
 public class UserController {
 	private final UserService service;
+
 	private final TokenProvider tokenProvider;
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 	
 	@GetMapping("/all")
 	public ResponseEntity<?> userList(){
@@ -36,7 +47,7 @@ public class UserController {
 		ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);
 	}
-	
+
 	@GetMapping("/{userId}")
 	public ResponseEntity<?> userById(@PathVariable int userId){
 		UserDTO dto = service.findByUserId(userId);

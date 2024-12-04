@@ -26,5 +26,7 @@ public class UserEntity {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
+
 	private int[] userLikeList;
+
 }

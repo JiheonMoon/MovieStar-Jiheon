@@ -10,11 +10,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,6 +82,19 @@ public class UserController {
 	public ResponseEntity<?> signup(@RequestBody UserDTO dto){
 		dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
 		UserDTO response = service.createUser(dto);
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@PutMapping("/like")
+	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @RequestBody int movieId){
+		UserDTO response = service.addLike(userId, movieId);
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@PutMapping("/modify")
+	public ResponseEntity<?> modifyUser(@RequestBody UserDTO dto){
+		dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
+		UserDTO response = service.update(dto);
 		return ResponseEntity.ok().body(response);
 	}
 }

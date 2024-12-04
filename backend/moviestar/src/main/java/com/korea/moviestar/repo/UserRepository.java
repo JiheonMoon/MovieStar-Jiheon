@@ -8,4 +8,6 @@ import com.korea.moviestar.entity.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer>{
 
+	UserEntity findByUserName(String userName);
+
 }

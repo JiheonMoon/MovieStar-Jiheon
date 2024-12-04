@@ -32,6 +32,38 @@ const LoginScreen = () => {
     navigate("/home")
   }
 
+  // 카카오 로그인
+  const handleKakaoLogin = () => {
+    const Rest_api_key = process.env.REACT_APP_KAKAO_LOGIN_API_KEY; // REST API KEY
+    const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
+    // oauth 요청 URL
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+    // 카카오 로그인 페이지로 리디렉션
+    window.location.href = KAKAO_AUTH_URL;
+  }
+
+  // 네이버 로그인
+  const handleNaverLogin = () => {
+    const NAVER_CLIENT_ID = process.env.REACT_APP_NAVER_LOGIN_CLIENT_ID; // 클라이언트 ID
+    const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
+    const STATE = "false";
+    // oauth 요청 URL
+    const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
+    // 네이버 로그인 페이지로 리디렉션
+    window.location.href = NAVER_AUTH_URL;
+  }
+
+  // 구글 로그인
+  const handleGoogleLogin = () => {
+    const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID; // 클라이언트 ID
+    const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
+    const SCOPE = "email profile";
+    // oauth 요청 URL
+    const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPE}`;
+    // 구글 로그인 페이지로 리다이렉션
+    window.location.href = GOOGLE_AUTH_URL
+  }
+
   // 입력값 업데이트
   const handleChange = (e) => {
     const { id, value } = e.target
@@ -110,9 +142,9 @@ const LoginScreen = () => {
         <div className="social-login-section">
           <p className="social-login-title">소셜 로그인</p>
           <div className="social-login">
-            <button className="social-button naver">네이버 로그인</button>
-            <button className="social-button kakao">카카오 로그인</button>
-            <button className="social-button google">구글 로그인</button>
+            <button className="social-button naver" onClick={handleNaverLogin}>네이버 로그인</button>
+            <button className="social-button kakao" onClick={handleKakaoLogin}>카카오 로그인</button>
+            <button className="social-button google" onClick={handleGoogleLogin}>구글 로그인</button>
           </div>
         </div>
 

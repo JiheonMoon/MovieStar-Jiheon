@@ -259,6 +259,7 @@ h2 {
   max-width: 400px; /* 최대 400px로 제한 */
 }
 
+
 .find-password-container input:focus {
   border-color: red; /* 포커스 시 테두리 색상 */
   outline: none; /* 기본 포커스 스타일 제거 */

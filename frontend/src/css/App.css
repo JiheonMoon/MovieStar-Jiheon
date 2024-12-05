@@ -1,3 +1,12 @@
+body.default-layout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+body.mypage-layout {
+  display: block; /* Flex 레이아웃을 끔 */
+}
 
   
   /* 최상단 추천 영화 컨테이너 */

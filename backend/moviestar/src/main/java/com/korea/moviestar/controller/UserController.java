@@ -27,6 +27,7 @@ import com.korea.moviestar.dto.ResponseDTO;
 import com.korea.moviestar.dto.UserDTO;
 
 import com.korea.moviestar.entity.UserEntity;
+import com.korea.moviestar.repo.MovieRepository;
 import com.korea.moviestar.security.TokenProvider;
 
 import com.korea.moviestar.service.UserService;
@@ -38,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("user")
 public class UserController {
 	private final UserService service;
+	private final MovieRepository movies;
 
 	private final TokenProvider tokenProvider;
 	
@@ -62,14 +64,13 @@ public class UserController {
 		UserDTO find = service.findUser(dto, passwordEncoder);
 		
 		if(find != null) {
-			UserEntity user = UserDTO.toEntity(find);
+			UserEntity user = UserService.toEntity(find, movies);
 			final String token = tokenProvider.create(user);
 			UserDTO response = UserDTO.builder()
 					.userId(user.getUserId())
 					.userEmail(user.getUserEmail())
 					.userNick(user.getUserNick())
 					.userName(user.getUserName())
-					.userLikeList(user.getUserLikeList())
 					.token(token)
 					.build();
 			return ResponseEntity.ok().body(response);

@@ -25,6 +25,16 @@ public class ReviewService {
 		return entities.stream().map(ReviewDTO::new).collect(Collectors.toList());
 	}
 	
+	public List<ReviewDTO> findByUserId(String userId){
+		int user = Integer.parseInt(userId);
+		Optional<UserEntity> origin = users.findById(user);
+		if(origin.isPresent()) {
+			List<ReviewEntity> entities = repository.findByUserUserId(user);
+			return entities.stream().map(ReviewDTO::new).collect(Collectors.toList());
+		}
+		return null;
+	}
+	
 	public ReviewDTO create(String userId, ReviewDTO dto) {
 		int user = Integer.parseInt(userId);
 		Optional<UserEntity> origin = users.findById(user);
@@ -35,4 +45,6 @@ public class ReviewService {
 		}
 		return null;
 	}
+	
+	
 }

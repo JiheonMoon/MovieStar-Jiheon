@@ -30,9 +30,18 @@ public class ReviewController {
 		return ResponseEntity.ok().body(response);
 	}
 	
+	@GetMapping("/myreview")
+	public ResponseEntity<?> reviewByUserId(@AuthenticationPrincipal String userId){
+		List<ReviewDTO> dtos = service.findByUserId(userId);
+		ResponseDTO<ReviewDTO> response = ResponseDTO.<ReviewDTO>builder().data(dtos).build();
+		return ResponseEntity.ok().body(response);
+	}
+	
 	@PostMapping("/write")
 	public ResponseEntity<?> writeReview(@AuthenticationPrincipal String userId, @RequestBody ReviewDTO dto){
 		ReviewDTO response = service.create(userId, dto);
 		return ResponseEntity.ok().body(response);
 	}
+	
+	
 }

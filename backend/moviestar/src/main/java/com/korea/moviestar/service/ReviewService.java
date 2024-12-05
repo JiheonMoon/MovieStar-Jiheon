@@ -46,5 +46,15 @@ public class ReviewService {
 		return null;
 	}
 	
+	public ReviewDTO update(ReviewDTO dto) {
+		Optional<ReviewEntity> origin = repository.findById(dto.getReviewId());
+		if(origin.isPresent()) {
+			 ReviewEntity newReview = origin.get();
+			 newReview.setReviewRating(dto.getReviewRating());
+			 newReview.setReviewContent(dto.getReviewContent());
+			 return new ReviewDTO(repository.save(newReview));
+		}
+		return null;
+	}
 	
 }

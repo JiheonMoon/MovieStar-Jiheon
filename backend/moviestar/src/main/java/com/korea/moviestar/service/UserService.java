@@ -3,6 +3,7 @@ package com.korea.moviestar.service;
 import java.util.List;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -67,7 +68,7 @@ public class UserService {
 		Optional<UserEntity> origin = repository.findById(user);
 		if(origin.isPresent()) {
 			UserEntity entity = origin.get();
-			List<Integer> newList = entity.getUserLikeList();
+			Set<Integer> newList = entity.getUserLikeList();
 			newList.add(movieId);
 			entity.setUserLikeList(newList);
 			return new UserDTO(repository.save(entity));
@@ -81,7 +82,7 @@ public class UserService {
 		Optional<UserEntity> origin = repository.findById(user);
 		if(origin.isPresent()) {
 			UserEntity entity = origin.get();
-			List<Integer> newList = entity.getUserLikeList();
+			Set<Integer> newList = entity.getUserLikeList();
 			newList.remove(Integer.valueOf(movieId));
 			entity.setUserLikeList(newList);
 			return new UserDTO(repository.save(entity));

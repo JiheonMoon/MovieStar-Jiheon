@@ -1,6 +1,7 @@
 package com.korea.moviestar.dto;
 
 import java.util.List;
+import java.util.Set;
 
 import com.korea.moviestar.entity.UserEntity;
 
@@ -19,7 +20,7 @@ public class UserDTO {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
-	private List<Integer> userLikeList;
+	private Set<Integer> userLikeList;
 
 	private String token;
 

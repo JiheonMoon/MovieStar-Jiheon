@@ -1,6 +1,6 @@
 package com.korea.moviestar.entity;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -28,5 +28,5 @@ public class UserEntity {
 	private String userEmail;
 	private String userPwd;
 	@ElementCollection
-	private List<Integer> userLikeList;
+	private Set<Integer> userLikeList;
 }

@@ -6,6 +6,7 @@ import MovieDetail from "../components/MovieDetail.js";
 import MovieSlider from "../components/MovieSlider.js";
 import logo from "../logo/logo.png"
 
+import '../css/main/MyPage.css';
 import "../css/main/Header.css"
 import "../css/main/TopRecommendation.css"
 

@@ -1,145 +1,264 @@
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { View, TouchableOpacity, Text, TextInput,Button } from "react-native";
-
-
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { View, TouchableOpacity, Text, TextInput,Button, StyleSheet } from "react-native";
+import { Linking } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppContext } from "../context/AppContext";
 
 
 const LoginScreen = () => {
     const [formData, setFormData] = useState({ userName: "", userPwd: "" });
     const [error, setError] = useState("")
+    const { setUser } = useContext(AppContext)
     const navigation = useNavigation();
+    const isfocused = useIsFocused();
 
-
-        // 로고 클릭 시 메인화면 띄우기
-    const handleLogoClick = () => {
-        navigation.navigate("Home");
-    };
-
+    useEffect(()=>{
+        if(isfocused){
+            setFormData({ userName: "", userPwd: "" })
+        }
+    },[isfocused])
 
     // 네이버 로그인
     const handleNaverLogin = () => {
-        const NAVER_CLIENT_ID = process.env.REACT_APP_NAVER_LOGIN_CLIENT_ID;
-        const REDIRECT_URI = 'http://localhost:9090/oauth';
+        const NAVER_LOGIN_CLIENT_ID ="kSEszMRKZ_x7AdJDnave";
+        const REDIRECT_URI = 'http://localhost:9090/oauth'
         const STATE = "false";
-        const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
-        window.location.href = NAVER_AUTH_URL;
+        const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_LOGIN_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
+        Linking.openURL(NAVER_AUTH_URL).catch(err => console.error("Failed to open URL:", err))
     };
+
 
     // 카카오 로그인
     const handleKakaoLogin = () => {
-        const Rest_api_key = process.env.REACT_APP_KAKAO_LOGIN_API_KEY;
+        const Rest_api_key = Config.REACT_APP_KAKAO_LOGIN_API_KEY;
         const REDIRECT_URI = 'http://localhost:9090/oauth';
         const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-        window.location.href = KAKAO_AUTH_URL;
+        Linking.openURL(KAKAO_AUTH_URL).catch(err => console.error("Failed to open URL:", err))
     };
 
     // 구글 로그인
     const handleGoogleLogin = () => {
-        const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID;
+        const GOOGLE_CLIENT_ID = Config.REACT_APP_GOOGLE_LOGIN_CLIENT_ID;
         const REDIRECT_URI = 'http://localhost:9090/oauth';
         const SCOPE = "email profile";
         const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPE}`;
-        window.location.href = GOOGLE_AUTH_URL;
-    };
-
-    // 입력값 업데이트
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData({ ...formData, [id]: value });
+        Linking.openURL(GOOGLE_AUTH_URL).catch(err => console.error("Failed to open URL:", err))
     };
 
     // 폼 제출 처리
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
+        try {
+            // AsyncStorage에서 모든 사용자 정보 가져오기
+            const storedUsers = await AsyncStorage.getItem('users');
+            const users = storedUsers ? JSON.parse(storedUsers) : [];
 
-        // localStorage에서 유저 정보 가져오기
-        const storedUser = JSON.parse(
-        localStorage.getItem(
-            Object.keys(window.localStorage).find(
-            key => JSON.parse(localStorage.getItem(key)).userName === formData.userName
-            )
-        )
-        );
+            // 입력된 userName에 해당하는 사용자 찾기
+            const parsedUser = users.find(user => user.userName === formData.userName);
 
-        // 유저 정보 확인
-        if (storedUser && storedUser.userPwd === formData.userPwd) {
-        // 로그인 성공 시
-        setUser({
-            userName: storedUser.userName,
-            userEmail: storedUser.userEmail,
-            userNick: storedUser.userNick,
-            userLikeList: storedUser.userLikeList,
-        }); // 사용자 정보를 Context에 저장
-        navigation.navigate("Home"); // MainScreen으로 이동
-        } else {
-        // 에러 메시지 출력
-        setError("아이디 또는 비밀번호가 일치하지 않습니다.");
+            if (parsedUser && parsedUser.userPwd === formData.userPwd) {
+                // 로그인 성공 시
+                setUser(parsedUser);
+                alert('Login')
+                navigation.navigate("Home");
+            } else {
+                setFormData({ userName: "", userPwd: "" })
+                setError("아이디 또는 비밀번호가 일치하지 않습니다.");
+            }
+        } catch (err) {
+            setError("로그인 오류가 발생했습니다. 다시 시도해 주세요.");
         }
     };
 
     return(
-        <View>
-            {/* <View>
-                <TouchableOpacity onPress={()=>{}}>
-                <Image source={}/>
-                </TouchableOpacity>
-            </View> */}
-
-            <View>
-                <Text>로그인</Text>
-
-                {/* 로그인 폼 */}
-                <View>
-                <Text>아이디</Text>
-                <TextInput
-                    placeholder="아이디를 입력하세요"
-                    value={formData.userName}
-                    onChangeText={(value) => setFormData({ ...formData, userName: value })}
-                />
-                </View>
-
-                <View>
-                <Text>비밀번호</Text>
+        <View style={styles.background}>
+            <View style={styles.container}>
+                <View style={styles.loginForm}>
+                    <Text style={styles.logininput}>Login</Text>
+                    {/* 로그인 폼 */}
+                    <View>
+                    <Text style={styles.textlogin}>아이디</Text>
                     <TextInput
-                        placeholder="비밀번호를 입력하세요"
-                        value={formData.userPwd}
-                        onChangeText={(value) => setFormData({ ...formData, userPwd: value })}
-                        secureTextEntry
+                        style={styles.textlogininput}
+                        placeholder="아이디를 입력하세요"
+                        placeholderTextColor='grey'
+                        value={formData.userName}
+                        onChangeText={(value) => setFormData({ ...formData, userName: value })}
                     />
-                </View>
+                    </View>
 
-                <Button title="로그인" onPress={()=>{}} />
+                    <View>
+                    <Text style={styles.textlogin}>비밀번호</Text>
+                        <TextInput
+                            style={styles.textpasswordinput}
+                            placeholder="비밀번호를 입력하세요"
+                            placeholderTextColor='grey'
+                            value={formData.userPwd}
+                            onChangeText={(value) => setFormData({ ...formData, userPwd: value })}
+                            secureTextEntry
+                        />
+                    </View>
 
-                {/* 에러 메시지 */}
-                {error && <Text>{error}</Text>}
+                    <TouchableOpacity onPress={handleSubmit}>
+                        <Text style={styles.Loginbutton}>로그인</Text>
+                    </TouchableOpacity>
 
-                {/* 소셜 로그인 섹션 */}
-                <View>
-                    <Text>소셜 로그인</Text>
-                        <View>
-                            <Button title="네이버 로그인" onPress={handleNaverLogin} />
-                            <Button title="카카오 로그인" onPress={handleKakaoLogin} />
-                            <Button title="구글 로그인" onPress={handleGoogleLogin} />
-                        </View>
+
+                    {/* 에러 메시지 */}
+                    {error && <Text style={styles.errortext}>{error}</Text>}
+
+                    {/* 소셜 로그인 섹션 */}
+                    <View>
+                        <Text style={styles.socialinput}>SocialLogin</Text>
+                            <View>
+                                <TouchableOpacity onPress={handleNaverLogin}>
+                                    <Text style={styles.naverbutton}>네이버 로그인</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity  onPress={handleKakaoLogin}>
+                                    <Text style={styles.kakaobutton}>카카오 로그인</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity  onPress={handleGoogleLogin}>
+                                    <Text style={styles.googlebutton}>구글 로그인</Text>
+                                </TouchableOpacity>
+                            </View>
+                    </View>
                 </View>
 
                 {/* 링크 섹션 */}
-                <View>
+                <View style={styles.Link}>
                     <TouchableOpacity onPress={() => navigation.navigate("FindId")}>
-                        <Text>아이디 찾기</Text>
+                        <Text style={styles.Linktext}>아이디 찾기</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate("FindPassword")}>
-                        <Text>비밀번호 찾기</Text>
+                        <Text style={styles.Linktext}>비밀번호 찾기</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-                        <Text>회원가입</Text>
+                        <Text style={styles.Linktext}>회원가입</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         </View>
     )
 };
+
+const styles = StyleSheet.create({
+    background:{
+        flex: 1,
+        padding:5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        resizeMode: 'cover',
+        backgroundColor:'rgba(0, 0, 0, 0.8)'
+    },
+    container:{
+        backgroundColor: 'rgba(0, 0, 0, 0.9)', // 투명한 배경
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding:24,
+        margin:16,
+        flex:1,
+        borderRadius:35,
+    },
+    loginForm:{
+        width:300,
+    },
+    logininput:{
+        fontSize:22,
+        color:"white",
+        textAlign:'center',
+        justifyContent:'center',
+        marginBottom:10,
+        padding:5,
+    },
+    socialinput:{
+        fontSize:20,
+        color:"white",
+        textAlign:'center',
+        justifyContent:'center',
+        margin:10,
+        marginTop:20,
+        padding:5,
+    },
+    textlogin:{
+        color:"white",
+        margin:5
+    },
+    textlogininput:{
+        color:'white',
+        fontSize:12,
+        margin:5,
+        marginBottom:10,
+        borderWidth:1,
+        borderColor:'white',
+        borderRadius:8,
+    },
+    textpasswordinput:{
+        color:'white',
+        fontSize:12,
+        margin:5,
+        marginBottom:10,
+        borderWidth:1,
+        borderColor:'white',
+        borderRadius:8,
+    },
+    Linktext:{
+        color:"red",
+        alignItems:'center',
+        justifyContent:'center',
+        padding:5,
+        margin:5
+    },
+    Link:{
+        flexDirection:'row',
+        alignItems:'center',
+        textAlign:'center',
+        justifyContent:'center',
+
+    },
+    Loginbutton:{
+        backgroundColor:'red',
+        textAlign:'center',
+        fontSize: 16,
+        padding:14,
+        margin:5,
+        color:'white',
+        borderRadius:10,
+    },
+    naverbutton:{
+        backgroundColor:'#03c75a',
+        textAlign:'center',
+        fontSize: 16,
+        padding:14,
+        margin:5,
+        color:'white',
+        borderRadius:10,
+    },
+    kakaobutton:{
+        backgroundColor:'#fee500',
+        textAlign:'center',
+        fontSize: 16,
+        padding:14,
+        margin:5,
+        color:'white',
+        borderRadius:10,
+    },
+    googlebutton:{
+        backgroundColor:'#4285f4',
+        textAlign:'center',
+        fontSize: 16,
+        padding:14,
+        margin:5,
+        color:'white',
+        borderRadius:10,
+    },
+    errortext: {
+        color: "white",
+        textAlign: "center",
+        marginTop: 10,
+        fontSize:12,
+    }
+})
+
 
 
 export default LoginScreen;

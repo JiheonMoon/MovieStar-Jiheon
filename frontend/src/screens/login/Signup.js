@@ -112,6 +112,7 @@ const Signup = () => {
           // key에 Pwd가 포함되어 있으면 타입을 password, 아니면 text
           const inputType = key.includes("Pwd") ? "password" : "text"
 
+          // placeholder 설정
           const placeholder = 
             key === "userPwdCheck" 
             ? "비밀번호 한번 더 입력" 

@@ -2,11 +2,13 @@ package com.korea.moviestar.entity;
 
 import java.util.Set;
 
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +29,11 @@ public class UserEntity {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
-	@ElementCollection
-	private Set<Integer> userLikeList;
+	@ManyToMany
+	@JoinTable(
+			name = "user_like_list",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "movie_id")
+	)
+	private Set<MovieEntity> userLikeList;
 }

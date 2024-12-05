@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,9 +46,18 @@ public class ReviewController {
 	}
 	
 	@PutMapping("/private/modify")
-	public ResponseEntity<?> modifyReview(@AuthenticationPrincipal String userId, @RequestBody ReviewDTO dto){
+	public ResponseEntity<?> modifyReview(@RequestBody ReviewDTO dto){
 		ReviewDTO response = service.update(dto);
 		return ResponseEntity.ok().body(response);
+	}
+	
+	@DeleteMapping("/private/remove")
+	public ResponseEntity<?> removeReview(@RequestBody int reviewId){
+		if(service.delete(reviewId)) {
+			return ResponseEntity.ok().body("succesfully remove");
+		}else {
+			return ResponseEntity.badRequest().body("fail to remove");
+		}
 	}
 	
 }

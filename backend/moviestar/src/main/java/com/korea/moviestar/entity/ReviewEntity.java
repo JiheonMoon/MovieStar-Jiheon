@@ -3,6 +3,8 @@ package com.korea.moviestar.entity;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,8 +30,9 @@ public class ReviewEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int reviewId;
 	private int movieId;
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	@JoinColumn(name="user_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private UserEntity user;
 	private int reviewRating;
 	private String reviewContent;

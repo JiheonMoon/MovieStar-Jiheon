@@ -4,12 +4,12 @@ import "../../css/login/LoginScreen.css"
 
 const Signup = () => {
   const [formData, setFormData] = useState({
+    userName: "",
     userEmail: "",
+    userNick: "",
     userPwd: "",
     userPwdCheck: "",
-    userNick: "",
-    userName: "",
-    userLikeList: [],
+    // userLikeList: [],
   })
 
   const [message, setMessage] = useState("")
@@ -98,65 +98,38 @@ const Signup = () => {
   return (
     <div className="signup-container">
       <h2>회원가입</h2>
-
-
-
       <form onSubmit={handleSubmit}>
-        <label htmlFor="userName">아이디</label>
-        <input
-          type="text"
-          id="userName"
-          name="userName"
-          value={formData.userName}
-          onChange={handleChange}
-          placeholder="아이디를 입력하세요"
-          required
-        />
+        {Object.entries(formData).map(([key, value]) => {
+          const labels = {
+            userName: "아이디",
+            userEmail: "이메일",
+            userNick: "닉네임",
+            userPwd: "비밀번호",
+            userPwdCheck: "비밀번호 확인",
+            // userLikeList: "관심 목록"
+          }
 
+          // key에 Pwd가 포함되어 있으면 타입을 password, 아니면 text
+          const inputType = key.includes("Pwd") ? "password" : "text"
 
-        <label htmlFor="userEmail">이메일</label>
-        <input
-          type="text"
-          id="userEmail"
-          name="userEmail"
-          value={formData.userEmail}
-          onChange={handleChange}
-          placeholder="이메일을 입력하세요"
-          required
-        />
-
-        <label htmlFor="userNick">닉네임</label>
-        <input
-          type="text"
-          id="userNick"
-          name="userNick"
-          value={formData.userNick}
-          onChange={handleChange}
-          placeholder="닉네임을 입력하세요"
-          required
-        />
-
-        <label htmlFor="userPwd">비밀번호</label>
-        <input
-          type="password"
-          id="userPwd"
-          name="userPwd"
-          value={formData.userPwd}
-          onChange={handleChange}
-          placeholder="비밀번호를 입력하세요"
-          required
-        />
-
-        <label htmlFor="userPwdCheck">비밀번호 확인</label>
-        <input
-          type="password"
-          id="userPwdCheck"
-          name="userPwdCheck"
-          value={formData.userPwdCheck}
-          onChange={handleChange}
-          placeholder="비밀번호를 다시 입력하세요"
-          required
-        />
+          const placeholder = 
+            key === "userPwdCheck" 
+            ? "비밀번호 한번 더 입력" 
+            : `${labels[key]} 입력`
+            
+          return (
+          <label key={key}>
+            {labels[key]}
+            <input 
+              type={inputType} //비밀번호는 password, 나머지는 text
+              name={key} 
+              onChange={handleChange}
+              placeholder={placeholder}
+              value={value} 
+            />
+          </label>
+        )
+      })}
 
         <button type="submit" disabled={disabled}>회원가입</button>
       </form>

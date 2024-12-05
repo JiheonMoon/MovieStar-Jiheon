@@ -38,7 +38,7 @@ const LoginScreen = () => {
     const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
     // oauth 요청 URL
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-    // 카카오 로그인 페이지로 리디렉션
+    // 카카오 로그인 페이지로 리다이렉션
     window.location.href = KAKAO_AUTH_URL;
   }
 
@@ -49,7 +49,7 @@ const LoginScreen = () => {
     const STATE = "false";
     // oauth 요청 URL
     const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
-    // 네이버 로그인 페이지로 리디렉션
+    // 네이버 로그인 페이지로 리다이렉션
     window.location.href = NAVER_AUTH_URL;
   }
 

@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchMovieDetails, fetchMovieCredits } from "../api/tmdb";
-import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
+import { searchYouTubeTrailer } from "../api/youtube";
+import { FaHeart, FaRegHeart, FaStar , FaPlay } from "react-icons/fa";
 import moment from "moment";
 import "../css/detail/Detail.css"
 import "../css/detail/Review.css"
 import "../css/detail/Modal.css"
+import "../css/detail/Trailer.css"
 import { AppContext } from "../context/AppContext";
 
 // 출연진 목록 컴포넌트
@@ -27,7 +29,6 @@ const ActorList = ({ actors }) => (
   </div>
 );
 
-
 // 별점 컴포넌트
 const StarRating = ({ rating, setRating, size = 30, readOnly }) => (
   <div className="star-rating" style={{ cursor: "pointer" }}>
@@ -44,7 +45,6 @@ const StarRating = ({ rating, setRating, size = 30, readOnly }) => (
 );
 
 // 리뷰 작성 폼 컴포넌트
-
 const ReviewForm = ({ reviewRating, setReviewRate, reviewContent, setReviewContent, addReview }) => (
   <div className="review-form">
     <h3>리뷰 작성</h3>
@@ -54,10 +54,8 @@ const ReviewForm = ({ reviewRating, setReviewRate, reviewContent, setReviewConte
       <input
         className="review-input"
         placeholder="리뷰 내용을 입력해주세요"
-
         value={reviewContent}
         onChange={(e) => setReviewContent(e.target.value)}
-
       />
       <button className="review-submit-button" onClick={addReview}>
         올리기
@@ -79,20 +77,16 @@ const ReviewItem = ({
 }) => (
   <li className="review-item">
     <div className="review-item-container">
-
       <span className="review-user">{item.userId}</span>
       <StarRating rating={item.reviewRating} size={15} readOnly />
       <span className="review-text">{item.reviewContent}</span>
       <span className="review-date">{item.reviewDate}</span>
       {username === item.userId && (
-
         <div className="review-actions">
           <button className="review-edit-button" onClick={() => onEdit(item)}>
             수정
           </button>
-
           <button className="review-delete-button" onClick={() => onRemove(item.reviewId)}>
-
             삭제
           </button>
         </div>
@@ -105,7 +99,6 @@ const ReviewItem = ({
           rating={editState.reviewRating}
           setRating={(newRate) =>
             editState.setEditState((prev) => ({ ...prev, reviewRating: newRate }))
-
           }
           size={15}
         />
@@ -113,13 +106,11 @@ const ReviewItem = ({
           type="text"
           className="review-edit-input"
           placeholder="리뷰 내용을 입력해주세요"
-
           value={editState.reviewContent}
           onChange={(e) =>
             editState.setEditState((prev) => ({
               ...prev,
               reviewContent: e.target.value,
-
             }))
           }
         />
@@ -160,6 +151,30 @@ const ReviewItem = ({
 //   </ul>
 // );
 
+//트레일러 모달 컴포넌트
+const TrailerModal = ({trailerUrl,onClose}) => {
+  return(
+    <div className="trailer-modal-overlay" onClick={onClose}>
+      <div className="trailer-modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>&times;</button>
+        {trailerUrl ? (
+          <iframe
+            width="100%"
+            height="500"
+            src={trailerUrl}
+            title="YouTube Video Player"
+            frameBorder="0"
+            allow=""
+            allowFullScreen
+          ></iframe>
+        ) : (
+          <p>예고편을 찾을수 없습니다.</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // 평균 평점 계산 함수
 const calculateAverageRating = (reviews) => {
   if (reviews.length === 0) return 0;
@@ -171,17 +186,28 @@ const calculateAverageRating = (reviews) => {
 
 // 메인 MovieDetail 컴포넌트
 const MovieDetail = ({ movie, onClose }) => {
-  const [actor, setActor] = useState([]); // 출연진 상태 추가
+  const { user, addLikeMovie, removeLikeMovie, isMovieLiked } = useContext(AppContext);
 
+
+  const [actor, setActor] = useState([]); 
   const [reviewRating, setReviewRate] = useState(5);
   const [reviewContent, setReviewContent] = useState("");
   const [reviewList, setReviewList] = useState([]);
   const [editable, setEditable] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [editState, setEditState] = useState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
-  const [isLiked,setIsLiked] = useState((movie.id));
+  
+  const [trailerUrl, setTrailerUrl] = useState(null);
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
 
-  const { user , addLikeMovie , removeLikeMovie , isMovieLiked } = useContext(AppContext)
+  const [isLiked, setIsLiked] = useState(false);
+  
+  // 좋아요 상태 동기화
+  useEffect(() => {
+    if (user && movie) {
+        setIsLiked(isMovieLiked(movie.id));
+    }
+}, [user, movie, isMovieLiked]);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -201,7 +227,6 @@ const MovieDetail = ({ movie, onClose }) => {
       return;
     }
     const newReview = {
-
       reviewId: reviewList.length + 1,
       userId: user.userNick,
       reviewRating,
@@ -209,7 +234,6 @@ const MovieDetail = ({ movie, onClose }) => {
       reviewDate: moment().format("MM/DD HH:mm"),
     };
     if (!reviewContent) {
-
       alert("리뷰 내용을 입력해주세요")
       return;
     }
@@ -224,7 +248,6 @@ const MovieDetail = ({ movie, onClose }) => {
     }
   };
 
-
   const handleRemove = (reviewId) => {
     if (window.confirm("삭제 하시겠습니까?")) {
       setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId));
@@ -238,24 +261,20 @@ const MovieDetail = ({ movie, onClose }) => {
     setEditable(true);
 
     setEditState({ reviewId: item.reviewId, reviewRating: item.reviewRating, reviewContent: item.reviewContent });
-
   };
 
   const updateReview = () => {
     if (window.confirm("수정 하시겠습니까?")) {
       setReviewList((prev) =>
         prev.map((item) =>
-
           item.reviewId === editState.reviewId
             ? { ...item, reviewRating: editState.reviewRating, reviewContent: editState.reviewContent }
-
             : item
         )
       );
       setEditable(false);
 
       setEditState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
-
     }
   };
 
@@ -263,28 +282,63 @@ const MovieDetail = ({ movie, onClose }) => {
     setEditable(false);
 
     setEditState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
-
   };
 
   const loadMoreReviews = () => {
     setVisibleReviews(prev => prev + 3);
   };
 
-  if (!movie) return <div>Loading...</div>;
+// MovieDetail.js의 handleLikeToggle 함수만 수정 (나머지는 그대로 유지)
 
+  // 좋아요 토글 함수 수정
   const handleLikeToggle = () => {
-    if(!user) {
+    if (!user) {
       alert("로그인 후 좋아요를 할 수 있습니다.");
       return;
     }
+
+    try {
+      if (isLiked) {
+        removeLikeMovie(movie.id);
+      } else {
+        const movieData = {
+          id: movie.id,
+          title: movie.title,
+          poster_path: movie.poster_path,
+          release_date: movie.release_date,
+          vote_average: movie.vote_average,
+          overview: movie.overview
+        };
+        addLikeMovie(movieData);
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("좋아요 처리 중 오류 발생:", error);
+    }
+  };
+
+  //예고편 검색 함수
+  const searchTrailer = async () => {
+    try {
+      const trailer = await searchYouTubeTrailer(`${movie.title} 예고편`);
+      if(trailer) {
+        const embedUrl = `https://www.youtube.com/embed/${trailer.id.videoId}`;
+        setTrailerUrl(embedUrl);
+      }
+    } catch (error) {
+      alert("예고편을 찾을수 없습니다");
+    } 
   }
+
+  if (!movie) return <div>Loading...</div>;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>
+      <button className="modal-close" onClick={onClose}>
           &times;
         </button>
+        <button className="modal-close" onClick={onClose}>&times;</button>
 
         <div className="modal-movie">
           <div className="modal-movie-container">
@@ -293,6 +347,17 @@ const MovieDetail = ({ movie, onClose }) => {
               alt={movie.title}
               className="modal-movie-poster"
             />
+            <button
+              className=""
+              onClick={(e) => {
+                e.stopPropagation();
+                searchTrailer();
+                setShowTrailerModal(true);
+              }}
+            >
+              <FaPlay /> 예고편
+            </button>
+
             <div className="modal-movie-details">
               <h1>
                 {movie.title}
@@ -316,7 +381,7 @@ const MovieDetail = ({ movie, onClose }) => {
               <p><strong>평점:</strong> {movie.vote_average}</p>
 
               <h3>출연진</h3>
-
+              
               {/* 출연진 목록 추가 */}
               <ActorList actors={actor} />
             </div>
@@ -324,12 +389,10 @@ const MovieDetail = ({ movie, onClose }) => {
           <div>
             {/* 리뷰 작성 폼 */}
             <ReviewForm
-
               reviewRating={reviewRating}
               setReviewRate={setReviewRate}
               reviewContent={reviewContent}
               setReviewContent={setReviewContent}
-
               addReview={addReview}
             />
 
@@ -344,9 +407,7 @@ const MovieDetail = ({ movie, onClose }) => {
                 <ul className="review-list">
                   {reviewList.slice(0, visibleReviews).map((item) => (
                     <ReviewItem
-
                       key={item.reviewId}
-
                       item={item}
                       onEdit={handleEdit}
                       onRemove={handleRemove}
@@ -357,9 +418,7 @@ const MovieDetail = ({ movie, onClose }) => {
                       }}
                       updateReview={updateReview}
                       cancelEdit={cancelEdit}
-
-                      username={user.userNick}
-
+                      username={user?.userNick}
                     />
                   ))}
                 </ul>
@@ -377,9 +436,16 @@ const MovieDetail = ({ movie, onClose }) => {
               </>
             )}
           </div>
-
+          
           {/* 하단 여백 확보 */}
           <div style={{ height: '20px' }}></div>
+
+          {showTrailerModal && (
+            <TrailerModal
+              trailerUrl={trailerUrl}
+              onClose={() => setShowTrailerModal(false)}
+            />
+          )}
         </div>
       </div>
     </div>

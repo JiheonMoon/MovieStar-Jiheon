@@ -57,4 +57,13 @@ public class ReviewService {
 		return null;
 	}
 	
+	public boolean delete(int reviewId) {
+		Optional<ReviewEntity> origin = repository.findById(reviewId);
+		if(origin.isPresent()) {
+			repository.delete(origin.get());
+			return true;
+		}
+		return false;
+	}
+	
 }

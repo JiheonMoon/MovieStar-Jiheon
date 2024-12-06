@@ -140,13 +140,22 @@ const MyPage = () => {
 
     return (
         <div className="mypage-container">
-            <div className='home-button-container'>
-                <button
-                    className="home-button"
-                    onClick={navigateToHome}
-                >
-                    <IoHome />
-                </button>
+            <div className="home-button-container">
+            <button
+                className="home-button"
+                onClick={navigateToHome}
+            >
+                <IoHome /> 홈
+            </button>
+            <button
+                className="logout-button"
+                onClick={() => {
+                setUser(null);
+                navigate('/login');
+                }}
+            >
+                로그아웃
+            </button>
             </div>
 
             <h1>마이페이지</h1>

@@ -27,9 +27,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "review")
 public class ReviewEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int reviewId;
-	private int movieId;
+	@ManyToOne
+	@JoinColumn(name="movie_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private MovieEntity movie;
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)

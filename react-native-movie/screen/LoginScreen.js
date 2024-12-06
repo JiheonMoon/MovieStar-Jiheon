@@ -59,7 +59,6 @@ const LoginScreen = () => {
             if (parsedUser && parsedUser.userPwd === formData.userPwd) {
                 // 로그인 성공 시
                 setUser(parsedUser);
-                alert('Login')
                 navigation.navigate("Home");
             } else {
                 setFormData({ userName: "", userPwd: "" })

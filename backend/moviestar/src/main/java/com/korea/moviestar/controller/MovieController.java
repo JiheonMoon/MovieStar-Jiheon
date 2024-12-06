@@ -34,6 +34,7 @@ public class MovieController {
 	
 	@GetMapping("/{movieId}")
 	public ResponseEntity<?> getOneMovie(@PathVariable int movieId){
+		service.getThemes();
 		MovieDTO response = new MovieDTO(service.getMovie(movieId));
 		return ResponseEntity.ok().body(response);
 	}

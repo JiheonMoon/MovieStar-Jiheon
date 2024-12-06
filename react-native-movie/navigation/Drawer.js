@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext }from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../screen/HomeScreen";
@@ -6,11 +6,11 @@ import MainScreen from "../screen/MainScreen";
 import DetailScreen from "../screen/DetailScreen";
 import LoginScreen from "../screen/LoginScreen";
 import SignupScreen from "../screen/SignupScreen";
-import { TouchableOpacity } from "react-native";
+import FindIdScreen from "../component/FindId";
+import FindPwdScreen from "../component/FindPwd";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
-import { Image,Text,View,StyleSheet } from "react-native";
+import { Image,Text,View,StyleSheet,TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 
 const Drawer = createDrawerNavigator();
@@ -36,10 +36,10 @@ const StackDetailNavigator = () => {
             options={{ headerShown: false}} />
         <Stack.Screen name="Signup" component={SignupScreen} 
             options={{ headerShown: false}} />
-        {/* <Stack.Screen name="FindId" component={FindIdScreen} 
-            options={{ headerShown: false,  }}/>
-        <Stack.Screen name="FindPwd" component={FindPwdScreen} 
-            options={{ headerShown: false,  }}/> */}
+        <Stack.Screen name="FindId" component={FindIdScreen} 
+            options={{ headerShown: false}} />
+        <Stack.Screen name="FindPassword" component={FindPwdScreen} 
+            options={{}}/>
       </Stack.Navigator>
     );
   };
@@ -145,7 +145,7 @@ const DrawerNavigator = () => {
                     },
                     drawerLabel: ()=>{
                         return(
-                            <TouchableOpacity onPress={user ? labelHandleLogout : navigateToLoginScreen}>
+                        <TouchableOpacity onPress={user ? labelHandleLogout : navigateToLoginScreen}>
                             <Text style={{fontSize:16,color:'white'}}>
                                 {user ? "Logout" : "Login"}
                             </Text>

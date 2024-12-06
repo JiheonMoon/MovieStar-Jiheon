@@ -1,5 +1,8 @@
 package com.korea.moviestar.service;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.Optional;
@@ -30,6 +33,7 @@ public class UserService {
 	}
 
 	public UserDTO createUser(UserDTO dto) {
+		dto.setUserLikeList(new HashSet<Integer>());
 		UserEntity entity = repository.save(UserService.toEntity(dto, movies));
 		UserDTO response = UserDTO.builder()
 			.userId(entity.getUserId())

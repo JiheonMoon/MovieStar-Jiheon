@@ -19,7 +19,7 @@ const Stack = createStackNavigator();
 
 const StackDetailNavigator = () => {
     return (
-      <Stack.Navigator>
+      <Stack.Navigator >
         <Stack.Screen name="Home" component={HomeScreen} 
             options={{ headerShown: false,  }}/>
         <Stack.Screen name="Detail" component={DetailScreen} 
@@ -27,13 +27,15 @@ const StackDetailNavigator = () => {
       </Stack.Navigator>
     );
   };
+
+  
   const StackLoginNavigator = () => {
     return (
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} 
-            options={{ headerShown: false,  }}/>
+            options={{ headerShown: false}} />
         <Stack.Screen name="Signup" component={SignupScreen} 
-            options={{ headerShown: false,  }}/>
+            options={{ headerShown: false}} />
         {/* <Stack.Screen name="FindId" component={FindIdScreen} 
             options={{ headerShown: false,  }}/>
         <Stack.Screen name="FindPwd" component={FindPwdScreen} 
@@ -57,7 +59,14 @@ const DrawerNavigator = () => {
     // 로그아웃 버튼 클릭 시
     const handleLogout = () => {
         setUser(null)
-        alert("Logout")
+        
+    }
+
+    //라벨 로그아웃 버튼 클릭 시
+    const labelHandleLogout = () => {
+        setUser(null)
+        navigation.navigate('Login')
+        
     }
 
     return(
@@ -66,10 +75,11 @@ const DrawerNavigator = () => {
                 drawerStyle:{backgroundColor: 'black',
                     width:180, 
                 },
-                drawerLabelStyle:{fontSize:16},
+                drawerLabelStyle:{fontSize:16,color:'white'},
                 drawerActiveTintColor:'#4caf50',  
                 drawerInactiveTintColor: '#757575', 
                 drawerPosition:'right',
+                drawerType:'slide' ,
                 headerLeft: () => (
                     null
                 ),
@@ -77,20 +87,18 @@ const DrawerNavigator = () => {
                     <View style={styles.container}>
                     <TouchableOpacity onPress={user ? handleLogout : navigateToLoginScreen}>
                         <Text style={styles.loginbutton}>
-                            {user ? "Logout" : "Login"}
+                            {user ? "로그아웃" : "로그인"}
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.toggle} onPress={()=>navigation.toggleDrawer()}>
                         <MaterialCommunityIcons name="menu" size={28} color="#Fff" />
                     </TouchableOpacity>
                     </View>
-                ),
-                drawerType:'slide' ,
-                
+                ),               
             })}
         >
             <Drawer.Screen name="Main" component={MainScreen} 
-                    options={{ headerShown: false,  }}/>
+                options={{ headerShown: false,  }}/>
 
             <Drawer.Screen name="Home" component={StackDetailNavigator}
                     options={{
@@ -113,39 +121,40 @@ const DrawerNavigator = () => {
                     }} />
 
             <Drawer.Screen name="Login" component={StackLoginNavigator}
-                    options={{
-                        headerTitle:() => {
-                            const navigation = useNavigation();
-                            return(
+                options={({navigation})=> ({
+                    headerTitle:() => {
+                        const navigation = useNavigation();
+                        return(
                             <TouchableOpacity onPress={()=>navigation.navigate('Home')}>
                                 <Image
                                     source={require('../images/logo.png')}
                                     style={styles.logo}
                                 />
                             </TouchableOpacity>
-                            )
-                        },
-                        headerTintColor : '#fff',
-                        headerStyle:{
-                            backgroundColor:'black',
-                            height:90,
-                        },
-                        
-                    }}/>
+                        )
+                    },
+                    headerRight:()=>(
+                        <TouchableOpacity style={styles.toggle} onPress={()=>navigation.toggleDrawer()}>
+                            <MaterialCommunityIcons name="menu" size={28} color="#Fff" />
+                        </TouchableOpacity>
+                    ),
+                    headerTintColor : '#fff',
+                    headerStyle:{
+                        backgroundColor:'black',
+                        height:90,
+                    },
+                    drawerLabel: ()=>{
+                        return(
+                            <TouchableOpacity onPress={user ? labelHandleLogout : navigateToLoginScreen}>
+                            <Text style={{fontSize:16,color:'white'}}>
+                                {user ? "Logout" : "Login"}
+                            </Text>
+                        </TouchableOpacity>
+                        )
+                    }                       
+                })}/>
             {/* <Drawer.Screen name="Detail" component={DetailScreen}
                 options={{title:'MovieDetail', headerShown: false,  }}/> */}
-            {/*
-            
-            <Drawer.Screen name="Main" component={MainScreen} 
-                    options={{ headerShown: false,  }}/>
-
-            <Drawer.Screen name="Main" component={MainScreen}
-                    options={{title:'SignUp'}}/>
-
-            <Drawer.Screen name="Main" component={MainScreen}
-                    options={{title:'찜목록'}}/>
-
-             */}
         </Drawer.Navigator>
     )
 }

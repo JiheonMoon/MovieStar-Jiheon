@@ -9,10 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.korea.moviestar.dto.PopularDTO;
+import com.korea.moviestar.dto.UserDTO;
 import com.korea.moviestar.entity.ActorEntity;
 import com.korea.moviestar.entity.MovieEntity;
+import com.korea.moviestar.entity.PopularEntity;
 import com.korea.moviestar.entity.ThemeEntity;
 import com.korea.moviestar.repo.MovieRepository;
+import com.korea.moviestar.repo.PopularRepository;
 import com.korea.moviestar.repo.ThemeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,7 @@ public class MovieService {
 	
 	private final MovieRepository movies;
 	private final ThemeRepository themes;
+	private final PopularRepository populars;
 	
 	public List<ThemeEntity> themeList(){
 		
@@ -80,5 +85,17 @@ public class MovieService {
 			.movieActors(actorEntities)
 			.build();
 		return movies.save(entity);
+	}
+	
+	public List<PopularDTO> getPopular(){
+		populars.truncatePopular();
+		Map<String, Object> response = restTemplate.getForObject(BASE_URL + "/movie/popular?api_key=" + apiKey +"&language=ko-KR", Map.class);
+		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
+		for(Map<String, Object> movie : results) {
+			int movieId = (int) movie.get("id");
+			populars.save(PopularEntity.builder().movie(getMovie(movieId)).build());
+		}
+		List<PopularEntity> entities = populars.findAll();
+		return entities.stream().map(PopularDTO::new).collect(Collectors.toList());
 	}
 }

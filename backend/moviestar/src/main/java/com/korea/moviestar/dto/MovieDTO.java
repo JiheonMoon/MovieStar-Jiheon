@@ -1,6 +1,7 @@
 package com.korea.moviestar.dto;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class MovieDTO {
 	double movieScore;
 	String moviePoster;
 	String movieOverview;
-	Set<Integer> movieActors;
+	List<ActorDTO> movieActors;
 	
 	public MovieDTO(MovieEntity entity) {
 		this.movieId = entity.getMovieId();
@@ -37,5 +38,6 @@ public class MovieDTO {
 		this.movieScore = entity.getMovieScore();
 		this.moviePoster = entity.getMoviePoster();
 		this.movieOverview = entity.getMovieOverview();
+		this.movieActors = entity.getMovieActors().stream().map(ActorDTO::new).collect(Collectors.toList());
 	}
 }

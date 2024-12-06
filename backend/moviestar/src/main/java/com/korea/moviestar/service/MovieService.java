@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.korea.moviestar.entity.ActorEntity;
 import com.korea.moviestar.entity.MovieEntity;
 import com.korea.moviestar.entity.ThemeEntity;
 import com.korea.moviestar.repo.MovieRepository;
@@ -57,7 +58,17 @@ public class MovieService {
 	                    .themeName((String) genre.get("name"))
 	                    .build())
 	            .collect(Collectors.toSet());
-		
+	    
+	    Map<String, Object> creditResponse = restTemplate.getForObject(BASE_URL + "/movie/"+movieId+"/credits?api_key=" + apiKey +"&language=ko-KR", Map.class);
+	    List<Map<String, Object>> actorList = (List<Map<String, Object>>) creditResponse.get("cast");
+	    List<ActorEntity> actorEntities = actorList.stream()
+	    		.map(actor -> ActorEntity.builder()
+	    				.actorName((String)actor.get("name"))
+	    				.actorRole((String)actor.get("character"))
+	    				.actorImage((String)actor.get("profile_path"))
+	    				.build())
+	    		.collect(Collectors.toList());
+	    
 		MovieEntity entity = MovieEntity.builder()
 			.movieId(movieId)
 			.movieName((String)response.get("title"))
@@ -66,6 +77,7 @@ public class MovieService {
 			.movieScore((double)response.get("vote_average"))
 			.moviePoster((String)response.get("poster_path"))
 			.movieOverview((String)response.get("overview"))
+			.movieActors(actorEntities)
 			.build();
 		return movies.save(entity);
 	}

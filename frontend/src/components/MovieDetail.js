@@ -320,15 +320,20 @@ const MovieDetail = ({ movie, onClose }) => {
   //예고편 검색 함수
   const searchTrailer = async () => {
     try {
-      const trailer = await searchYouTubeTrailer(`${movie.title} 예고편`);
-      if(trailer) {
-        const embedUrl = `https://www.youtube.com/embed/${trailer.id.videoId}`;
-        setTrailerUrl(embedUrl);
-      }
+        const trailer = await searchYouTubeTrailer(`${movie.title} 예고편`);
+        if (trailer) {
+            const embedUrl = `https://www.youtube.com/embed/${trailer.id.videoId}`;
+            setTrailerUrl(embedUrl);
+        } else {
+            alert("적합한 예고편을 찾을 수 없습니다.");
+        }
     } catch (error) {
-      alert("예고편을 찾을수 없습니다");
-    } 
-  }
+        alert("예고편을 찾을 수 없습니다.");
+        console.error("Error searching for trailer:", error);
+    }
+};
+
+
 
   if (!movie) return <div>Loading...</div>;
 

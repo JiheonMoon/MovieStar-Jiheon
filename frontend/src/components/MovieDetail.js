@@ -341,14 +341,15 @@ const MovieDetail = ({ movie, onClose }) => {
         <button className="modal-close" onClick={onClose}>&times;</button>
 
         <div className="modal-movie">
-          <div className="modal-movie-container">
+        <div className="modal-movie-container">
+          <div className="modal-movie-poster-container">
             <img
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
               className="modal-movie-poster"
             />
             <button
-              className=""
+              className="trailer-play-button"
               onClick={(e) => {
                 e.stopPropagation();
                 searchTrailer();
@@ -357,35 +358,39 @@ const MovieDetail = ({ movie, onClose }) => {
             >
               <FaPlay /> 예고편
             </button>
-
-            <div className="modal-movie-details">
-              <h1>
-                {movie.title}
-                {user && (
-                  <button
-                    onClick={handleLikeToggle}
-                    style={{
-                      background:'none',
-                      border:'none',
-                      cursor:'pointer',
-                      height:5,
-                      width:5
-                    }}
-                  >
-                    {isLiked ? <FaHeart color="red"/> : <FaRegHeart color="gray" />}
-                  </button>
-                )}
-              </h1>
-              <p>{movie.overview}</p>
-              <p><strong>개봉일:</strong> {movie.release_date}</p>
-              <p><strong>평점:</strong> {movie.vote_average}</p>
-
-              <h3>출연진</h3>
-              
-              {/* 출연진 목록 추가 */}
-              <ActorList actors={actor} />
-            </div>
           </div>
+
+          <div className="modal-movie-details">
+            <h1>
+              {movie.title}
+              {user && (
+                <button
+                  onClick={handleLikeToggle}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    height: 5,
+                    width: 5,
+                  }}
+                >
+                  {isLiked ? <FaHeart color="red" /> : <FaRegHeart color="gray" />}
+                </button>
+              )}
+            </h1>
+            <p>{movie.overview}</p>
+            <p>
+              <strong>개봉일:</strong> {movie.release_date}
+            </p>
+            <p>
+              <strong>평점:</strong> {movie.vote_average}
+            </p>
+            <h3>출연진</h3>
+            {/* 출연진 목록 추가 */}
+            <ActorList actors={actor} />
+          </div>
+        </div>
+
           <div>
             {/* 리뷰 작성 폼 */}
             <ReviewForm

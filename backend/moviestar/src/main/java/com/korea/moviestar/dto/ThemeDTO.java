@@ -13,10 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ThemeDTO {
-	private int id;
-	private String name;
+	private int themeId;
+	private String themeName;
+	
+	public ThemeDTO(ThemeEntity entity) {
+		this.themeId = entity.getThemeId();
+		this.themeName = entity.getThemeName();
+	}
 	
 	public static ThemeEntity toEntity(ThemeDTO dto) {
-		return ThemeEntity.builder().themeId(dto.getId()).themeName(dto.getName()).build();
+		return ThemeEntity.builder().themeId(dto.getThemeId()).themeName(dto.getThemeName()).build();
 	}
 }

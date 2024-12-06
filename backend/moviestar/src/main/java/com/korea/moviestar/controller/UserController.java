@@ -59,6 +59,12 @@ public class UserController {
 		return ResponseEntity.ok().body(dto);
 	}
 	
+	@GetMapping("/private/mine")
+	public ResponseEntity<?> myUser(@AuthenticationPrincipal String userId){
+		UserDTO response = service.findByUserId(Integer.parseInt(userId));
+		return ResponseEntity.ok().body(response);
+	}
+	
 	@PostMapping("/signin")
 	public ResponseEntity<?> signin(@RequestBody UserDTO dto){
 		UserDTO find = service.findUser(dto, passwordEncoder);

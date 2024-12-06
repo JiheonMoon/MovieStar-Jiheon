@@ -4,19 +4,20 @@
   }
   
   /* 예고편 재생 버튼 스타일 */
+  .modal-movie-poster-container {
+    display: flex;
+    flex-direction: column; /* 세로 배치 */
+    align-items: center; /* 중앙 정렬 */
+    gap: 10px; /* 포스터와 버튼 사이 간격 */
+  }
+  
   .trailer-play-button {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: fit-content; /* 버튼 크기를 내용에 맞춤 */
     background-color: rgba(0, 0, 0, 0.7);
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
   }
@@ -24,6 +25,7 @@
   .trailer-play-button:hover {
     background-color: rgba(0, 0, 0, 0.9);
   }
+  
   
   /* 트레일러 모달 스타일 */
   .trailer-modal-overlay {

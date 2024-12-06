@@ -12,16 +12,14 @@ export const searchYouTubeTrailer = async (query) => {
         q: query,
         type: "video",
         part: "snippet",
-        maxResults: 1,
-        // 한국어로 제한
-        relevanceLanguage: "ko",
-        // 예고편 관련 비디오 필터링
-        videoCategoryId: "44" // 예고편/트레일러 카테고리
+        maxResults: 2,
+
       }
     });
 
     // 검색 결과가 있는지 확인
     if (response.data.items && response.data.items.length > 0) {
+      // 가장 적합한 결과를 찾거나 첫 번째 결과 반환
       return response.data.items[0];
     }
 

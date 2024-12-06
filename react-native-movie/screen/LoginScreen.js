@@ -80,7 +80,7 @@ const LoginScreen = () => {
                     <TextInput
                         style={styles.textlogininput}
                         placeholder="아이디를 입력하세요"
-                        placeholderTextColor='grey'
+                        placeholderTextColor='#A6A6A6'
                         value={formData.userName}
                         onChangeText={(value) => setFormData({ ...formData, userName: value })}
                     />
@@ -91,7 +91,7 @@ const LoginScreen = () => {
                         <TextInput
                             style={styles.textpasswordinput}
                             placeholder="비밀번호를 입력하세요"
-                            placeholderTextColor='grey'
+                            placeholderTextColor='#A6A6A6'
                             value={formData.userPwd}
                             onChangeText={(value) => setFormData({ ...formData, userPwd: value })}
                             secureTextEntry
@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
         fontSize:12,
         margin:5,
         marginBottom:10,
+        paddingLeft:10,
         borderWidth:1,
         borderColor:'white',
         borderRadius:8,
@@ -195,6 +196,7 @@ const styles = StyleSheet.create({
         color:'white',
         fontSize:12,
         margin:5,
+        paddingLeft:10,
         marginBottom:10,
         borderWidth:1,
         borderColor:'white',

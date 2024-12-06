@@ -54,46 +54,40 @@ const Signup = () => {
     }
   }, [formData])
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+      try {
+        const response = await fetch("/user/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
 
-    if (!disabled) {
-      // 회원가입 정보를 localStorage에 저장
-      const newUser = {
-        userName: formData.userName,
-        userPwd: formData.userPwd,
-        userEmail: formData.userEmail,
-        userNick: formData.userNick,
-        userLikeList: [],
-      };
-      localStorage.setItem(localStorage.length + 1, JSON.stringify(newUser));
+        if(!response.ok) {
+          const errorText = await response.text()
+          console.error("Error response from server:", errorText)
+          setMessage("회원가입 요청 실패")
+          return;
+        }
 
-      alert("회원가입 완료")
-      navigate("/login")
+        const data = await response.json()
 
-      // 서버로 회원가입 요청(백엔드 연결 시 위 코드 다음과 같이 수정, handleSubmit에 async 추가)
-    //   const response = await fetch("/api/signup", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(formData, userName: formData.userName),
-    //   });
-    //   const data = await response.json()
-    //   if (data.isDuplicate) {
-    //     setMessage("이미 사용중인 아이디입니다.")
-    //   } else {
-    //     alert("회원가입 완료");
-    //     navigate("/login");
-    //   }
-    // }
-
-    
+        if (!data.success) {
+          setMessage(data.message)
+          return;
+        } 
+          alert("회원가입 완료");
+          navigate("/login");
+      } catch(error) {
+        console.error("Error during signup:", error)
+        setMessage("회원가입 중 오류가 발생했습니다.")
+      }
     }
-  };
 
   return (
     <div className="signup-container">
@@ -112,7 +106,7 @@ const Signup = () => {
           // key에 Pwd가 포함되어 있으면 타입을 password, 아니면 text
           const inputType = key.includes("Pwd") ? "password" : "text"
 
-          //placeholder 설정
+          // placeholder 설정
           const placeholder = 
             key === "userPwdCheck" 
             ? "비밀번호 한번 더 입력" 

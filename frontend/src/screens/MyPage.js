@@ -140,13 +140,22 @@ const MyPage = () => {
 
     return (
         <div className="mypage-container">
-            <div className='home-button-container'>
-                <button
-                    className="home-button"
-                    onClick={navigateToHome}
-                >
-                    <IoHome />
-                </button>
+            <div className="home-button-container">
+            <button
+                className="home-button"
+                onClick={navigateToHome}
+            >
+                <IoHome /> 홈
+            </button>
+            <button
+                className="logout-button"
+                onClick={() => {
+                setUser(null);
+                navigate('/login');
+                }}
+            >
+                로그아웃
+            </button>
             </div>
 
             <h1>마이페이지</h1>
@@ -246,24 +255,25 @@ const MyPage = () => {
                 </div>
             )}
 
-            <div className="liked-movies-section">
-                <h2>좋아요 표시한 영화</h2>
-                {user.userLikeList && user.userLikeList.length > 0 ? (
-                    <div className="liked-movies-grid">
-                        {user.userLikeList.map(movie => (
-                            <div key={movie.id} className="liked-movie-item">
-                                <img 
-                                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
-                                    alt={movie.title} 
-                                />
-                                <p>{movie.title}</p>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p>좋아요 표시한 영화가 없습니다.</p>
-                )}
-            </div>
+        <div className="liked-movies-section">
+            <h2>좋아요 표시한 영화</h2>
+            {user.userLikeList && user.userLikeList.length > 0 ? (
+                <div className="liked-movies-flex">
+                    {user.userLikeList.map((movie, index) => (
+                        <div key={movie.id} className="liked-movie-item">
+                            <img 
+                                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+                                alt={movie.title} 
+                            />
+                            <p>{movie.title}</p>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p>좋아요 표시한 영화가 없습니다.</p>
+            )}
+        </div>
+
         </div>
     );
 };

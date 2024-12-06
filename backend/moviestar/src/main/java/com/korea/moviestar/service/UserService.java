@@ -1,16 +1,18 @@
 package com.korea.moviestar.service;
 
+import java.util.HashSet;
 import java.util.List;
-
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 
 import com.korea.moviestar.dto.UserDTO;
+import com.korea.moviestar.entity.MovieEntity;
 import com.korea.moviestar.entity.UserEntity;
+import com.korea.moviestar.repo.MovieRepository;
 import com.korea.moviestar.repo.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository repository;
+	private final MovieRepository movies;
 	
 	public List<UserDTO> findAll(){
 		List<UserEntity> entities = repository.findAll();
@@ -26,13 +29,13 @@ public class UserService {
 	}
 
 	public UserDTO createUser(UserDTO dto) {
-		UserEntity entity = repository.save(UserDTO.toEntity(dto));
+		dto.setUserLikeList(new HashSet<Integer>());
+		UserEntity entity = repository.save(UserService.toEntity(dto, movies));
 		UserDTO response = UserDTO.builder()
 			.userId(entity.getUserId())
 			.userEmail(entity.getUserEmail())
 			.userNick(entity.getUserNick())
 			.userName(entity.getUserName())
-			.userLikeList(entity.getUserLikeList())
 			.build();
 		return response;
 	}
@@ -46,7 +49,7 @@ public class UserService {
 					.userEmail(entity.getUserEmail())
 					.userNick(entity.getUserNick())
 					.userName(entity.getUserName())
-					.userLikeList(entity.getUserLikeList())
+					.userLikeList(entity.getUserLikeList().stream().map(movie -> movie.getMovieId()).collect(Collectors.toSet()))
 					.build();
 			return response;
 		}
@@ -67,8 +70,8 @@ public class UserService {
 		Optional<UserEntity> origin = repository.findById(user);
 		if(origin.isPresent()) {
 			UserEntity entity = origin.get();
-			List<Integer> newList = entity.getUserLikeList();
-			newList.add(movieId);
+			Set<MovieEntity> newList = entity.getUserLikeList();
+			newList.add(movies.findById(movieId).get());
 			entity.setUserLikeList(newList);
 			return new UserDTO(repository.save(entity));
 		}else {
@@ -81,8 +84,8 @@ public class UserService {
 		Optional<UserEntity> origin = repository.findById(user);
 		if(origin.isPresent()) {
 			UserEntity entity = origin.get();
-			List<Integer> newList = entity.getUserLikeList();
-			newList.remove(Integer.valueOf(movieId));
+			Set<MovieEntity> newList = entity.getUserLikeList();
+			newList.remove(movies.findById(movieId).get());
 			entity.setUserLikeList(newList);
 			return new UserDTO(repository.save(entity));
 		}else {
@@ -101,5 +104,16 @@ public class UserService {
 			return new UserDTO(repository.save(entity));
 		}
 		return null;
+	}
+	
+	public static UserEntity toEntity(UserDTO dto, MovieRepository movies) {
+		return UserEntity.builder()
+					.userId(dto.getUserId())
+					.userNick(dto.getUserNick())
+					.userName(dto.getUserName())
+					.userEmail(dto.getUserEmail())
+					.userPwd(dto.getUserPwd())
+					.userLikeList(dto.getUserLikeList().stream().map(movies::findById).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet()))
+					.build();
 	}
 }

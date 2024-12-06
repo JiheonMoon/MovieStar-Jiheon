@@ -6,6 +6,7 @@ import MovieDetail from "../components/MovieDetail.js";
 import MovieSlider from "../components/MovieSlider.js";
 import logo from "../logo/logo.png"
 
+import '../css/main/MyPage.css';
 import "../css/main/Header.css"
 import "../css/main/TopRecommendation.css"
 
@@ -64,8 +65,8 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     // 다양한 영화 리스트 상태 관리
     const [popularMovies, setPopularMovies] = useState([]); 
     const [nowPlayingMovies, setNowPlayingMovies] = useState([]); 
-    const [topRatedMovies, setTopRatedMovies] = useState([]);
-
+    const [topRatedMovies, setTopRatedMovies] = useState([]); 
+    
     // 검색 관련 상태 관리
     const [searchQuery, setSearchQuery] = useState(""); 
     const [filteredMovies, setFilteredMovies] = useState([]); 
@@ -88,7 +89,9 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
 
     // 로그아웃 버튼 클릭 시
     const handleLogout = () => {
+        localStorage.removeItem("token")
         setUser(null) // 사용자 로그아웃 처리
+        navigate("/login")
     }
 
     // 마이페이지로 이동하는 함수
@@ -156,7 +159,6 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
                 <button onClick={navigateToLoginScreen}>로그인</button>
             )}
         </div>
-        
         {/* 검색 결과 또는 기본 영화 리스트 조건부 렌더링 */}
         {searchQuery && filteredMovies.length > 0 ? (
           <MovieSlider 
@@ -186,7 +188,6 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
               movies={topRatedMovies} 
               onMovieSelect={handleMovieSelect} 
             />
-            
           </>
         )}
   

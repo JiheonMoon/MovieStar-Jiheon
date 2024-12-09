@@ -16,6 +16,7 @@ const instance = axios.create({
 export const fetchPopularMovies = async () => {
   try {
     const response = await instance.get("/movie/popular"); // 인기 영화 엔드포인트 호출
+    console.log(response.data.results)
     return response.data.results; // 영화 데이터 반환
   } catch (error) {
     console.error("Error fetching popular movies:", error);

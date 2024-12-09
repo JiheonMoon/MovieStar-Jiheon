@@ -34,6 +34,4 @@ public class UserDTO {
 		this.userPwd = entity.getUserPwd();
 		this.userLikeList = entity.getUserLikeList().stream().map(movie -> movie.getMovieId()).collect(Collectors.toSet());
 	}
-	
-	
 }

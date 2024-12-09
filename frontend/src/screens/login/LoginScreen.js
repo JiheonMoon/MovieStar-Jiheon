@@ -127,58 +127,60 @@ const LoginScreen = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="logo-box">
-        <img src={logo} className="loginLogo" onClick={handleLogoClick}/>
-      </div>
-      <div className="login-box">
-        <h2>로그인</h2>
+    <div className="login-page">
+      <header className="header">
+        <img src={logo} className="header-logo" onClick={handleLogoClick} />
+      </header>
 
-        {/* 로그인 폼 */}
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label htmlFor="userName">아이디</label>
-            <input
-              type="text"
-              id="userName"
-              placeholder="아이디를 입력하세요"
-              value={formData.userName}
-              onChange={handleChange}
-            />
+      <div className="body">
+        <div className="login-box">
+          <h2>로그인</h2>
+          {/* 로그인 폼 */}
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label htmlFor="userName">아이디</label>
+              <input
+                type="text"
+                id="userName"
+                placeholder="아이디를 입력하세요"
+                value={formData.userName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor="userPwd">비밀번호</label>
+              <input
+                type="password"
+                id="userPwd"
+                placeholder="비밀번호를 입력하세요"
+                value={formData.userPwd}
+                onChange={handleChange}
+              />
+            </div>
+            <button type="submit" className="login-button">
+              로그인
+            </button>
+          </form>
+
+          {/* 에러 메시지 */}
+          {error && <p className="error-message">{error}</p>}
+
+          {/* 소셜 로그인 섹션 */}
+          <div className="social-login-section">
+            <p className="social-login-title">소셜 로그인</p>
+            <div className="social-login">
+              <button className="social-button naver" onClick={handleNaverLogin}>네이버 로그인</button>
+              <button className="social-button kakao" onClick={handleKakaoLogin}>카카오 로그인</button>
+              <button className="social-button google" onClick={handleGoogleLogin}>구글 로그인</button>
+            </div>
           </div>
-          <div className="input-group">
-            <label htmlFor="userPwd">비밀번호</label>
-            <input
-              type="password"
-              id="userPwd"
-              placeholder="비밀번호를 입력하세요"
-              value={formData.userPwd}
-              onChange={handleChange}
-            />
+
+          {/* 링크 섹션 */}
+          <div className="links">
+            <Link to="/find-id">아이디 찾기</Link>
+            <Link to="/find-password">비밀번호 찾기</Link>
+            <Link to="/signup">회원가입</Link>
           </div>
-          <button type="submit" className="login-button">
-            로그인
-          </button>
-        </form>
-
-        {/* 에러 메시지 */}
-        {error && <p className="error-message">{error}</p>}
-
-        {/* 소셜 로그인 섹션 */}
-        <div className="social-login-section">
-          <p className="social-login-title">소셜 로그인</p>
-          <div className="social-login">
-            <button className="social-button naver" onClick={handleNaverLogin}>네이버 로그인</button>
-            <button className="social-button kakao" onClick={handleKakaoLogin}>카카오 로그인</button>
-            <button className="social-button google" onClick={handleGoogleLogin}>구글 로그인</button>
-          </div>
-        </div>
-
-        {/* 링크 섹션 */}
-        <div className="links">
-          <Link to="/find-id">아이디 찾기</Link>
-          <Link to="/find-password">비밀번호 찾기</Link>
-          <Link to="/signup">회원가입</Link>
         </div>
       </div>
     </div>

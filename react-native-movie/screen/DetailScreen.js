@@ -22,7 +22,7 @@ const StarRating = ({ rating, setRating, size = 20 }) => (
 
 const ReviewForm = ({ rate, setRate, review, setReview, addReview }) => (
     <View style={styles.reviewForm}>
-        <Text style={styles.reviewTitle}>리뷰 작성</Text>
+        <Text style={styles.reviewTitle}>리뷰</Text>
         <StarRating rating={rate} setRating={setRate} />
         <TextInput
             style={[styles.reviewInput, { color: 'white' }]}
@@ -31,7 +31,9 @@ const ReviewForm = ({ rate, setRate, review, setReview, addReview }) => (
             value={review}
             onChangeText={setReview}
         />
-        <Button style={styles.reviewItem} title="올리기" onPress={addReview} />
+        <TouchableOpacity style={styles.editButton} onPress={addReview}>
+            <Text style={styles.editText}>등록</Text>
+        </TouchableOpacity>
     </View>
 );
 
@@ -239,10 +241,11 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     buttonText: {
+        textAlign:'center',
         alignItems:'center',
         justifyContent:'center',
-        fontSize: 14,
-        margin:10,
+        fontSize: 12,
+        margin:8,
         color:'black'
     },
     header: {
@@ -315,6 +318,18 @@ const styles = StyleSheet.create({
         marginBottom:5,
         backgroundColor: 'white',
         borderRadius: 5,
+    },
+    editButton:{
+        backgroundColor:'#FF3636',
+        marginTop:5,
+        marginBottom:5,
+        padding:5,
+        borderRadius: 5,
+    },
+    editText:{
+        color:'white',
+        textAlign:'center',
+        
         
     },
     reviewDeleteButton: {

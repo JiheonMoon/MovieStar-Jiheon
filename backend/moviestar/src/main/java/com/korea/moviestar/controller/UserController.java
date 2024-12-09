@@ -2,6 +2,7 @@ package com.korea.moviestar.controller;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.korea.moviestar.dto.ResponseDTO;
@@ -88,9 +90,20 @@ public class UserController {
 	
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody UserDTO dto){
-		dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
-		UserDTO response = service.createUser(dto);
-		return ResponseEntity.ok().body(response);
+		try {
+			dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
+			UserDTO response = service.createUser(dto);
+			return ResponseEntity.ok().body(Map.of(
+					"success", true,
+					"message", "Signup successed",
+					"data", response
+					));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of(
+					"success", false,
+					"message", e.getMessage()
+					));
+		}
 	}
 	
 	@PutMapping("/private/like")

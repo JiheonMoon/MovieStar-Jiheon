@@ -4,13 +4,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 
 import com.korea.moviestar.dto.UserDTO;
@@ -33,6 +31,17 @@ public class UserService {
 	}
 
 	public UserDTO createUser(UserDTO dto) {
+		// 아이디 중복 확인
+		if (repository.existsByUserName(dto.getUserName())) {
+			throw new RuntimeException("이미 사용 중인 아이디입니다.");
+		}
+		
+		// 닉네임 중복 확인
+		if (repository.existsByUserNick(dto.getUserNick())) {
+			throw new RuntimeException("이미 사용 중인 닉네임입니다.");
+		}
+		
+		// 중복 검사 통과 시 사용자 저장
 		dto.setUserLikeList(new HashSet<Integer>());
 		UserEntity entity = repository.save(UserService.toEntity(dto, movies));
 		UserDTO response = UserDTO.builder()
@@ -53,7 +62,7 @@ public class UserService {
 					.userEmail(entity.getUserEmail())
 					.userNick(entity.getUserNick())
 					.userName(entity.getUserName())
-					.userLikeList( entity.getUserLikeList().stream().map(movie -> movie.getMovieId()).collect(Collectors.toSet()))
+					.userLikeList(entity.getUserLikeList().stream().map(movie -> movie.getMovieId()).collect(Collectors.toSet()))
 					.build();
 			return response;
 		}

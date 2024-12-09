@@ -13,6 +13,7 @@ import com.korea.moviestar.dto.MovieDTO;
 import com.korea.moviestar.dto.PopularDTO;
 import com.korea.moviestar.dto.ResponseDTO;
 import com.korea.moviestar.dto.ThemeDTO;
+import com.korea.moviestar.dto.TopRatedDTO;
 import com.korea.moviestar.entity.MovieEntity;
 import com.korea.moviestar.entity.ThemeEntity;
 import com.korea.moviestar.service.MovieService;
@@ -44,6 +45,13 @@ public class MovieController {
 	public ResponseEntity<?> getPopularMovies(){
 		List<PopularDTO> dtos = service.getPopular();
 		ResponseDTO<PopularDTO> response = ResponseDTO.<PopularDTO>builder().data(dtos).build();
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@GetMapping("/top_rated")
+	public ResponseEntity<?> getTopRatedMovies(){
+		List<TopRatedDTO> dtos = service.getTopRated();
+		ResponseDTO<TopRatedDTO> response = ResponseDTO.<TopRatedDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);
 	}
 }

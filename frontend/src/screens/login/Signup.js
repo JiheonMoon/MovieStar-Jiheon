@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../css/login/LoginScreen.css"
+import "../../css/login/Signup.css"
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -94,6 +94,7 @@ const Signup = () => {
 
   return (
     <div className="signup-container">
+      <div className="signup-box">
       <h2>회원가입</h2>
       <form onSubmit={handleSubmit}>
         {Object.entries(formData).map(([key, value]) => {
@@ -132,6 +133,7 @@ const Signup = () => {
         <button type="submit" disabled={disabled}>회원가입</button>
       </form>
       {message && <p>{message}</p>}
+      </div>
     </div>
   );
 };

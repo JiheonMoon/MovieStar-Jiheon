@@ -88,6 +88,22 @@ public class UserController {
 		}
 	}
 	
+	@GetMapping("/find-id")
+	public ResponseEntity<?> findIdByEmail(@RequestParam String email) {
+	    try {
+	        UserDTO user = service.findByEmail(email); // 이메일로 사용자 검색
+	        return ResponseEntity.ok().body(Map.of(
+	            "success", true,
+	            "userName", user.getUserName() // 찾은 아이디 반환
+	        ));
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.badRequest().body(Map.of(
+	            "success", false,
+	            "message", "해당 이메일로 등록된 아이디를 찾을 수 없습니다."
+	        ));
+	    }
+	}
+
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody UserDTO dto){
 		try {

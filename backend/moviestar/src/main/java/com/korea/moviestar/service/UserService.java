@@ -53,6 +53,12 @@ public class UserService {
 		return response;
 	}
 	
+	public UserDTO findByEmail(String email) {
+	    UserEntity user = repository.findByUserEmail(email)
+	        .orElseThrow(() -> new RuntimeException("해당 이메일로 등록된 사용자를 찾을 수 없습니다."));
+	    return UserDTO.fromEntity(user);
+	}
+	
 	public UserDTO findByUserId(int userId) {
 		Optional<UserEntity> origin = repository.findById(userId);
 		if(origin.isPresent()) {

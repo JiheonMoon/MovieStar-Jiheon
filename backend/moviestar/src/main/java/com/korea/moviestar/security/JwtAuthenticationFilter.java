@@ -37,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 					AuthorityUtils.NO_AUTHORITIES// 현재 권한 정보는 제공하지 않음
 					);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-			SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 		filterChain.doFilter(request, response);

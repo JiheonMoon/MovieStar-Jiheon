@@ -13,6 +13,8 @@ const Signup = () => {
   })
 
   const [message, setMessage] = useState("")
+  // 중복된 아이디로 로그인 시도할 경우
+  const [userNameError, setUserNameError] = useState("")
 
   const [disabled, setDisabled] = useState(true)
 
@@ -69,9 +71,10 @@ const Signup = () => {
         });
 
         if(!response.ok) {
-          const errorText = await response.text()
-          console.error("Error response from server:", errorText)
-          setMessage("회원가입 요청 실패")
+          const errorData = await response.json()
+          if(errorData.message) {
+            setMessage(errorData.message)
+          }
           return;
         }
 
@@ -100,7 +103,6 @@ const Signup = () => {
             userNick: "닉네임",
             userPwd: "비밀번호",
             userPwdCheck: "비밀번호 확인",
-            // userLikeList: "관심 목록"
           }
 
           // key에 Pwd가 포함되어 있으면 타입을 password, 아니면 text
@@ -120,8 +122,9 @@ const Signup = () => {
               name={key} 
               onChange={handleChange}
               placeholder={placeholder}
-              value={value} 
+              value={value}
             />
+            {userNameError && <p style={{ color: "red", fontSize: "0.8rem"}}>{userNameError}</p>}
           </label>
         )
       })}

@@ -3,9 +3,11 @@ package com.korea.moviestar.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,6 +21,7 @@ import com.korea.moviestar.repo.MovieRepository;
 import com.korea.moviestar.repo.PopularRepository;
 import com.korea.moviestar.repo.ThemeRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -53,7 +56,11 @@ public class MovieService {
 		return themeList();
 	}
 	
+	@Transactional
 	public MovieEntity getMovie(int movieId){
+		if(movies.findById(movieId).isPresent()) {
+			return movies.findById(movieId).get();
+		}
 		Map<String, Object> response = restTemplate.getForObject(BASE_URL + "/movie/"+movieId+"?api_key=" + apiKey +"&language=ko-KR", Map.class);
 		
 		List<Map<String, Object>> genres = (List<Map<String, Object>>) response.get("genres");
@@ -87,14 +94,33 @@ public class MovieService {
 		return movies.save(entity);
 	}
 	
-	public List<PopularDTO> getPopular(){
+	@Scheduled(cron = "0 0 0/1 * * *")
+	@Transactional
+	public List<PopularDTO> saveAndGetPopular(){
 		populars.truncatePopular();
 		Map<String, Object> response = restTemplate.getForObject(BASE_URL + "/movie/popular?api_key=" + apiKey +"&language=ko-KR", Map.class);
 		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
-		for(Map<String, Object> movie : results) {
-			int movieId = (int) movie.get("id");
-			populars.save(PopularEntity.builder().movie(getMovie(movieId)).build());
-		}
+		
+		//병렬(비동기) 처리
+		List<CompletableFuture<PopularEntity>> futures = results.stream()
+	            .map(movie -> CompletableFuture.supplyAsync(() -> {
+	                int movieId = (int) movie.get("id");
+	                return PopularEntity.builder().movie(getMovie(movieId)).build();
+	            }))
+	            .collect(Collectors.toList());
+		
+		List<PopularEntity> popEntities = futures.stream()
+	            .map(CompletableFuture::join)
+	            .collect(Collectors.toList());
+		
+		populars.saveAll(popEntities);
+		
+		List<PopularEntity> entities = populars.findAll();
+		
+		return entities.stream().map(PopularDTO::new).collect(Collectors.toList());
+	}
+	
+	public List<PopularDTO> getPopular(){
 		List<PopularEntity> entities = populars.findAll();
 		return entities.stream().map(PopularDTO::new).collect(Collectors.toList());
 	}

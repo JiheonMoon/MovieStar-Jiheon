@@ -1,6 +1,5 @@
 import React,{useState} from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import MovieStack from "../navigation/MovieStack";
 import DrawerNavigator from "../navigation/Drawer";
 import { AppContext } from "../context/AppContext";
 

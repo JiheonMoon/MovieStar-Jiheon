@@ -8,6 +8,7 @@ import LoginScreen from "../screen/LoginScreen";
 import SignupScreen from "../screen/SignupScreen";
 import FindIdScreen from "../component/FindId";
 import FindPwdScreen from "../component/FindPwd";
+import LikeScreen from "../screen/LikeScreen";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
 import { Image,Text,View,StyleSheet,TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -153,8 +154,8 @@ const DrawerNavigator = () => {
                         )
                     }                       
                 })}/>
-            {/* <Drawer.Screen name="Detail" component={DetailScreen}
-                options={{title:'MovieDetail', headerShown: false,  }}/> */}
+            <Drawer.Screen name="Like" component={LikeScreen}
+                options={{title:'♥목록', headerShown: false,  }}/>
         </Drawer.Navigator>
     )
 }

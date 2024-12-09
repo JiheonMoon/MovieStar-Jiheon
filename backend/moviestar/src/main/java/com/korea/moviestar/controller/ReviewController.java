@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,20 +40,27 @@ public class ReviewController {
 		return ResponseEntity.ok().body(response);
 	}
 	
+	@GetMapping("/{movieId}")
+	public ResponseEntity<?> reviewByMovieId(@PathVariable int movieId){
+		List<ReviewDTO> dtos = service.findByMovieId(movieId);
+		ResponseDTO<ReviewDTO> response = ResponseDTO.<ReviewDTO>builder().data(dtos).build();
+		return ResponseEntity.ok().body(response);
+	}
+	
 	@PostMapping("/private/write")
 	public ResponseEntity<?> writeReview(@AuthenticationPrincipal String userId, @RequestBody ReviewDTO dto){
 		ReviewDTO response = service.create(userId, dto);
 		return ResponseEntity.ok().body(response);
 	}
 	
-	@PutMapping("/private/modify")
-	public ResponseEntity<?> modifyReview(@RequestBody ReviewDTO dto){
-		ReviewDTO response = service.update(dto);
+	@PutMapping("/private/modify/{reviewId}")
+	public ResponseEntity<?> modifyReview(@PathVariable int reviewId, @RequestBody ReviewDTO dto){
+		ReviewDTO response = service.update(reviewId, dto);
 		return ResponseEntity.ok().body(response);
 	}
 	
-	@DeleteMapping("/private/remove")
-	public ResponseEntity<?> removeReview(@RequestBody int reviewId){
+	@DeleteMapping("/private/remove/{reviewId}")
+	public ResponseEntity<?> removeReview(@PathVariable int reviewId){
 		if(service.delete(reviewId)) {
 			return ResponseEntity.ok().body("succesfully remove");
 		}else {

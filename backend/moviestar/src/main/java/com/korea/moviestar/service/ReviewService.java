@@ -12,6 +12,7 @@ import com.korea.moviestar.entity.ReviewEntity;
 import com.korea.moviestar.entity.UserEntity;
 import com.korea.moviestar.repo.MovieRepository;
 import com.korea.moviestar.repo.ReviewRepository;
+import com.korea.moviestar.repo.ThemeRepository;
 import com.korea.moviestar.repo.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,15 @@ public class ReviewService {
 		return null;
 	}
 	
+	public List<ReviewDTO> findByMovieId(int movieId){
+		Optional<MovieEntity> origin = movies.findById(movieId);
+		if(origin.isPresent()) {
+			List<ReviewEntity> entities = repository.findByMovieMovieId(movieId);
+			return entities.stream().map(ReviewDTO::new).collect(Collectors.toList());
+		}
+		return null;
+	}
+	
 	public ReviewDTO create(String userId, ReviewDTO dto) {
 		int user = Integer.parseInt(userId);
 		Optional<UserEntity> originUser = users.findById(user);
@@ -50,8 +60,8 @@ public class ReviewService {
 		return null;
 	}
 	
-	public ReviewDTO update(ReviewDTO dto) {
-		Optional<ReviewEntity> origin = repository.findById(dto.getReviewId());
+	public ReviewDTO update(int reviewId, ReviewDTO dto) {
+		Optional<ReviewEntity> origin = repository.findById(reviewId);
 		if(origin.isPresent()) {
 			 ReviewEntity newReview = origin.get();
 			 newReview.setReviewRating(dto.getReviewRating());

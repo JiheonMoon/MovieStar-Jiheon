@@ -108,6 +108,8 @@ const DetailScreen = () => {
     const [editable, setEditable] = useState(false);
     const [editState, setEditState] = useState({ id: -1, rate: 5, review: "" });
     const [actor, setActor] = useState([]);
+    const [isFavorite,setIsFavorite]= useState(false)
+    const [favoriteMovies, setFavoriteMovies] = useState([])
 
     const addReview = () => {
         const newReview = {
@@ -173,7 +175,17 @@ const DetailScreen = () => {
         }
     }, [movie]);
 
-    return (
+    const toggleFavorite = () => {
+        if (!isFavorite) {
+            setFavoriteMovies([...favoriteMovies, movie]); // 찜 추가
+        } else {
+            setFavoriteMovies(favoriteMovies.filter((m) => m.id !== movie.id)); // 찜 해제
+        }
+        setIsFavorite(!isFavorite);
+        navigation.navigate('Like',{favoriteMovies})
+    };
+
+return (
         <FlatList
             style={styles.container}
             ListHeaderComponent={
@@ -188,7 +200,17 @@ const DetailScreen = () => {
                             style={styles.poster}
                         />
                         <View style={styles.movieDetails}>
-                            <Text style={styles.title}>{movie.title}</Text>
+                            <View style={styles.likeList}>
+                                <Text style={styles.title}>{movie.title}</Text>
+                                <TouchableOpacity onPress={toggleFavorite}>
+                                    <Ionicons 
+                                        style={styles.like}
+                                        name={isFavorite ? 'heart' : 'heart-outline'} 
+                                        size={20} 
+                                        color={isFavorite ? 'red' : 'white'} 
+                                    />
+                                </TouchableOpacity>
+                            </View>
                             <Text style={styles.overview}>{movie.overview}</Text>
                             <Text style={styles.releaseDate}>
                                 <Text style={styles.bold}>Release Date: {movie.release_date}</Text>
@@ -264,7 +286,9 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white',
-        marginBottom:10
+        marginBottom:10,
+        paddingRight:10,
+        marginLeft:-5
     },
     overview: {
         fontSize:14,
@@ -373,6 +397,14 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 5,
     },
+    likeList : {
+        flexDirection:'row',
+        margin:5,
+        
+    },
+    like: {
+        marginTop:10
+    }
   });
 
 

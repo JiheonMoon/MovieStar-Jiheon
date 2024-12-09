@@ -39,7 +39,7 @@ const StackDetailNavigator = () => {
         <Stack.Screen name="FindId" component={FindIdScreen} 
             options={{ headerShown: false}} />
         <Stack.Screen name="FindPassword" component={FindPwdScreen} 
-            options={{}}/>
+            options={{ headerShown: false}}/>
       </Stack.Navigator>
     );
   };

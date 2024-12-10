@@ -40,7 +40,7 @@ const HomeScreen = () => {
   };
 
   const handleNavigateToDetail = (movieId) => {
-    navigation.navigate("Detail", { id: movieId });
+    navigation.navigate("DetailScreen", { id: movieId });
   };
 
   return (

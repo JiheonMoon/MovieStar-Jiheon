@@ -4,7 +4,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { fetchMovieDetails, fetchMovieCredits } from '../api/tmdb';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFavoriteContext } from '../context/FavoriteContext';
 
 const StarRating = ({ rating, setRating, size = 20 }) => (
     <View style={styles.starRating}>
@@ -66,8 +67,14 @@ const ReviewItem = ({ item, onEdit, onRemove, editable, editState, updateReview,
                     value={editState.review}
                     onChangeText={(text) => editState.setEditState((prev) => ({ ...prev, review: text }))}
                 />
-                <Button title="수정하기" onPress={updateReview} />
-                <Button title="취소" onPress={cancelEdit} />
+                <View style={styles.reviewUser}>
+                    <TouchableOpacity style={styles.reviewEditButton} onPress={updateReview}>
+                        <Text style={styles.buttonText}>수정</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.reviewDeleteButton} onPress={cancelEdit}>
+                        <Text style={styles.buttonText}>취소</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         )}
     </View>
@@ -108,6 +115,8 @@ const DetailScreen = () => {
     const [editable, setEditable] = useState(false);
     const [editState, setEditState] = useState({ id: -1, rate: 5, review: "" });
     const [actor, setActor] = useState([]);
+    const [isFavorite,setIsFavorite]= useState(false)
+    const { favoriteMovies, setFavoriteMovies, } = useFavoriteContext(); // 찜 목록과 업데이트 함수 사용
 
     const addReview = () => {
         const newReview = {
@@ -148,18 +157,6 @@ const DetailScreen = () => {
     };
 
     useEffect(() => {
-        const getMovieDetails = async () => {
-            try {
-                const movieDetails = await fetchMovieDetails(id);
-                setMovie(movieDetails);
-            } catch (error) {
-                console.error('Error fetching movie details:', error);
-            }
-        };
-        getMovieDetails();
-    }, [id]);
-
-    useEffect(() => {
         if (movie?.id) {
             const fetchDetails = async () => {
                 try {
@@ -173,12 +170,41 @@ const DetailScreen = () => {
         }
     }, [movie]);
 
-    return (
+    useEffect(() => {
+            const getMovieDetails = async () => {
+                try {
+                    const movieDetails = await fetchMovieDetails(id);
+                    setMovie(movieDetails);
+                } catch (error) {
+                    console.error('Error fetching movie details:', error);
+                }
+            };
+            getMovieDetails();
+    }, [id]);
+
+    useEffect(() => {
+        // 찜 목록에 영화가 있는지 확인하여 하트 상태를 설정
+        const isMovieFavorite = favoriteMovies.some((m) => m.id === movie?.id);
+        setIsFavorite(isMovieFavorite); // 찜 여부 상태 설정
+    }, [favoriteMovies, movie]);
+
+    const toggleFavorite = () => {
+        const updatedFavorites = isFavorite
+            ? favoriteMovies.filter((m) => m.id !== movie.id)
+            : [...favoriteMovies, movie];
+
+        setFavoriteMovies(updatedFavorites); // 찜 목록 업데이트
+        setIsFavorite(!isFavorite); // 찜 여부 상태 업데이트
+    };
+
+
+
+return (
         <FlatList
             style={styles.container}
             ListHeaderComponent={
                 <>
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Text style={styles.backButton}>←</Text>
                     </TouchableOpacity>
 
@@ -188,8 +214,20 @@ const DetailScreen = () => {
                             style={styles.poster}
                         />
                         <View style={styles.movieDetails}>
-                            <Text style={styles.title}>{movie.title}</Text>
-                            <Text style={styles.overview}>{movie.overview}</Text>
+                            <View style={styles.likeList}>
+                                <Text style={styles.title}>{movie.title}</Text>
+                                <TouchableOpacity onPress={toggleFavorite}>
+                                    <Ionicons 
+                                        style={styles.like}
+                                        name={isFavorite ? 'heart' : 'heart-outline'} 
+                                        size={20} 
+                                        color={isFavorite ? 'red' : 'white'} 
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <ScrollView style={{maxHeight:140}}>
+                                <Text style={styles.overview}>{movie.overview}</Text>
+                            </ScrollView>
                             <Text style={styles.releaseDate}>
                                 <Text style={styles.bold}>Release Date: {movie.release_date}</Text>
                             </Text>
@@ -239,13 +277,14 @@ const styles = StyleSheet.create({
         color:'white',
         fontSize:30,
         marginBottom: 5,
+        marginTop:-10
     },
     buttonText: {
         textAlign:'center',
         alignItems:'center',
         justifyContent:'center',
-        fontSize: 12,
-        margin:8,
+        fontSize: 14,
+        margin:5,
         color:'black'
     },
     header: {
@@ -264,13 +303,16 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white',
-        marginBottom:10
+        marginBottom:10,
+        paddingRight:10,
+        marginLeft:-5
     },
     overview: {
         fontSize:14,
         color: 'white',
         marginVertical: 5,
-        marginBottom:10
+        marginBottom:10,
+        marginTop:-5
     },
     reviewForm: {
         
@@ -304,6 +346,7 @@ const styles = StyleSheet.create({
         color: 'white',
         flexDirection:'row',
         fontWeight: 'bold',
+        
     },
     reviewText: {
         color:'white',
@@ -318,6 +361,7 @@ const styles = StyleSheet.create({
         marginBottom:5,
         backgroundColor: 'white',
         borderRadius: 5,
+        width: 170
     },
     editButton:{
         backgroundColor:'#FF3636',
@@ -328,14 +372,15 @@ const styles = StyleSheet.create({
     },
     editText:{
         color:'white',
-        textAlign:'center',
-        
-        
+        textAlign:'center', 
     },
     reviewDeleteButton: {
-        margin: 5,
+        marginLeft:5,
+        marginTop:5,
+        marginBottom:5,
         backgroundColor: 'white',
         borderRadius: 5,
+        width: 170
     },
     starRating : {
         flexDirection: 'row',
@@ -372,6 +417,14 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 12,
         marginTop: 5,
+    },
+    likeList : {
+        flexDirection:'row',
+        margin:5,
+        
+    },
+    like: {
+        marginTop:10
     },
   });
 

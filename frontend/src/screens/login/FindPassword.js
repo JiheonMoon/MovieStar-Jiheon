@@ -1,9 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../css/login/FindPassword.css"
+import logo from "../../logo/logo.png"
 
 const FindPassword = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/Home")
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,6 +25,9 @@ const FindPassword = () => {
 
   return (
     <div className="find-password-container">
+      <header className="header">
+        <img src={logo} className="header-logo" onClick={handleLogoClick} />
+      </header>
       <h2>비밀번호 찾기</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">이메일 주소</label>

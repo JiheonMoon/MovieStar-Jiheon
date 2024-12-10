@@ -177,8 +177,7 @@ const LoginScreen = () => {
 
           {/* 링크 섹션 */}
           <div className="links">
-            <Link to="/find-id">아이디 찾기</Link>
-            <Link to="/find-password">비밀번호 찾기</Link>
+            <Link to="/find">아이디/비밀번호 찾기</Link>
             <Link to="/signup">회원가입</Link>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/login/Signup.css"
+import logo from "../../logo/logo.png"
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -56,6 +57,10 @@ const Signup = () => {
     }
   }, [formData])
 
+  const handleLogoClick = () => {
+    navigate("/Home")
+  }
+
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -94,6 +99,9 @@ const Signup = () => {
 
   return (
     <div className="signup-container">
+      <header className="header">
+        <img src={logo} className="header-logo" onClick={handleLogoClick} />
+      </header>
       <div className="signup-box">
       <h2>회원가입</h2>
       <form onSubmit={handleSubmit}>

@@ -53,13 +53,13 @@ const FindId = () => {
     };
 
     return (
-        <div className="findId-page">
+        <div className="find-page">
             <header className="header">
                 <img src={logo} className="header-logo" onClick={handleLogoClick} />
             </header>
             <div className="body">
                 <div className="find-id-container">
-                    <h2>- - - - - - - 아이디 찾기 - - - - - - -</h2>
+                    <h2>아이디 찾기</h2>
                     <form onSubmit={handleFindId}>
                         <div className="input-group">
                             <label htmlFor="email">가입 시 사용한 이메일</label>
@@ -99,7 +99,7 @@ const FindId = () => {
                         </>
                     )}
 
-                    <h2>- - - - - - 비밀번호 찾기 - - - - - - </h2>
+                    <h2>비밀번호 찾기</h2>
                     <form onSubmit={handleFindPassword}>
                         <div className="input-group">
                             <label htmlFor="username">아이디</label>

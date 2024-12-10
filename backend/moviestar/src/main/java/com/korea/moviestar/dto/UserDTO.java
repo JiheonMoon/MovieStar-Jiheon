@@ -1,6 +1,8 @@
 package com.korea.moviestar.dto;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.korea.moviestar.entity.UserEntity;
 
@@ -19,28 +21,33 @@ public class UserDTO {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
+	private Set<Integer> userLikeList;
 
-	private int[] userLikeList;
 	private String token;
 
-	
+	// 기존 생성자
 	public UserDTO(UserEntity entity) {
 		this.userId = entity.getUserId();
 		this.userNick = entity.getUserNick();
 		this.userName = entity.getUserName();
 		this.userEmail = entity.getUserEmail();
 		this.userPwd = entity.getUserPwd();
-		this.userLikeList = entity.getUserLikeList();
+		this.userLikeList = entity.getUserLikeList() != null
+				? entity.getUserLikeList().stream().map(movie -> movie.getMovieId()).collect(Collectors.toSet())
+				: new HashSet<>();
 	}
 	
-	public static UserEntity toEntity(UserDTO dto) {
-		return UserEntity.builder()
-					.userId(dto.getUserId())
-					.userNick(dto.getUserNick())
-					.userName(dto.getUserName())
-					.userEmail(dto.getUserEmail())
-					.userPwd(dto.getUserPwd())
-					.userLikeList(dto.getUserLikeList())
-					.build();
-	}
+	// Entity를 DTO로 변환하는 정적 메서드 추가
+		public static UserDTO fromEntity(UserEntity entity) {
+			return UserDTO.builder()
+				.userId(entity.getUserId())
+				.userName(entity.getUserName())
+				.userNick(entity.getUserNick())
+				.userEmail(entity.getUserEmail())
+				.userPwd(entity.getUserPwd())
+				.userLikeList(entity.getUserLikeList() != null
+					? entity.getUserLikeList().stream().map(movie -> movie.getMovieId()).collect(Collectors.toSet())
+					: new HashSet<>()) // null 처리
+				.build();
+		}
 }

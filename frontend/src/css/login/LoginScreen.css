@@ -42,14 +42,13 @@
 }
 
 .login-box {
-  border: 1px #ddd;
   position: absolute; /* 절대 위치 지정 */
   top: 50%; /* 화면의 세로 중앙 */
   right: 5%; /* 우측 여백 */
   transform: translateY(-50%); /* 세로 중앙 정렬 */
   width: 400px; /* 기본 너비 */
   max-width: 90%; /* 화면 크기에 따라 너비 제한 */
-  background: #2c2c2c; /* 더 어두운 배경 */
+  background-color: #2c2c2c; /* 더 어두운 배경 */
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* 그림자 효과 */
@@ -185,6 +184,3 @@ h2 {
 .links a:hover {
   text-decoration: underline;
 }
-
-
-

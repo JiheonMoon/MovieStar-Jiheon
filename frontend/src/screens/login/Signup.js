@@ -5,9 +5,9 @@ import logo from "../../logo/logo.png"
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    userName: "",
-    userEmail: "",
     userNick: "",
+    userEmail: "",
+    userName: "",
     userPwd: "",
     userPwdCheck: "",
     // userLikeList: [],
@@ -30,8 +30,8 @@ const Signup = () => {
     const passwordCheck = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     
     // 서버 요청 또는 로직 추가
-    if (!formData.userName) {
-      setMessage("아이디를 입력해주세요")
+    if (!formData.userNick) {
+      setMessage("닉네임을 입력해주세요")
       setDisabled(true)
     } else if (!formData.userEmail) {
       setMessage("이메일을 입력해주세요.");
@@ -39,8 +39,8 @@ const Signup = () => {
     } else if (!emailCheck.test(formData.userEmail)) {
       setMessage("이메일 형식을 확인해주세요.");
       setDisabled(true)
-    } else if (!formData.userNick) {
-      setMessage("닉네임을 입력해주세요.");
+    } else if (!formData.userName) {
+      setMessage("아이디를 입력해주세요.");
       setDisabled(true)
     } else if (!formData.userPwd) {
       setMessage("비밀번호를 입력해주세요.");
@@ -98,49 +98,51 @@ const Signup = () => {
     }
 
   return (
-    <div className="signup-container">
-      <header className="header">
-        <img src={logo} className="header-logo" onClick={handleLogoClick} />
-      </header>
-      <div className="signup-box">
-      <h2>회원가입</h2>
-      <form onSubmit={handleSubmit}>
-        {Object.entries(formData).map(([key, value]) => {
-          const labels = {
-            userName: "아이디",
-            userEmail: "이메일",
-            userNick: "닉네임",
-            userPwd: "비밀번호",
-            userPwdCheck: "비밀번호 확인",
-          }
+      <div className="signup-page">
+        <header className="header">
+          <img src={logo} className="header-logo" onClick={handleLogoClick} />
+        </header>
+        <div className="body">
+          <div className="signup-box">
+            <h2>회원가입</h2>
+            <form onSubmit={handleSubmit}>
+              {Object.entries(formData).map(([key, value]) => {
+                const labels = {
+                  userNick: "닉네임",
+                  userEmail: "이메일",
+                  userName: "아이디",
+                  userPwd: "비밀번호",
+                  userPwdCheck: "비밀번호 확인",
+                }
 
-          // key에 Pwd가 포함되어 있으면 타입을 password, 아니면 text
-          const inputType = key.includes("Pwd") ? "password" : "text"
+                // key에 Pwd가 포함되어 있으면 타입을 password, 아니면 text
+                const inputType = key.includes("Pwd") ? "password" : "text"
 
-          // placeholder 설정
-          const placeholder = 
-            key === "userPwdCheck" 
-            ? "비밀번호 한번 더 입력" 
-            : `${labels[key]} 입력`
-            
-          return (
-          <label key={key}>
-            {labels[key]}
-            <input 
-              type={inputType} //비밀번호는 password, 나머지는 text
-              name={key} 
-              onChange={handleChange}
-              placeholder={placeholder}
-              value={value}
-            />
-            {userNameError && <p style={{ color: "red", fontSize: "0.8rem"}}>{userNameError}</p>}
-          </label>
-        )
-      })}
+                // placeholder 설정
+                const placeholder = 
+                  key === "userPwdCheck" 
+                  ? "비밀번호 한번 더 입력" 
+                  : `${labels[key]} 입력`
+                  
+                return (
+                <label key={key}>
+                  {labels[key]}
+                  <input 
+                    type={inputType} //비밀번호는 password, 나머지는 text
+                    name={key} 
+                    onChange={handleChange}
+                    placeholder={placeholder}
+                    value={value}
+                  />
+                  {userNameError && <p style={{ color: "red", fontSize: "0.8rem"}}>{userNameError}</p>}
+                </label>
+              )
+            })}
 
-        <button type="submit" disabled={disabled}>회원가입</button>
-      </form>
-      {message && <p>{message}</p>}
+            <button type="submit" disabled={disabled}>회원가입</button>
+          </form>
+          {message && <p>{message}</p>}
+        </div>
       </div>
     </div>
   );

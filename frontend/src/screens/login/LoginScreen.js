@@ -72,58 +72,58 @@ const LoginScreen = () => {
 
   // 폼 제출 처리
   const handleSubmit = async (e) => {
-    // e.preventDefault()
+     e.preventDefault()
 
-    // try {
-    //   const response = await axios.post("/user/signin", formData)
-    //   const data = response.data;
+     try {
+       const response = await axios.post("/user/signin", formData)
+       const data = response.data;
 
-    //   // 토큰 저장
-    //   if(data.token) {
-    //     localStorage.setItem("token", data.token)
+       // 토큰 저장
+       if(data.token) {
+         localStorage.setItem("token", data.token)
 
-    //     // 사용자 정보 Context에 저장
-    //     setUser({
-    //       userId: data.userId,
-    //       userEmail: data.userEmail,
-    //       userNick: data.userNick,
-    //       userName: data.userName
-    //     })
+         // 사용자 정보 Context에 저장
+         setUser({
+           userId: data.userId,
+           userEmail: data.userEmail,
+           userNick: data.userNick,
+           userName: data.userName
+         })
 
-    //     // 로그인 성공 시 메인 화면으로 이동
-    //     navigate("/home")
-    //   } else {
-    //     setError("Login failed: Cannot find token")
-    //   }
-    // } catch (error) {
-    //   console.error("error during login:", error)
-    //   setError("아이디 또는 비밀번호가 일치하지 않습니다.")
-    // }
+         // 로그인 성공 시 메인 화면으로 이동
+         navigate("/home")
+         } else {
+         setError("Login failed: Cannot find token")
+       }
+     } catch (error) {
+       console.error("error during login:", error)
+       setError("아이디 또는 비밀번호가 일치하지 않습니다.")
+     }
 
-    // // localStorage에서 유저 정보 가져오기
-    // const storedUser = JSON.parse(
-    //   localStorage.getItem(
-    //     Object.keys(window.localStorage).find(
-    //     key => JSON.parse(localStorage.getItem(key)).userName === formData.userName
-    //   )))
+     // localStorage에서 유저 정보 가져오기
+     const storedUser = JSON.parse(
+       localStorage.getItem(
+         Object.keys(window.localStorage).find(
+         key => JSON.parse(localStorage.getItem(key)).userName === formData.userName
+       )))
 
-    // // 유저 정보 확인
-    // if (
-    //   storedUser && 
-    //   storedUser.userPwd=== formData.userPwd
-    // ) {
-    //   // 로그인 성공 시
-    //   setUser({ 
-    //     userName: storedUser.userName,
-    //     userEmail: storedUser.userEmail,
-    //     userNick: storedUser.userNick,
-    //     userLikeList: storedUser.userLikeList,
-    //   }) // 사용자 정보를 Context에 저장
-    //   navigate("/home"); // MainScreen으로 이동
-    // } else {
-    //   // 에러 메시지 출력
-    //   setError("아이디 또는 비밀번호가 일치하지 않습니다.");
-    // }
+     // 유저 정보 확인
+     if (
+       storedUser && 
+       storedUser.userPwd=== formData.userPwd
+     ) {
+       // 로그인 성공 시
+       setUser({ 
+         userName: storedUser.userName,
+         userEmail: storedUser.userEmail,
+         userNick: storedUser.userNick,
+      userLikeList: storedUser.userLikeList,
+       }) // 사용자 정보를 Context에 저장
+       navigate("/home"); // MainScreen으로 이동
+      } else {
+      // 에러 메시지 출력
+      setError("아이디 또는 비밀번호가 일치하지 않습니다.");
+    }
   };
 
   return (

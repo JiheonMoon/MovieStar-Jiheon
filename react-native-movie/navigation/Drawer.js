@@ -6,7 +6,7 @@ import MainScreen from "../screen/MainScreen";
 import DetailScreen from "../screen/DetailScreen";
 import LoginScreen from "../screen/LoginScreen";
 import SignupScreen from "../screen/SignupScreen";
-import FindIdScreen from "../component/FindId";
+import FindIdScreen from "../component/FIndId";
 import FindPwdScreen from "../component/FindPwd";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
 import { Image,Text,View,StyleSheet,TouchableOpacity } from "react-native";

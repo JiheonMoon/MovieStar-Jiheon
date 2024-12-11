@@ -1,4 +1,10 @@
 /* Signup.css */
+.signup-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .signup-header {
   position: fixed;
   top: 0;
@@ -12,7 +18,7 @@
   border-bottom: 3px solid #ddd;
 }
 
-.signup-header-logo {
+.signup-logo {
   max-width: 200px; /* 로고 크기 제한 */
   width: auto;
   height: auto;

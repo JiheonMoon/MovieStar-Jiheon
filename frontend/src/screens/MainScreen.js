@@ -142,9 +142,9 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     };
   
     return (
-      <div className="app">
-        <div className="main-header">
-          <img src={logo} className="logo" onClick={handleLogoClick}/>
+      <div className="main-page">
+        <header className="main-header">
+          <img src={logo} className="main-logo" onClick={handleLogoClick}/>
             {/* 영화 검색 입력창 */}
             <input
             type="text"
@@ -160,7 +160,8 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
             ) : (
                 <button onClick={navigateToLoginScreen}>로그인</button>
             )}
-        </div>
+        </header>
+
         {/* 검색 결과 또는 기본 영화 리스트 조건부 렌더링 */}
         {searchQuery && filteredMovies.length > 0 ? (
           <MovieSlider 

@@ -8,6 +8,7 @@ import LoginScreen from "../screen/LoginScreen";
 import SignupScreen from "../screen/SignupScreen";
 import FindIdScreen from "../component/FIndId";
 import FindPwdScreen from "../component/FindPwd";
+import LikeScreen from "../screen/LikeScreen";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
 import { Image,Text,View,StyleSheet,TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -19,10 +20,10 @@ const Stack = createStackNavigator();
 
 const StackDetailNavigator = () => {
     return (
-      <Stack.Navigator >
-        <Stack.Screen name="Home" component={HomeScreen} 
+      <Stack.Navigator>
+        <Stack.Screen name="HomeStack" component={HomeScreen} 
             options={{ headerShown: false,  }}/>
-        <Stack.Screen name="Detail" component={DetailScreen} 
+        <Stack.Screen name="DetailScreen" component={DetailScreen} 
             options={{ headerShown: false, }}/>
       </Stack.Navigator>
     );
@@ -98,7 +99,7 @@ const DrawerNavigator = () => {
             })}
         >
             <Drawer.Screen name="Main" component={MainScreen} 
-                options={{ headerShown: false,  }}/>
+                options={{ headerShown: false, }}/>
 
             <Drawer.Screen name="Home" component={StackDetailNavigator}
                     options={{
@@ -118,6 +119,12 @@ const DrawerNavigator = () => {
                             backgroundColor:'black',
                             height:70,
                         },
+                        drawerLabel:()=>(
+                        <View style={{flexDirection:'row',marginRight:5}}>
+                            <MaterialCommunityIcons name="home" size={20} color="white" />
+                            <Text style={{color:"white",}}>Home</Text>
+                        </View>
+                        )
                     }} />
 
             <Drawer.Screen name="Login" component={StackLoginNavigator}
@@ -147,14 +154,42 @@ const DrawerNavigator = () => {
                         return(
                         <TouchableOpacity onPress={user ? labelHandleLogout : navigateToLoginScreen}>
                             <Text style={{fontSize:16,color:'white'}}>
-                                {user ? "Logout" : "Login"}
+                                {user ? 
+                                <>
+                                <MaterialCommunityIcons name="logout" size={16} color="#fff" />
+                                <Text style={{ marginLeft: 10 }}>Logout</Text>
+                                </> 
+                                :
+                                <>
+                                <MaterialCommunityIcons name="login" size={16} color="#fff" />
+                                <Text style={{ marginLeft: 10 }}>Login</Text>
+                                </>
+                                }
                             </Text>
                         </TouchableOpacity>
                         )
                     }                       
                 })}/>
-            {/* <Drawer.Screen name="Detail" component={DetailScreen}
-                options={{title:'MovieDetail', headerShown: false,  }}/> */}
+            <Drawer.Screen name="Like" component={LikeScreen}
+                options={{
+                    title:'♥ 찜',
+                    headerTitle:() => {
+                        const navigation = useNavigation();
+                        return(
+                        <TouchableOpacity onPress={()=>navigation.navigate('Home')}>
+                            <Image
+                                source={require('../images/logo.png')}
+                                style={styles.logo}
+                            />
+                        </TouchableOpacity>
+                        )
+                    },
+                    headerTintColor : '#fff',
+                    headerStyle:{
+                        backgroundColor:'black',
+                        height:80,
+                    },
+                 }}/>
         </Drawer.Navigator>
     )
 }
@@ -173,7 +208,7 @@ const styles =StyleSheet.create({
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop:5,
+        marginTop:6,
         marginRight:5
         
     },

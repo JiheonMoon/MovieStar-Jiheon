@@ -44,19 +44,14 @@ public class UserService {
 		// 중복 검사 통과 시 사용자 저장
 		dto.setUserLikeList(new HashSet<Integer>());
 		UserEntity entity = repository.save(UserService.toEntity(dto, movies));
-		UserDTO response = UserDTO.builder()
-			.userId(entity.getUserId())
-			.userEmail(entity.getUserEmail())
-			.userNick(entity.getUserNick())
-			.userName(entity.getUserName())
-			.build();
-		return response;
+		UserDTO response = new UserDTO(entity);
+		return response.hidePwd();
 	}
 	
 	public UserDTO findByEmail(String email) {
 	    UserEntity user = repository.findByUserEmail(email)
 	        .orElseThrow(() -> new RuntimeException("해당 이메일로 등록된 사용자를 찾을 수 없습니다."));
-	    return UserDTO.fromEntity(user);
+	    return UserDTO.fromEntity(user).hidePwd();
 	}
 	
 	public UserDTO findByUserId(int userId) {
@@ -78,7 +73,7 @@ public class UserService {
 	public UserDTO findUser(UserDTO dto, final PasswordEncoder encoder) {
 		UserEntity origin = repository.findByUserName(dto.getUserName());
 		if(origin != null && encoder.matches(dto.getUserPwd(), origin.getUserPwd())) {
-			return new UserDTO(origin);
+			return new UserDTO(origin).hidePwd();
 		}else {
 			return null;
 		}
@@ -92,7 +87,7 @@ public class UserService {
 			Set<MovieEntity> newList = entity.getUserLikeList();
 			newList.add(movies.findById(movieId).get());
 			entity.setUserLikeList(newList);
-			return new UserDTO(repository.save(entity));
+			return new UserDTO(repository.save(entity)).hidePwd();
 		}else {
 			return null;
 		}
@@ -106,7 +101,7 @@ public class UserService {
 			Set<MovieEntity> newList = entity.getUserLikeList();
 			newList.remove(movies.findById(movieId).get());
 			entity.setUserLikeList(newList);
-			return new UserDTO(repository.save(entity));
+			return new UserDTO(repository.save(entity)).hidePwd();
 		}else {
 			return null;
 		}
@@ -120,7 +115,7 @@ public class UserService {
 			entity.setUserNick(dto.getUserNick());
 			entity.setUserEmail(dto.getUserEmail());
 			entity.setUserPwd(dto.getUserPwd());
-			return new UserDTO(repository.save(entity));
+			return new UserDTO(repository.save(entity)).hidePwd();
 		}
 		return null;
 	}

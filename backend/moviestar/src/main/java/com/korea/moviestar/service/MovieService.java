@@ -11,15 +11,18 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.korea.moviestar.dto.NowPlayingDTO;
 import com.korea.moviestar.dto.PopularDTO;
 import com.korea.moviestar.dto.TopRatedDTO;
 import com.korea.moviestar.dto.UserDTO;
 import com.korea.moviestar.entity.ActorEntity;
 import com.korea.moviestar.entity.MovieEntity;
+import com.korea.moviestar.entity.NowPlayingEntity;
 import com.korea.moviestar.entity.PopularEntity;
 import com.korea.moviestar.entity.ThemeEntity;
 import com.korea.moviestar.entity.TopRatedEntity;
 import com.korea.moviestar.repo.MovieRepository;
+import com.korea.moviestar.repo.NowPlayingRepository;
 import com.korea.moviestar.repo.PopularRepository;
 import com.korea.moviestar.repo.ThemeRepository;
 import com.korea.moviestar.repo.TopRatedRepository;
@@ -40,6 +43,7 @@ public class MovieService {
 	private final ThemeRepository themes;
 	private final PopularRepository populars;
 	private final TopRatedRepository topRates;
+	private final NowPlayingRepository nowPlayings;
 
 	public List<ThemeEntity> themeList() {
 
@@ -94,7 +98,8 @@ public class MovieService {
 	@Scheduled(cron = "0 0 0/1 * * *")
 	@Transactional
 	public List<PopularDTO> saveAndGetPopular() {
-		populars.truncatePopular();
+		populars.truncatePopular();//테이블 비우기
+		
 		Map<String, Object> response = restTemplate
 				.getForObject(BASE_URL + "/movie/popular?api_key=" + apiKey + "&language=ko-KR", Map.class);
 		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
@@ -110,9 +115,7 @@ public class MovieService {
 
 		populars.saveAll(popEntities);
 
-		List<PopularEntity> entities = populars.findAll();
-
-		return entities.stream().map(PopularDTO::new).collect(Collectors.toList());
+		return getPopular();
 	}
 
 	public List<PopularDTO> getPopular() {
@@ -124,7 +127,8 @@ public class MovieService {
 	@Scheduled(cron = "0 0 0/1 * * *")
 	@Transactional
 	public List<TopRatedDTO> saveAndGetTopRated() {
-		topRates.truncateTopRated();
+		topRates.truncateTopRated(); //테이블 비우기
+		
 		Map<String, Object> response = restTemplate
 				.getForObject(BASE_URL + "/movie/top_rated?api_key=" + apiKey + "&language=ko-KR", Map.class);
 		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
@@ -140,9 +144,7 @@ public class MovieService {
 
 		topRates.saveAll(topEntities);
 
-		List<TopRatedEntity> entities = topRates.findAll();
-
-		return entities.stream().map(TopRatedDTO::new).collect(Collectors.toList());
+		return getTopRated();
 	}
 
 	public List<TopRatedDTO> getTopRated() {
@@ -150,5 +152,34 @@ public class MovieService {
 		List<TopRatedEntity> entities = topRates.findAll();
 
 		return entities.stream().map(TopRatedDTO::new).collect(Collectors.toList());
+	}
+	
+	// 1시간마다 자동 갱신
+	@Scheduled(cron = "0 0 0/1 * * *")
+	@Transactional
+	public List<NowPlayingDTO> saveAndGetNowPlaying(){	
+		nowPlayings.truncateNowPlaying();
+		
+		Map<String, Object> response = restTemplate
+				.getForObject(BASE_URL + "/movie/now_playing?api_key=" + apiKey + "&language=ko-KR", Map.class);
+		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
+		
+		List<CompletableFuture<NowPlayingEntity>> futures = results.stream()
+				.map(movie -> CompletableFuture.supplyAsync(() -> {
+					int movieId = (int) movie.get("id");
+					return NowPlayingEntity.builder().movie(getMovie(movieId)).build();
+				})).collect(Collectors.toList());
+		
+		List<NowPlayingEntity> nowEntities = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+		
+		nowPlayings.saveAll(nowEntities);
+		
+		return getNowplaying();
+	}
+	
+	public List<NowPlayingDTO> getNowplaying(){
+		List<NowPlayingEntity> entities = nowPlayings.findAll();
+
+		return entities.stream().map(NowPlayingDTO::new).collect(Collectors.toList());
 	}
 }

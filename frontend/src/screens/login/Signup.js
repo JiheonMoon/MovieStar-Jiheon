@@ -102,7 +102,7 @@ const Signup = () => {
         <header className="header">
           <img src={logo} className="header-logo" onClick={handleLogoClick} />
         </header>
-        <div className="body">
+        <div className="signup-body">
           <div className="signup-box">
             <h2>회원가입</h2>
             <form onSubmit={handleSubmit}>

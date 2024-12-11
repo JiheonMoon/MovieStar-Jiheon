@@ -33,7 +33,7 @@
   .top-recommendation-poster {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 10px;
     filter: brightness(50%);
   }
@@ -46,6 +46,8 @@
     color: white;
     text-align: center;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    width: 90%;
+    max-width: 1200px;
   }
   
   .recommendation-info h2 {

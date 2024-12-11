@@ -128,11 +128,11 @@ const LoginScreen = () => {
 
   return (
     <div className="login-page">
-      <header className="header">
-        <img src={logo} className="header-logo" onClick={handleLogoClick} />
+      <header className="login-header">
+        <img src={logo} className="login-header-logo" onClick={handleLogoClick} />
       </header>
 
-      <div className="body">
+      <div className="login-body">
         <div className="login-box">
           <h2>로그인</h2>
           {/* 로그인 폼 */}

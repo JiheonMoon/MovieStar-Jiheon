@@ -226,6 +226,7 @@ const MovieDetail = ({ movie, onClose }) => {
       alert("로그인한 유저만 리뷰를 등록 가능합니다")
       return;
     }
+    
     const newReview = {
       reviewId: reviewList.length + 1,
       userId: user.userNick,

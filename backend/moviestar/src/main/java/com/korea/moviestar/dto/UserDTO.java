@@ -50,4 +50,10 @@ public class UserDTO {
 					: new HashSet<>()) // null 처리
 				.build();
 		}
+		
+	//비밀번호를 가리는 메서드
+	public UserDTO hidePwd() {
+		this.userPwd = null;
+		return this;
+	}
 }

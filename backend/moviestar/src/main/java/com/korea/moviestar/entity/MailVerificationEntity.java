@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class MailVerificationEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int Id;
+	private int id;
 	private String email;
 	private String code;
 	private LocalDateTime expiresAt;

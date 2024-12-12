@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.korea.moviestar.dto.MovieDTO;
+import com.korea.moviestar.dto.MovieThemeDTO;
 import com.korea.moviestar.dto.NowPlayingDTO;
 import com.korea.moviestar.dto.PopularDTO;
 import com.korea.moviestar.dto.ResponseDTO;
@@ -60,6 +61,14 @@ public class MovieController {
 	public ResponseEntity<?> getNowPlayingMovies(){
 		List<NowPlayingDTO> dtos = service.getNowplaying();
 		ResponseDTO<NowPlayingDTO> response = ResponseDTO.<NowPlayingDTO>builder().data(dtos).build();
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@GetMapping("/theme/{themeId}")
+	public ResponseEntity<?> getThemeMovies(@PathVariable int themeId){
+		service.getThemes();
+		List<MovieThemeDTO> dtos = service.getThemeMovies(themeId);
+		ResponseDTO<MovieThemeDTO> response = ResponseDTO.<MovieThemeDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);
 	}
 }

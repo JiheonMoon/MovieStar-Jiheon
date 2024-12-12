@@ -1,8 +1,6 @@
 package com.korea.moviestar.service;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -52,7 +50,7 @@ public class UserService {
 			.build();
 		return response;
 	}
-	
+
 	public UserDTO findByEmail(String email) {
 	    UserEntity user = repository.findByUserEmail(email)
 	        .orElseThrow(() -> new RuntimeException("해당 이메일로 등록된 사용자를 찾을 수 없습니다."));

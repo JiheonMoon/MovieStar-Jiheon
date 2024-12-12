@@ -41,6 +41,11 @@ public class UserService {
 			throw new RuntimeException("이미 사용 중인 닉네임입니다.");
 		}
 		
+		//이메일 중복 확인
+		if(repository.existsByUserEmail(dto.getUserEmail())) {
+			throw new RuntimeException("이미 사용 중인 이메일입니다.");
+		}
+		
 		// 중복 검사 통과 시 사용자 저장
 		dto.setUserLikeList(new HashSet<Integer>());
 		UserEntity entity = repository.save(UserService.toEntity(dto, movies));
@@ -73,7 +78,7 @@ public class UserService {
 	public UserDTO findUser(UserDTO dto, final PasswordEncoder encoder) {
 		UserEntity origin = repository.findByUserName(dto.getUserName());
 		if(origin != null && encoder.matches(dto.getUserPwd(), origin.getUserPwd())) {
-			return new UserDTO(origin).hidePwd();
+			return new UserDTO(origin);
 		}else {
 			return null;
 		}

@@ -55,7 +55,7 @@ public class UserService {
 	
 	public UserDTO findByEmail(String email) {
 	    UserEntity user = repository.findByUserEmail(email)
-	        .orElseThrow(() -> new RuntimeException("해당 이메일로 등록된 사용자를 찾을 수 없습니다."));
+	        .orElseThrow(() -> new RuntimeException(email+"해당 이메일로 등록된 사용자를 찾을 수 없습니다."));
 	    return UserDTO.fromEntity(user).hidePwd();
 	}
 	
@@ -116,13 +116,33 @@ public class UserService {
 		Optional<UserEntity> origin = repository.findById(dto.getUserId());
 		if(origin.isPresent()) {
 			UserEntity entity = origin.get();
+			// 아이디 중복 확인
+			if (!dto.getUserName().equals(entity.getUserName()) && repository.existsByUserName(dto.getUserName()) ) {
+				throw new RuntimeException("이미 사용 중인 아이디입니다.");
+			}
+			
+			// 닉네임 중복 확인
+			if (!dto.getUserNick().equals(entity.getUserNick()) &&repository.existsByUserNick(dto.getUserNick())) {
+				throw new RuntimeException("이미 사용 중인 닉네임입니다.");
+			}
+			
+			//이메일 중복 확인
+			if(!dto.getUserEmail().equals(entity.getUserEmail()) &&repository.existsByUserEmail(dto.getUserEmail())) {
+				throw new RuntimeException("이미 사용 중인 이메일입니다.");
+			}
+			
 			entity.setUserName(dto.getUserName());
 			entity.setUserNick(dto.getUserNick());
 			entity.setUserEmail(dto.getUserEmail());
-			entity.setUserPwd(dto.getUserPwd());
 			return new UserDTO(repository.save(entity)).hidePwd();
 		}
 		return null;
+	}
+	
+	public UserDTO updatePwd(String userEmail, String newPwd) {
+		UserDTO dto = findByEmail(userEmail);
+		dto.setUserPwd(newPwd);
+		return new UserDTO(repository.save(toEntity(dto, movies))).hidePwd();
 	}
 	
 	public static UserEntity toEntity(UserDTO dto, MovieRepository movies) {

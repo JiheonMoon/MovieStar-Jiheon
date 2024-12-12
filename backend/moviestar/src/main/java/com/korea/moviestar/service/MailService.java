@@ -72,9 +72,7 @@ public class MailService {
             throw new RuntimeException("인증 코드가 일치하지 않습니다.");
         }
 
-        // 인증 성공 처리
-        entity.setVerified(true);
-        repository.save(entity);
+        repository.delete(entity);
         return true;
     }
     

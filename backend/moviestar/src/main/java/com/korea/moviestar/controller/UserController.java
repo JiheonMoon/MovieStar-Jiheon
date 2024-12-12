@@ -151,12 +151,12 @@ public class UserController {
 	@PostMapping("/request_verification")
 	public ResponseEntity<?> requestVerification(@RequestParam String email) {
 	    mails.sendVerificationCode(email);
-	    return ResponseEntity.ok().body("인증 코드가 이메일로 전송되었습니다.");
+	    return ResponseEntity.ok().body("인증 코드가 전송되었습니다");
 	}
 	
 	@PostMapping("/verify_email")
 	public ResponseEntity<?> verifyEmail(@RequestParam String email, @RequestParam String code) {
-	    if (mails.verifyCode(email, code)) {
+	    if (mails.verifyCode(email, code, passwordEncoder)) {
 	        return ResponseEntity.ok().body("이메일 인증 성공");
 	    }
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 실패");

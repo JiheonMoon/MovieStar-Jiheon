@@ -25,6 +25,7 @@ import com.korea.moviestar.dto.ResponseDTO;
 import com.korea.moviestar.dto.UserDTO;
 import com.korea.moviestar.entity.UserEntity;
 import com.korea.moviestar.repo.MovieRepository;
+import com.korea.moviestar.repo.UserRepository;
 import com.korea.moviestar.security.TokenProvider;
 import com.korea.moviestar.service.UserService;
 
@@ -38,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 	private final UserService service;
 	private final MovieRepository movies;
+	private final UserRepository repository;
 
 	private final TokenProvider tokenProvider;
 	
@@ -50,7 +52,7 @@ public class UserController {
 		ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);
 	}
-
+	
 	@GetMapping("/{userId}")
 	public ResponseEntity<?> userById(@PathVariable int userId){
 		UserDTO dto = service.findByUserId(userId);

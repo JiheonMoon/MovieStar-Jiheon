@@ -33,7 +33,7 @@ public class MovieDTO {
 	public MovieDTO(MovieEntity entity) {
 		this.movieId = entity.getMovieId();
 		this.movieName = entity.getMovieName();
-		this.movieTheme = entity.getMovieTheme().stream().map(theme -> theme.getThemeId()).collect(Collectors.toSet());
+		this.movieTheme = entity.getMovieThemes().stream().map(theme -> theme.getTheme().getThemeId()).collect(Collectors.toSet());
 		this.movieOpDate = entity.getMovieOpDate();
 		this.movieScore = entity.getMovieScore();
 		this.moviePoster = entity.getMoviePoster();

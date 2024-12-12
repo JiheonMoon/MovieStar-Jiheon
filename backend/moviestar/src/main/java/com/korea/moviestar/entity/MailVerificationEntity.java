@@ -25,5 +25,4 @@ public class MailVerificationEntity {
 	private String email;
 	private String code;
 	private LocalDateTime expiresAt;
-	private boolean verified;
 }

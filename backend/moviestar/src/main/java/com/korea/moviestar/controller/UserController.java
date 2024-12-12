@@ -177,10 +177,26 @@ public class UserController {
 	
 	@PutMapping("/private/modify")
 	public ResponseEntity<?> modifyUser(@RequestBody UserDTO dto){
-		dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
-		UserDTO response = service.update(dto);
-		return ResponseEntity.ok().body(response);
+		try {
+			dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
+			UserDTO response = service.update(dto);
+			return ResponseEntity.ok().body(response);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		
 	}
 	
+	@PutMapping("/modifyPwd")
+	public ResponseEntity<?> modifyPwd(@RequestParam String email, @RequestBody String pwd){
+		try {
+			String newPwd = passwordEncoder.encode(pwd);
+			UserDTO response = service.updatePwd(email, newPwd);
+			return ResponseEntity.ok().body(response);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		
+	}
 	
 }

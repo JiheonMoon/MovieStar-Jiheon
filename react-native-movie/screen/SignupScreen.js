@@ -101,7 +101,7 @@ const Signup = () => {
       <View style={styles.container}>
         <View style={styles.contentcontainer}>
         <View style={styles.titletext}>
-          <TouchableOpacity  onPress={() => navigation.navigate('Login')}>
+          <TouchableOpacity  onPress={() => navigation.navigate('LoginStack')}>
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
           <Text style={styles.header}>회원가입</Text>

@@ -154,11 +154,13 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
             {/* 로그인, 로그아웃 버튼 */}
             { user ? (
               <>
-                <button onClick={navigateToMyPage}>마이페이지</button>
-                <button onClick={handleLogout}>로그아웃</button>
+                <div>
+                  <button onClick={navigateToMyPage} className="mypage-button-main">마이페이지</button>
+                  <button onClick={handleLogout} className="logout-button-main">로그아웃</button>
+                </div>
               </>
             ) : (
-                <button onClick={navigateToLoginScreen}>로그인</button>
+                <button onClick={navigateToLoginScreen} className="login-button-main">로그인</button>
             )}
         </header>
 

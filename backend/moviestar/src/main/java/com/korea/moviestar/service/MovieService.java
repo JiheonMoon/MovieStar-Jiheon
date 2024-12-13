@@ -98,6 +98,7 @@ public class MovieService {
 		MovieEntity entity = MovieEntity.builder().movieId(movieId).movieName((String) response.get("title"))
 				.movieOpDate((String) response.get("release_date")).movieScore((double) response.get("vote_average"))
 				.moviePoster((String) response.get("poster_path")).movieOverview((String) response.get("overview"))
+				.movieBackdrop((String) response.get("backdrop_path"))
 				.movieActors(actorEntities).build();
 		
 		Set<MovieThemeEntity> themeEntities = genres.stream().map(genre -> {

@@ -30,7 +30,7 @@ public class MovieEntity {
 	private int movieId;
 	private String movieName;
 	
-	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
 	private Set<MovieThemeEntity> movieThemes;
 	
 	private String movieOpDate;

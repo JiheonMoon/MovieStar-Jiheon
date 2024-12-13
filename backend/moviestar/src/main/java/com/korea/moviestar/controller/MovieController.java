@@ -70,4 +70,10 @@ public class MovieController {
 		ResponseDTO<MovieThemeDTO> response = ResponseDTO.<MovieThemeDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);
 	}
+	
+	@GetMapping("/video/{movieId}")
+	public ResponseEntity<?> getVideoLink(@PathVariable int movieId){
+		MovieDTO dto = service.getVideoPath(movieId);
+		return ResponseEntity.ok().body(dto);
+	}
 }

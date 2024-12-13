@@ -36,9 +36,11 @@ public class MovieEntity {
 	private String movieOpDate;
 	private double movieScore;
 	private String moviePoster;
+	private String movieVideo;
 	@Column(length = 65535, columnDefinition = "TEXT")
 	private String movieOverview;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "movie_id")
 	private List<ActorEntity> movieActors;
+	
 }

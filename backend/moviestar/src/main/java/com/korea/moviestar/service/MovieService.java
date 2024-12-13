@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.korea.moviestar.dto.MovieDTO;
 import com.korea.moviestar.dto.MovieThemeDTO;
 import com.korea.moviestar.dto.NowPlayingDTO;
 import com.korea.moviestar.dto.PopularDTO;
@@ -255,6 +256,17 @@ public class MovieService {
 		for(ThemeEntity theme : entities) {
 			getAndSaveThemeMovies(theme.getThemeId());
 		}
+	}
+	
+	public MovieDTO getVideoPath(int movieId) {
+		MovieEntity movie = getMovie(movieId);
+		
+		Map<String, Object> response = restTemplate
+				.getForObject(BASE_URL + "/movie/"+ movieId+"/videos?api_key=" + apiKey + "&language=ko-KR", Map.class);
+		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
+		String key = (String)results.get(0).get("key");
+		movie.setMovieVideo(key);
+		return new MovieDTO(movies.save(movie));
 	}
 
 }

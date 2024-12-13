@@ -27,6 +27,7 @@ public class MovieDTO {
 	String movieOpDate;
 	double movieScore;
 	String moviePoster;
+	String movieVideo;
 	String movieOverview;
 	List<ActorDTO> movieActors;
 	
@@ -38,6 +39,7 @@ public class MovieDTO {
 		this.movieScore = entity.getMovieScore();
 		this.moviePoster = entity.getMoviePoster();
 		this.movieOverview = entity.getMovieOverview();
+		this.movieVideo = entity.getMovieVideo();
 		this.movieActors = entity.getMovieActors().stream().map(ActorDTO::new).collect(Collectors.toList());
 	}
 }

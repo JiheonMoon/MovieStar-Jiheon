@@ -75,7 +75,7 @@ const Signup = () => {
 
                 // Success message
                 Alert.alert("회원가입 완료");
-                navigation.navigate("Login"); // 로그인 화면으로 이동
+                navigation.navigate("LoginStack"); // 로그인 화면으로 이동
 
                 // Clear form data
                 setFormData({

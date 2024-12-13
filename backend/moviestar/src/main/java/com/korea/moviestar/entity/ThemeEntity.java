@@ -23,6 +23,6 @@ public class ThemeEntity {
 	private int themeId;
 	private String themeName;
 	
-	@OneToMany(mappedBy = "theme", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "theme", cascade = CascadeType.ALL)
     private Set<MovieThemeEntity> movieThemes;
 }

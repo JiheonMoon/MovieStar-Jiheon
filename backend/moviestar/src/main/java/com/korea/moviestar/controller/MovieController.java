@@ -66,7 +66,6 @@ public class MovieController {
 	
 	@GetMapping("/theme/{themeId}")
 	public ResponseEntity<?> getThemeMovies(@PathVariable int themeId){
-		service.getThemes();
 		List<MovieThemeDTO> dtos = service.getThemeMovies(themeId);
 		ResponseDTO<MovieThemeDTO> response = ResponseDTO.<MovieThemeDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);

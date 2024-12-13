@@ -57,7 +57,8 @@ public class MovieService {
 
 		return themes.findAll();
 	}
-
+	
+	@Transactional
 	public List<ThemeEntity> getThemes() {
 		Map<String, Object> response = restTemplate.getForObject(BASE_URL + "/genre/movie/list?api_key=" + apiKey + "&language=ko-KR",
 				Map.class);
@@ -138,7 +139,7 @@ public class MovieService {
 	}
 
 	// 1시간마다 자동 갱신
-	@Scheduled(cron = "0 0 0/1 * * *")
+	@Scheduled(cron = "0 2 0/1 * * *")
 	@Transactional
 	public List<TopRatedDTO> saveAndGetTopRated() {
 		topRates.truncateTopRated(); // 테이블 비우기
@@ -169,7 +170,7 @@ public class MovieService {
 	}
 
 	// 1시간마다 자동 갱신
-	@Scheduled(cron = "0 0 0/1 * * *")
+	@Scheduled(cron = "0 3 0/1 * * *")
 	@Transactional
 	public List<NowPlayingDTO> saveAndGetNowPlaying() {
 		nowPlayings.truncateNowPlaying();
@@ -197,8 +198,8 @@ public class MovieService {
 		return entities.stream().map(NowPlayingDTO::new).collect(Collectors.toList());
 	}
 	
-	public List<MovieThemeDTO> getThemeMovies(int themeId){
-		System.out.println(BASE_URL + "/discover/movie?api_key=" + apiKey + "&language=ko-KR&page=1&sort_by=popularity.desc&with_genres=" + themeId);
+
+	public List<MovieThemeDTO> getAndSaveThemeMovies(int themeId){
 		
 		ThemeEntity theme = themes.findById(themeId).get();
 		Set<Integer> updatedMovieIds = new HashSet<>();
@@ -211,22 +212,49 @@ public class MovieService {
 		List<CompletableFuture<MovieThemeEntity>> futures = results.stream()
 				.map(item -> CompletableFuture.supplyAsync(() ->{
 					int movieId = (int) item.get("id");
-					int currentRank = rank.getAndIncrement();
-					updatedMovieIds.add(movieId);
-					MovieEntity movie = getMovie(movieId);
-					MovieThemeEntity mt =movieThemes.findByMovieAndTheme(movie, theme);
-					mt.setMovieRank(currentRank);
-					return mt;
+		            updatedMovieIds.add(movieId);
+		            int currentRank = rank.getAndIncrement();
+
+		            MovieEntity movie = getMovie(movieId);
+		            
+		            MovieThemeEntity existingEntity = movieThemes.findByMovieAndTheme(movie, theme);
+		            
+		            if (existingEntity != null) {
+	                    existingEntity.setMovieRank(currentRank);
+	                    return existingEntity;
+	                }
+		            else {
+		            	return MovieThemeEntity.builder().movie(movie).theme(theme).movieRank(currentRank).build();
+		            }
 				})).collect(Collectors.toList());
 		
 		
 		List<MovieThemeEntity> mtEntities = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 		
-		movieThemes.saveAll(mtEntities);
-		movieThemes.clearOldRanks(theme, updatedMovieIds);
-		List<MovieThemeEntity> entities = movieThemes.findAllByTheme(theme);
-		return entities.stream().map(MovieThemeDTO::new).collect(Collectors.toList());
+		return saveEntities(mtEntities, theme, updatedMovieIds);
 		
+	}
+	
+	@Transactional
+	public List<MovieThemeDTO> saveEntities(List<MovieThemeEntity> mtEntities, ThemeEntity theme, Set<Integer> updatedMovieIds) {
+	    movieThemes.saveAll(mtEntities);
+	    movieThemes.clearOldRanks(theme, updatedMovieIds);
+	    return getThemeMovies(theme.getThemeId());
+	}
+	
+	public List<MovieThemeDTO> getThemeMovies(int themeId){
+		List<MovieThemeEntity> entities = movieThemes.findAllByTheme(themes.findById(themeId).get());
+		return entities.stream().map(MovieThemeDTO::new).collect(Collectors.toList());
+	}
+	
+
+	@Scheduled(cron = "0 10 0/1 * * *")
+	public void getAndSaveAllThemeMovies() {
+		getThemes();
+		List<ThemeEntity> entities = themes.findAll();
+		for(ThemeEntity theme : entities) {
+			getAndSaveThemeMovies(theme.getThemeId());
+		}
 	}
 
 }

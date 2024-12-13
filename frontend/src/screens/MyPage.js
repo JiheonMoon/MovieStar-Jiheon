@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import { IoHome } from "react-icons/io5";
 import '../css/main/MyPage.css';
+import logo from "../logo/logo.png"
 
 const MyPage = () => {
     const { user, setUser } = useContext(AppContext);
@@ -138,142 +139,149 @@ const MyPage = () => {
         }
     };
 
+    const handleLogoClick = () => {
+        navigate("/home")
+    }
+
     return (
         <div className="mypage-container">
-            <div className="home-button-container">
-            <button
-                className="home-button"
-                onClick={navigateToHome}
-            >
-                <IoHome /> 홈
-            </button>
-            <button
-                className="logout-button"
-                onClick={() => {
-                setUser(null);
-                navigate('/login');
-                }}
-            >
-                로그아웃
-            </button>
-            </div>
-
-            <h1>마이페이지</h1>
-            
-            <div className="mypage-tabs">
-                <button 
-                    className={activeTab === 'profile' ? 'active' : ''}
-                    onClick={() => setActiveTab('profile')}
-                >
-                    프로필 수정
-                </button>
-                <button 
-                    className={activeTab === 'password' ? 'active' : ''}
-                    onClick={() => setActiveTab('password')}
-                >
-                    비밀번호 변경
-                </button>
-            </div>
-
-            {activeTab === 'profile' && (
-                <div className="profile-edit-section">
-                    <h2>프로필 수정</h2>
-                    <div className="input-group">
-                        <label>아이디</label>
-                        <input
-                            type="text"
-                            name="newUserName"
-                            value={formData.newUserName}
-                            onChange={handleInputChange}
-                            placeholder="새 아이디 입력"
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>닉네임</label>
-                        <input
-                            type="text"
-                            name="userNick"
-                            value={formData.userNick}
-                            onChange={handleInputChange}
-                            placeholder="새 닉네임 입력"
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>이메일</label>
-                        <input
-                            type="email"
-                            name="userEmail"
-                            value={formData.userEmail}
-                            onChange={handleInputChange}
-                            placeholder="새 이메일 입력"
-                        />
-                    </div>
-                    <button onClick={updateProfile}>프로필 업데이트</button>
+            <header className="mypage-header">
+                <img src={logo} className="signup-logo" onClick={handleLogoClick} />
+                <div className="home-button-container">
+                    <button
+                        className="home-button"
+                        onClick={navigateToHome}
+                    >
+                        <IoHome /> 홈
+                    </button>
+                    <button
+                        className="logout-button"
+                        onClick={() => {
+                        setUser(null);
+                        navigate('/login');
+                        }}
+                    >
+                        로그아웃
+                    </button>
                 </div>
-            )}
+            </header>
 
-            {activeTab === 'password' && (
-                <div className="password-edit-section">
-                    <h2>비밀번호 변경</h2>
-                    <div className="input-group">
-                        <label>현재 비밀번호</label>
-                        <input
-                            type="password"
-                            name="currentPassword"
-                            value={formData.currentPassword}
-                            onChange={handleInputChange}
-                            placeholder="현재 비밀번호 입력"
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>새 비밀번호</label>
-                        <input
-                            type="password"
-                            name="newPassword"
-                            value={formData.newPassword}
-                            onChange={handleInputChange}
-                            placeholder="새 비밀번호 입력"
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>새 비밀번호 확인</label>
-                        <input
-                            type="password"
-                            name="confirmNewPassword"
-                            value={formData.confirmNewPassword}
-                            onChange={handleInputChange}
-                            placeholder="새 비밀번호 다시 입력"
-                        />
-                    </div>
-                    <button onClick={updatePassword}>비밀번호 변경</button>
+            <div className="mypage-body">
+                <h1>마이페이지</h1>
+                <div className="mypage-tabs">
+                    <button 
+                        className={activeTab === 'profile' ? 'active' : ''}
+                        onClick={() => setActiveTab('profile')}
+                    >
+                        프로필 수정
+                    </button>
+                    <button 
+                        className={activeTab === 'password' ? 'active' : ''}
+                        onClick={() => setActiveTab('password')}
+                    >
+                        비밀번호 변경
+                    </button>
                 </div>
-            )}
 
-            {message && (
-                <div className={`message ${messageType}`}>
-                    {message}
-                </div>
-            )}
-
-        <div className="liked-movies-section">
-            <h2>좋아요 표시한 영화</h2>
-            {user.userLikeList && user.userLikeList.length > 0 ? (
-                <div className="liked-movies-flex">
-                    {user.userLikeList.map((movie, index) => (
-                        <div key={movie.id} className="liked-movie-item">
-                            <img 
-                                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
-                                alt={movie.title} 
+                {activeTab === 'profile' && (
+                    <div className="profile-edit-section">
+                        <h2>프로필 수정</h2>
+                        <div className="input-group">
+                            <label>아이디</label>
+                            <input
+                                type="text"
+                                name="newUserName"
+                                value={formData.newUserName}
+                                onChange={handleInputChange}
+                                placeholder="새 아이디 입력"
                             />
-                            <p>{movie.title}</p>
                         </div>
-                    ))}
-                </div>
-            ) : (
-                <p>좋아요 표시한 영화가 없습니다.</p>
-            )}
-        </div>
+                        <div className="input-group">
+                            <label>닉네임</label>
+                            <input
+                                type="text"
+                                name="userNick"
+                                value={formData.userNick}
+                                onChange={handleInputChange}
+                                placeholder="새 닉네임 입력"
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>이메일</label>
+                            <input
+                                type="email"
+                                name="userEmail"
+                                value={formData.userEmail}
+                                onChange={handleInputChange}
+                                placeholder="새 이메일 입력"
+                            />
+                        </div>
+                        <button onClick={updateProfile}>프로필 업데이트</button>
+                    </div>
+                )}
 
+                {activeTab === 'password' && (
+                    <div className="password-edit-section">
+                        <h2>비밀번호 변경</h2>
+                        <div className="input-group">
+                            <label>현재 비밀번호</label>
+                            <input
+                                type="password"
+                                name="currentPassword"
+                                value={formData.currentPassword}
+                                onChange={handleInputChange}
+                                placeholder="현재 비밀번호 입력"
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>새 비밀번호</label>
+                            <input
+                                type="password"
+                                name="newPassword"
+                                value={formData.newPassword}
+                                onChange={handleInputChange}
+                                placeholder="새 비밀번호 입력"
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>새 비밀번호 확인</label>
+                            <input
+                                type="password"
+                                name="confirmNewPassword"
+                                value={formData.confirmNewPassword}
+                                onChange={handleInputChange}
+                                placeholder="새 비밀번호 다시 입력"
+                            />
+                        </div>
+                        <button onClick={updatePassword}>비밀번호 변경</button>
+                    </div>
+                )}
+
+                {message && (
+                    <div className={`message ${messageType}`}>
+                        {message}
+                    </div>
+                )}
+
+                <div className="liked-movies-section">
+                    <h2>좋아요 표시한 영화</h2>
+                    {user.userLikeList && user.userLikeList.length > 0 ? (
+                        <div className="liked-movies-flex">
+                            {user.userLikeList.map((movie, index) => (
+                                <div key={movie.id} className="liked-movie-item">
+                                    <img 
+                                        src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+                                        alt={movie.title} 
+                                    />
+                                    <p>{movie.title}</p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>좋아요 표시한 영화가 없습니다.</p>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

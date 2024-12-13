@@ -23,7 +23,7 @@ const MypageScreen= () => {
             ...prev,
             [name]: value
         }));
-        setMessage(''); // 입력 시 메시지 초기화
+        setMessage('');
     };
 
     const handleProfileUpdate = async() => {

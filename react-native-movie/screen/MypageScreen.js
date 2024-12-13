@@ -105,7 +105,7 @@ const MypageScreen= () => {
                 const storedUser = await AsyncStorage.getItem("user");
                 if (storedUser) {
                     const parsedUser = JSON.parse(storedUser);
-                    setUser(parsedUser); // 로그인 후 상태에 반영
+                    setUser(parsedUser);
                     setFormData({
                         userName: parsedUser.userName,
                         userNick: parsedUser.userNick,
@@ -118,7 +118,7 @@ const MypageScreen= () => {
         };
 
         loadUserData();
-    }, []); // 컴포넌트가 마운트될 때 한 번만 실행
+    }, []);
 
     
     return(

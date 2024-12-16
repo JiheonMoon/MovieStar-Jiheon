@@ -1,12 +1,6 @@
-.main-page {
-    height: 300vh;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-}
-
+/* 공통 헤더 스타일 */
 .main-header {
-  position: relative;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -16,60 +10,92 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 3px solid #ddd;
-  }
-  
-  .main-header h1 {
-    margin: 0;
-    font-size: 30px;
-    font-weight: bold;
+  z-index: 10;
+  box-sizing: border-box; /* 레이아웃 계산 오류 방지 */
+}
+
+.main-header .main-logo {
+  max-width: 150px;
+  height: auto;
+  cursor: pointer;
+}
+
+.main-header .search-bar {
+  flex-grow: 1;
+  max-width: 300px;
+  margin: 0 20px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #333;
+  color: #ddd;
+}
+
+.main-header .button-group {
+  display: flex;
+  gap: 10px;
+  margin-right: 20px; /* 오른쪽 여백 증가 */
+  justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+  flex-shrink: 0; /* 버튼 그룹이 축소되지 않도록 설정 */
+}
+
+.main-header .button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* 버튼 스타일 */
+.main-header .mypage-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.main-header .mypage-button:hover {
+  background-color: #0056b3;
+}
+
+.main-header .logout-button {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.main-header .logout-button:hover {
+  background-color: #d32f2f;
+}
+
+.main-header .login-button {
+  background-color: #d81f26;
+  color: white;
+}
+
+.main-header .login-button:hover {
+  background-color: #a3151d;
+}
+
+/* 반응형 설정 */
+@media (max-width: 768px) {
+  .main-header {
+    flex-wrap: wrap; /* 컨텐츠가 줄바꿈 가능하도록 설정 */
+    padding: 10px; /* 패딩 줄여 공간 확보 */
   }
 
-  .main-header input {
-    width: 100%;
-    max-width: 400px;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #444;
-    border-radius: 4px;
-    background-color: #333;
-    color: #ddd;
-    flex-grow: 1;
-    margin: 0 20px;
+  .main-header .search-bar {
+    max-width: 100%;
+    margin: 10px 0;
   }
 
-  .main-logo {
-    max-width: 200px;
-    width: auto;
-    height: auto;
-    cursor: pointer;
+  .main-header .button-group {
+    flex-wrap: wrap; /* 버튼 그룹도 줄바꿈 가능 */
+    justify-content: center; /* 작은 화면에서는 중앙 정렬 */
+    gap: 15px; /* 버튼 간 여백 증가 */
+    margin-right: 0; /* 오른쪽 여백 제거 */
   }
 
-  .main-header button {
-    right: 100px; /* 우측 여백 */
-    padding: 10px 10px;
-    font-size: 14px;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 50px;
+  .main-header .main-logo {
+    max-width: 100px; /* 작은 화면에서 로고 크기 축소 */
   }
-
-  .mypage-button-main {
-    background-color: #007bff;
-  }
-
-  .mypage-button-main:hover {
-    background-color: #0056b3;
-  }
-
-  .logout-button-main,
-  .login-button-main {
-    background-color: #d81f26;
-  }
-
-  .logout-button-main:hover,
-  .login-button-main:hover {
-    background-color: #a3151d;
-  }
-  
+}

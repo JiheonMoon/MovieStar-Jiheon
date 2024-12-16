@@ -66,8 +66,6 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     const [popularMovies, setPopularMovies] = useState([]); 
     const [nowPlayingMovies, setNowPlayingMovies] = useState([]); 
     const [topRatedMovies, setTopRatedMovies] = useState([]); 
-    // const [genres,setGenres] = useState([]);
-    // const [moviesByGenre, setMoviesByGenre] = useState({}); // 장르별 영화 상태
     
     // 검색 관련 상태 관리
     const [searchQuery, setSearchQuery] = useState(""); 

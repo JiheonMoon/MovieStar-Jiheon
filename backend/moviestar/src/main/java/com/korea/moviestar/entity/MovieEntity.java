@@ -3,6 +3,8 @@ package com.korea.moviestar.entity;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,19 +29,19 @@ public class MovieEntity {
 	@Id
 	private int movieId;
 	private String movieName;
-	@ManyToMany
-	@JoinTable(
-			name = "movie_theme_table",
-			joinColumns = @JoinColumn(name="movie_id"),
-			inverseJoinColumns = @JoinColumn(name = "theme_id")
-	)
-	private Set<ThemeEntity> movieTheme;
+	
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+	private Set<MovieThemeEntity> movieThemes;
+	
 	private String movieOpDate;
 	private double movieScore;
 	private String moviePoster;
+	private String movieVideo;
+	private String movieBackdrop;
 	@Column(length = 65535, columnDefinition = "TEXT")
 	private String movieOverview;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "movie_id")
 	private List<ActorEntity> movieActors;
+	
 }

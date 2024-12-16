@@ -84,28 +84,4 @@ export const fetchMovieCredits = async (movieId) => {
   }
 };
 
-// // 장르 목록 가져오는 함수
-// export const fetchGenres = async () => {
-//   try {
-//     const response = await instance.get("/genre/movie/list");
-//     return response.data.genres; // 장르 목록 반환
-//   } catch (error) {
-//     console.error("Error fetching genres:", error);
-//     return [];
-//   }
-// };
 
-// // 특정 장르의 영화 가져오는 함수
-// export const fetchMoviesByGenre = async (genreId) => {
-//   try {
-//     const response = await instance.get("/discover/movie", {
-//       params: {
-//         with_genres: genreId, // 특정 장르 ID 필터
-//       },
-//     });
-//     return response.data.results; // 영화 데이터 반환
-//   } catch (error) {
-//     console.error("Error fetching movies by genre:", error);
-//     return [];
-//   }
-// };

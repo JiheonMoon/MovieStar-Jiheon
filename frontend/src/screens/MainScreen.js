@@ -141,26 +141,33 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
   
     return (
       <div className="main-page">
-        <header className="main-header">
-          <img src={logo} className="main-logo" onClick={handleLogoClick}/>
+          <header className="main-header">
+            <img src={logo} className="main-logo" onClick={handleLogoClick} />
             {/* 영화 검색 입력창 */}
             <input
-            type="text"
-            placeholder="Search Movies..."
-            onChange={(e) => handleSearch(e.target.value)}
+              type="text"
+              className="search-bar"
+              placeholder="Search Movies..."
+              onChange={(e) => handleSearch(e.target.value)}
             />
             {/* 로그인, 로그아웃 버튼 */}
-            { user ? (
-              <>
-                <div>
-                  <button onClick={navigateToMyPage} className="mypage-button-main">마이페이지</button>
-                  <button onClick={handleLogout} className="logout-button-main">로그아웃</button>
-                </div>
-              </>
-            ) : (
-                <button onClick={navigateToLoginScreen} className="login-button-main">로그인</button>
-            )}
-        </header>
+            <div className="button-group">
+              {user ? (
+                <>
+                  <button onClick={navigateToMyPage} className="mypage-button button">
+                    마이페이지
+                  </button>
+                  <button onClick={handleLogout} className="logout-button button">
+                    로그아웃
+                  </button>
+                </>
+              ) : (
+                <button onClick={navigateToLoginScreen} className="login-button button">
+                  로그인
+                </button>
+              )}
+            </div>
+          </header>
 
         {/* 검색 결과 또는 기본 영화 리스트 조건부 렌더링 */}
         {searchQuery && filteredMovies.length > 0 ? (

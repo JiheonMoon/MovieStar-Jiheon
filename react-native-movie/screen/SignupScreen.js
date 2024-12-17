@@ -75,7 +75,7 @@ const Signup = () => {
 
                 // Success message
                 Alert.alert("회원가입 완료");
-                navigation.navigate("LoginStack"); // 로그인 화면으로 이동
+                navigation.navigate("Login"); // 로그인 화면으로 이동
 
                 // Clear form data
                 setFormData({
@@ -101,7 +101,7 @@ const Signup = () => {
       <View style={styles.container}>
         <View style={styles.contentcontainer}>
         <View style={styles.titletext}>
-          <TouchableOpacity  onPress={() => navigation.navigate('LoginStack')}>
+          <TouchableOpacity  onPress={() => navigation.navigate('Login')}>
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
           <Text style={styles.header}>회원가입</Text>

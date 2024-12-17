@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,9 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "movie_theme_table", uniqueConstraints = {
-	    @UniqueConstraint(columnNames = {"movie_id", "theme_id"})
-	})
+@Table(name = "movie_theme_table")
 public class MovieThemeEntity {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

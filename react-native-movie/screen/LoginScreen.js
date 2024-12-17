@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { View, TouchableOpacity, Text, TextInput,Button, StyleSheet,KeyboardAvoidingView,ScrollView } from "react-native";
-import { Linking, Platform } from "react-native";
+import { View, TouchableOpacity, Text, TextInput,Button, StyleSheet } from "react-native";
+import { Linking } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppContext } from "../context/AppContext";
+
 
 const LoginScreen = () => {
     const [formData, setFormData] = useState({ userName: "", userPwd: "" });
@@ -69,78 +70,73 @@ const LoginScreen = () => {
     };
 
     return(
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "android" ? "height" : "padding"}
-            style={{ flex: 1,  }}
-        >
-            <ScrollView contentContainerStyle={styles.background}>
-                <View style={styles.container}>
-                    <View style={styles.loginForm}>
-                        <Text style={styles.logininput}>Login</Text>
-                        {/* 로그인 폼 */}
-                        <View>
-                        <Text style={styles.textlogin}>아이디</Text>
-                        <TextInput
-                            style={styles.textlogininput}
-                            placeholder="아이디를 입력하세요"
-                            placeholderTextColor='#A6A6A6'
-                            value={formData.userName}
-                            onChangeText={(value) => setFormData({ ...formData, userName: value })}
-                        />
-                        </View>
-
-                        <View>
-                        <Text style={styles.textlogin}>비밀번호</Text>
-                            <TextInput
-                                style={styles.textpasswordinput}
-                                placeholder="비밀번호를 입력하세요"
-                                placeholderTextColor='#A6A6A6'
-                                value={formData.userPwd}
-                                onChangeText={(value) => setFormData({ ...formData, userPwd: value })}
-                                secureTextEntry
-                            />
-                        </View>
-
-                        <TouchableOpacity onPress={handleSubmit}>
-                            <Text style={styles.Loginbutton}>로그인</Text>
-                        </TouchableOpacity>
-
-
-                        {/* 에러 메시지 */}
-                        {error && <Text style={styles.errortext}>{error}</Text>}
-
-                        {/* 소셜 로그인 섹션 */}
-                        <View>
-                            <Text style={styles.socialinput}>SocialLogin</Text>
-                                <View>
-                                    <TouchableOpacity onPress={handleNaverLogin}>
-                                        <Text style={styles.naverbutton}>네이버 로그인</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity  onPress={handleKakaoLogin}>
-                                        <Text style={styles.kakaobutton}>카카오 로그인</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity  onPress={handleGoogleLogin}>
-                                        <Text style={styles.googlebutton}>구글 로그인</Text>
-                                    </TouchableOpacity>
-                                </View>
-                        </View>
+        <View style={styles.background}>
+            <View style={styles.container}>
+                <View style={styles.loginForm}>
+                    <Text style={styles.logininput}>Login</Text>
+                    {/* 로그인 폼 */}
+                    <View>
+                    <Text style={styles.textlogin}>아이디</Text>
+                    <TextInput
+                        style={styles.textlogininput}
+                        placeholder="아이디를 입력하세요"
+                        placeholderTextColor='#A6A6A6'
+                        value={formData.userName}
+                        onChangeText={(value) => setFormData({ ...formData, userName: value })}
+                    />
                     </View>
 
-                    {/* 링크 섹션 */}
-                    <View style={styles.Link}>
-                        <TouchableOpacity onPress={() => navigation.navigate("FindId")}>
-                            <Text style={styles.Linktext}>아이디 찾기</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate("FindPassword")}>
-                            <Text style={styles.Linktext}>비밀번호 찾기</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-                            <Text style={styles.Linktext}>회원가입</Text>
-                        </TouchableOpacity>
+                    <View>
+                    <Text style={styles.textlogin}>비밀번호</Text>
+                        <TextInput
+                            style={styles.textpasswordinput}
+                            placeholder="비밀번호를 입력하세요"
+                            placeholderTextColor='#A6A6A6'
+                            value={formData.userPwd}
+                            onChangeText={(value) => setFormData({ ...formData, userPwd: value })}
+                            secureTextEntry
+                        />
+                    </View>
+
+                    <TouchableOpacity onPress={handleSubmit}>
+                        <Text style={styles.Loginbutton}>로그인</Text>
+                    </TouchableOpacity>
+
+
+                    {/* 에러 메시지 */}
+                    {error && <Text style={styles.errortext}>{error}</Text>}
+
+                    {/* 소셜 로그인 섹션 */}
+                    <View>
+                        <Text style={styles.socialinput}>SocialLogin</Text>
+                            <View>
+                                <TouchableOpacity onPress={handleNaverLogin}>
+                                    <Text style={styles.naverbutton}>네이버 로그인</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity  onPress={handleKakaoLogin}>
+                                    <Text style={styles.kakaobutton}>카카오 로그인</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity  onPress={handleGoogleLogin}>
+                                    <Text style={styles.googlebutton}>구글 로그인</Text>
+                                </TouchableOpacity>
+                            </View>
                     </View>
                 </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
+
+                {/* 링크 섹션 */}
+                <View style={styles.Link}>
+                    <TouchableOpacity onPress={() => navigation.navigate("FindId")}>
+                        <Text style={styles.Linktext}>아이디 찾기</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("FindPassword")}>
+                        <Text style={styles.Linktext}>비밀번호 찾기</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+                        <Text style={styles.Linktext}>회원가입</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
     )
 };
 

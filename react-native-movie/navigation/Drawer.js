@@ -9,7 +9,6 @@ import SignupScreen from "../screen/SignupScreen";
 import FindIdScreen from "../component/FIndId";
 import FindPwdScreen from "../component/FindPwd";
 import LikeScreen from "../screen/LikeScreen";
-import MypageScreen from "../screen/MypageScreen";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
 import { Image,Text,View,StyleSheet,TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -22,8 +21,6 @@ const Stack = createStackNavigator();
 const StackDetailNavigator = () => {
     return (
       <Stack.Navigator>
-        {/* <Stack.Screen name="Main" component={MainScreen} 
-            options={{ headerShown: false,  }}/> */}
         <Stack.Screen name="HomeStack" component={HomeScreen} 
             options={{ headerShown: false,  }}/>
         <Stack.Screen name="DetailScreen" component={DetailScreen} 
@@ -36,7 +33,7 @@ const StackDetailNavigator = () => {
   const StackLoginNavigator = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="LoginStack" component={LoginScreen} 
+        <Stack.Screen name="Login" component={LoginScreen} 
             options={{ headerShown: false}} />
         <Stack.Screen name="Signup" component={SignupScreen} 
             options={{ headerShown: false}} />
@@ -63,7 +60,6 @@ const DrawerNavigator = () => {
     // 로그아웃 버튼 클릭 시
     const handleLogout = () => {
         setUser(null)
-        navigation.navigate('Home')
         
     }
 
@@ -71,27 +67,14 @@ const DrawerNavigator = () => {
     const labelHandleLogout = () => {
         setUser(null)
         navigation.navigate('Login')
-    }
-
-    const labelHandleMypage = () => {
-        navigation.navigate('Mypage')
-    }
-
-    const labelHandleLogoutMypage = () => {
-        alert('로그인 후 이용해주세요')
-        navigation.navigate('Home')
         
     }
 
-    const labelHandleLike = () => {
-        navigation.navigate('Like')
-    }
-
     return(
-        <Drawer.Navigator initialRouteName="Main"
+        <Drawer.Navigator
             screenOptions={({navigation})=> ({
                 drawerStyle:{backgroundColor: 'black',
-                    width:160, 
+                    width:180, 
                 },
                 drawerLabelStyle:{fontSize:16,color:'white'},
                 drawerActiveTintColor:'#4caf50',  
@@ -116,15 +99,8 @@ const DrawerNavigator = () => {
             })}
         >
             <Drawer.Screen name="Main" component={MainScreen} 
-                options={ {headerShown: false,
-                    drawerLabelStyle:{
-                        display: 'none',  // 드로어 라벨을 숨깁니다
-                    },
-                    drawerItemStyle:{
-                        display:'none'
-                    }
-            }}/>
-            
+                options={{ headerShown: false, }}/>
+
             <Drawer.Screen name="Home" component={StackDetailNavigator}
                     options={{
                         headerTitle:() => {
@@ -144,9 +120,9 @@ const DrawerNavigator = () => {
                             height:70,
                         },
                         drawerLabel:()=>(
-                        <View style={{flexDirection:'row',marginLeft:-10}}>
+                        <View style={{flexDirection:'row',marginRight:5}}>
                             <MaterialCommunityIcons name="home" size={20} color="white" />
-                            <Text style={{color:"white",marginLeft:10,fontWeight:'blod'}}>Home</Text>
+                            <Text style={{color:"white",}}>Home</Text>
                         </View>
                         )
                     }} />
@@ -177,70 +153,26 @@ const DrawerNavigator = () => {
                     drawerLabel: ()=>{
                         return(
                         <TouchableOpacity onPress={user ? labelHandleLogout : navigateToLoginScreen}>
-                            <View style={{flexDirection:'row',marginLeft:-10}}>
+                            <Text style={{fontSize:16,color:'white'}}>
                                 {user ? 
                                 <>
-                                <MaterialCommunityIcons name="logout" size={20} color="#fff" />
-                                <Text style={{ color:'#fff',marginLeft:10 }}>Logout</Text>
+                                <MaterialCommunityIcons name="logout" size={16} color="#fff" />
+                                <Text style={{ marginLeft: 10 }}>Logout</Text>
                                 </> 
                                 :
                                 <>
-                                <MaterialCommunityIcons name="login" size={20} color="#fff" />
-                                <Text style={{ color:'#fff',marginLeft:10 }}>Login</Text>
+                                <MaterialCommunityIcons name="login" size={16} color="#fff" />
+                                <Text style={{ marginLeft: 10 }}>Login</Text>
                                 </>
                                 }
-                            </View>
+                            </Text>
                         </TouchableOpacity>
                         )
-                    } ,                 
+                    }                       
                 })}/>
-            <Drawer.Screen name="Mypage" component={MypageScreen}
-                options={{
-                    headerTitle:() => {
-                        const navigation = useNavigation();
-                        return(
-                        <TouchableOpacity onPress={()=>navigation.navigate('Home')}>
-                            <Image
-                                source={require('../images/logo.png')}
-                                style={styles.logo}
-                            />
-                        </TouchableOpacity>
-                        )
-                    },
-                    headerTintColor : '#fff',
-                    headerStyle:{
-                        backgroundColor:'black',
-                        height:80,
-                    },
-                    drawerLabel: ()=>{
-                        const MyLabelContent = (
-                            <View style={{flexDirection:'row',marginLeft:-10,}}>
-                                <MaterialCommunityIcons name="account" size={20} color="#fff" />
-                                <Text style={{ color:'#fff',marginLeft:10 }}>Mypage</Text>
-                            </View>
-                        )
-                        return(
-                        <TouchableOpacity onPress={user ? labelHandleMypage : labelHandleLogoutMypage} >
-                            {MyLabelContent}
-                        </TouchableOpacity>
-                        )
-                    } 
-                }}/>
             <Drawer.Screen name="Like" component={LikeScreen}
                 options={{
-                    drawerLabel:()=>{
-                        const LikeLabelContent=(
-                            <View style={{flexDirection:'row',marginLeft:-5}}>
-                                <MaterialCommunityIcons name="heart" size={20} color="red" />
-                                <Text style={{color:"white",marginLeft:10,fontWeight:'blod'}}>찜 목록</Text>
-                            </View>
-                        )
-                        return(
-                            <TouchableOpacity onPress={user ? labelHandleLike : labelHandleLogoutMypage} style={{flexDirection:'row',marginLeft:-5}}>
-                               {LikeLabelContent}
-                            </TouchableOpacity>
-                        )
-                    },
+                    title:'♥ 찜',
                     headerTitle:() => {
                         const navigation = useNavigation();
                         return(
@@ -257,7 +189,7 @@ const DrawerNavigator = () => {
                         backgroundColor:'black',
                         height:80,
                     },
-                }}/>
+                 }}/>
         </Drawer.Navigator>
     )
 }

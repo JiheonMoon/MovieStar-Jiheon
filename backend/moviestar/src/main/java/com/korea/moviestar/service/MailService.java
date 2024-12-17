@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -74,7 +73,6 @@ public class MailService {
                 .orElseThrow(() -> new RuntimeException("인증 요청이 없습니다."));
 
         if (entity.getExpiresAt().isBefore(LocalDateTime.now())) {
-        	repository.delete(entity);
             throw new RuntimeException("인증 코드가 만료되었습니다.");
         }
 
@@ -88,11 +86,6 @@ public class MailService {
         
         repository.delete(entity);
         return true;
-    }
-    
-    @Scheduled(cron = "0 0 0/1 * * *")
-    public void clearVerification() {
-    	repository.deleteExpiredEntities(LocalDateTime.now());
     }
     
     

@@ -71,7 +71,7 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     const [genres, setGenres] = useState([]);
     const [movies, setMovies] = useState({})
     const sectionRef = useRef({})
-    
+
     // 검색 관련 상태 관리
     const [searchQuery, setSearchQuery] = useState(""); 
     const [filteredMovies, setFilteredMovies] = useState([]); 

@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.korea.moviestar.dto.MovieDTO;
 import com.korea.moviestar.dto.MovieThemeDTO;
 import com.korea.moviestar.dto.NowPlayingDTO;
 import com.korea.moviestar.dto.PopularDTO;
@@ -59,15 +58,9 @@ public class MovieService {
 		return themes.findAll();
 	}
 
-	@Transactional
 	public List<ThemeEntity> getThemes() {
-		Map<String, Object> response = restTemplate
-				.getForObject(BASE_URL + "/genre/movie/list?api_key=" + apiKey + "&language=ko-KR", Map.class);
-
-		if (response == null) {
-			return null;
-		}
-
+		Map<String, Object> response = restTemplate.getForObject(BASE_URL + "/genre/movie/list?api_key=" + apiKey + "&language=ko-KR",
+				Map.class);
 		List<Map<String, Object>> genres = (List<Map<String, Object>>) response.get("genres");
 		for (Map<String, Object> genre : genres) {
 			int id = (int) genre.get("id");
@@ -88,19 +81,11 @@ public class MovieService {
 		Map<String, Object> response = restTemplate
 				.getForObject(BASE_URL + "/movie/" + movieId + "?api_key=" + apiKey + "&language=ko-KR", Map.class);
 
-		if (response == null) {
-			return null; // 데이터가 없을 때 빈 리스트 반환
-		}
-
 		List<Map<String, Object>> genres = (List<Map<String, Object>>) response.get("genres");
+		
 
 		Map<String, Object> creditResponse = restTemplate.getForObject(
 				BASE_URL + "/movie/" + movieId + "/credits?api_key=" + apiKey + "&language=ko-KR", Map.class);
-
-		if (creditResponse == null) {
-			return null;
-		}
-
 		List<Map<String, Object>> actorList = (List<Map<String, Object>>) creditResponse.get("cast");
 		List<ActorEntity> actorEntities = actorList.stream()
 				.map(actor -> ActorEntity.builder().actorName((String) actor.get("name"))
@@ -111,11 +96,10 @@ public class MovieService {
 		MovieEntity entity = MovieEntity.builder().movieId(movieId).movieName((String) response.get("title"))
 				.movieOpDate((String) response.get("release_date")).movieScore((double) response.get("vote_average"))
 				.moviePoster((String) response.get("poster_path")).movieOverview((String) response.get("overview"))
-				.movieBackdrop((String) response.get("backdrop_path")).movieActors(actorEntities).build();
-
+				.movieActors(actorEntities).build();
+		
 		Set<MovieThemeEntity> themeEntities = genres.stream().map(genre -> {
-			ThemeEntity theme = ThemeEntity.builder().themeId((Integer) genre.get("id"))
-					.themeName((String) genre.get("name")).build();
+			ThemeEntity theme = ThemeEntity.builder().themeId((Integer) genre.get("id")).themeName((String) genre.get("name")).build();
 			return MovieThemeEntity.builder().movie(entity).theme(theme).build();
 		}).collect(Collectors.toSet());
 
@@ -132,16 +116,7 @@ public class MovieService {
 
 		Map<String, Object> response = restTemplate
 				.getForObject(BASE_URL + "/movie/popular?api_key=" + apiKey + "&language=ko-KR", Map.class);
-
-		if (response == null || response.get("results") == null) {
-			return null;
-		}
-
 		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
-
-		if (results.isEmpty()) {
-			return null;
-		}
 
 		// 병렬(비동기) 처리
 		List<CompletableFuture<PopularEntity>> futures = results.stream()
@@ -163,23 +138,14 @@ public class MovieService {
 	}
 
 	// 1시간마다 자동 갱신
-	@Scheduled(cron = "0 2 0/1 * * *")
+	@Scheduled(cron = "0 0 0/1 * * *")
 	@Transactional
 	public List<TopRatedDTO> saveAndGetTopRated() {
 		topRates.truncateTopRated(); // 테이블 비우기
 
 		Map<String, Object> response = restTemplate
 				.getForObject(BASE_URL + "/movie/top_rated?api_key=" + apiKey + "&language=ko-KR", Map.class);
-
-		if (response == null || response.get("results") == null) {
-			return null;
-		}
-
 		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
-
-		if (results.isEmpty()) {
-			return null;
-		}
 
 		// 병렬(비동기) 처리
 		List<CompletableFuture<TopRatedEntity>> futures = results.stream()
@@ -203,23 +169,14 @@ public class MovieService {
 	}
 
 	// 1시간마다 자동 갱신
-	@Scheduled(cron = "0 3 0/1 * * *")
+	@Scheduled(cron = "0 0 0/1 * * *")
 	@Transactional
 	public List<NowPlayingDTO> saveAndGetNowPlaying() {
 		nowPlayings.truncateNowPlaying();
 
 		Map<String, Object> response = restTemplate
 				.getForObject(BASE_URL + "/movie/now_playing?api_key=" + apiKey + "&language=ko-KR", Map.class);
-
-		if (response == null || response.get("results") == null) {
-			return null;
-		}
-
 		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
-
-		if (results.isEmpty()) {
-			return null;
-		}
 
 		List<CompletableFuture<NowPlayingEntity>> futures = results.stream()
 				.map(movie -> CompletableFuture.supplyAsync(() -> {
@@ -239,116 +196,37 @@ public class MovieService {
 
 		return entities.stream().map(NowPlayingDTO::new).collect(Collectors.toList());
 	}
-
-	public List<MovieThemeDTO> getAndSaveThemeMovies(int themeId) {
-
+	
+	public List<MovieThemeDTO> getThemeMovies(int themeId){
+		System.out.println(BASE_URL + "/discover/movie?api_key=" + apiKey + "&language=ko-KR&page=1&sort_by=popularity.desc&with_genres=" + themeId);
+		
 		ThemeEntity theme = themes.findById(themeId).get();
 		Set<Integer> updatedMovieIds = new HashSet<>();
-
-		Map<String, Object> response = restTemplate.getForObject(BASE_URL + "/discover/movie?api_key=" + apiKey
-				+ "&language=ko-KR&page=1&sort_by=popularity.desc&with_genres=" + themeId, Map.class);
-
-		if (response == null || response.get("results") == null) {
-			return null;
-		}
-
+		
+		Map<String, Object> response = restTemplate
+				.getForObject(BASE_URL + "/discover/movie?api_key=" + apiKey + "&language=ko-KR&page=1&sort_by=popularity.desc&with_genres="+themeId, Map.class);
+		
 		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
-
-		if (results.isEmpty()) {
-			return null;
-		}
-
 		AtomicInteger rank = new AtomicInteger(1);
 		List<CompletableFuture<MovieThemeEntity>> futures = results.stream()
-				.map(item -> CompletableFuture.supplyAsync(() -> {
+				.map(item -> CompletableFuture.supplyAsync(() ->{
 					int movieId = (int) item.get("id");
-					updatedMovieIds.add(movieId);
 					int currentRank = rank.getAndIncrement();
-
+					updatedMovieIds.add(movieId);
 					MovieEntity movie = getMovie(movieId);
-
-					MovieThemeEntity existingEntity = movieThemes.findByMovieAndTheme(movie, theme);
-
-					if (existingEntity != null) {
-						existingEntity.setMovieRank(currentRank);
-						return existingEntity;
-					} else {
-						return MovieThemeEntity.builder().movie(movie).theme(theme).movieRank(currentRank).build();
-					}
+					MovieThemeEntity mt =movieThemes.findByMovieAndTheme(movie, theme);
+					mt.setMovieRank(currentRank);
+					return mt;
 				})).collect(Collectors.toList());
-
+		
+		
 		List<MovieThemeEntity> mtEntities = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
-
-		return saveEntities(mtEntities, theme, updatedMovieIds);
-
-	}
-
-	@Transactional
-	public List<MovieThemeDTO> saveEntities(List<MovieThemeEntity> mtEntities, ThemeEntity theme,
-			Set<Integer> updatedMovieIds) {
+		
 		movieThemes.saveAll(mtEntities);
 		movieThemes.clearOldRanks(theme, updatedMovieIds);
-		return getThemeMovies(theme.getThemeId());
-	}
-
-	public List<MovieThemeDTO> getThemeMovies(int themeId) {
-		List<MovieThemeEntity> entities = movieThemes.findAllByTheme(themes.findById(themeId).get());
+		List<MovieThemeEntity> entities = movieThemes.findAllByTheme(theme);
 		return entities.stream().map(MovieThemeDTO::new).collect(Collectors.toList());
-	}
-
-	@Scheduled(cron = "0 10 0/1 * * *")
-	public void getAndSaveAllThemeMovies() {
-		getThemes();
-		List<ThemeEntity> entities = themes.findAll();
-		for (ThemeEntity theme : entities) {
-			getAndSaveThemeMovies(theme.getThemeId());
-		}
-	}
-
-	public MovieDTO getVideoPath(int movieId) {
-		MovieEntity movie = getMovie(movieId);
-
-		Map<String, Object> response = restTemplate.getForObject(
-				BASE_URL + "/movie/" + movieId + "/videos?api_key=" + apiKey + "&language=ko-KR", Map.class);
-
-		if (response == null || response.get("results") == null) {
-			return null;
-		}
-
-		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
-
-		if (results.isEmpty()) {
-			return null;
-		}
-
-		String key = (String) results.get(0).get("key");
-		movie.setMovieVideo(key);
-		return new MovieDTO(movies.save(movie));
-	}
-
-	public List<MovieDTO> searchMovies(String query) {
-
-		Map<String, Object> response = restTemplate.getForObject(
-				BASE_URL + "/search/movie?api_key=" + apiKey + "&query=" + query + "&page=1&language=ko-KR", Map.class);
-		if (response == null || response.get("results") == null) {
-			return null;
-		}
 		
-		List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
-		if (results.isEmpty()) {
-			return null;
-		}
-		
-		List<CompletableFuture<MovieDTO>> futures = results.stream()
-				.map(movie -> CompletableFuture.supplyAsync(() -> {
-					int movieId = (int) movie.get("id");
-					String poster = (String) movie.get("poster_path");
-					String title = (String) movie.get("title");
-					getMovie(movieId);
-					return MovieDTO.builder().movieId(movieId).movieName(title).moviePoster(poster).build();
-				})).collect(Collectors.toList());
-		
-		return futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 	}
 
 }

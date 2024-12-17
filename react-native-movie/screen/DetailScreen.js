@@ -1,10 +1,10 @@
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet,FlatList } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { fetchMovieDetails, fetchMovieCredits } from '../api/tmdb';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
-import { AppContext } from '../context/AppContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFavoriteContext } from '../context/FavoriteContext';
 
 const StarRating = ({ rating, setRating, size = 20 }) => (
@@ -25,7 +25,6 @@ const ReviewForm = ({ rate, setRate, review, setReview, addReview }) => (
     <View style={styles.reviewForm}>
         <Text style={styles.reviewTitle}>리뷰</Text>
         <StarRating rating={rate} setRating={setRate} />
-
         <TextInput
             style={[styles.reviewInput, { color: 'white' }]}
             placeholder="리뷰 내용을 입력해주세요"
@@ -33,7 +32,6 @@ const ReviewForm = ({ rate, setRate, review, setReview, addReview }) => (
             value={review}
             onChangeText={setReview}
         />
-
         <TouchableOpacity style={styles.editButton} onPress={addReview}>
             <Text style={styles.editText}>등록</Text>
         </TouchableOpacity>
@@ -109,7 +107,7 @@ const DetailScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { id } = route.params;
-    const { user } = useContext(AppContext)
+
     const [movie, setMovie] = useState([]);
     const [rate, setRate] = useState(5);
     const [review, setReview] = useState('');
@@ -121,10 +119,6 @@ const DetailScreen = () => {
     const { favoriteMovies, setFavoriteMovies, } = useFavoriteContext(); // 찜 목록과 업데이트 함수 사용
 
     const addReview = () => {
-        if(!user){
-            alert('로그인 후 작성할 수 있습니다.')
-            return;
-        }
         const newReview = {
             id: reviewList.length + 1,
             user: '유저 이름',
@@ -133,7 +127,7 @@ const DetailScreen = () => {
             date: moment().format('MM/DD HH:mm'),
         };
         setReviewList((prev) => [newReview, ...prev]);
-        // setReview('');
+        setReview('');
     };
 
     const handleRemove = (id) => {
@@ -210,7 +204,7 @@ return (
             style={styles.container}
             ListHeaderComponent={
                 <>
-                    <TouchableOpacity onPress={() => navigation.navigate('HomeStack')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Text style={styles.backButton}>←</Text>
                     </TouchableOpacity>
 

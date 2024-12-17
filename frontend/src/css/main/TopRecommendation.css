@@ -3,8 +3,8 @@
     position: relative;
     width: 100%;
     height: 400px;
-    overflow: hidden;
-    margin: 20px 0;
+    overflow: visible;
+    margin-top: 200px;
   }
   
   /* 최상단 추천 영화 슬라이드 */
@@ -36,6 +36,7 @@
     object-fit: contain;
     border-radius: 10px;
     filter: brightness(50%);
+    cursor: pointer;
   }
   
   .recommendation-info {

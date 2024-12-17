@@ -30,15 +30,18 @@ public class MovieEntity {
 	private int movieId;
 	private String movieName;
 	
-	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
 	private Set<MovieThemeEntity> movieThemes;
 	
 	private String movieOpDate;
 	private double movieScore;
 	private String moviePoster;
+	private String movieVideo;
+	private String movieBackdrop;
 	@Column(length = 65535, columnDefinition = "TEXT")
 	private String movieOverview;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "movie_id")
 	private List<ActorEntity> movieActors;
+	
 }

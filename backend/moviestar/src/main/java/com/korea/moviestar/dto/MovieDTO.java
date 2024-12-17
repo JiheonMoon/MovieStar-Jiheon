@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.korea.moviestar.entity.MovieEntity;
 import com.korea.moviestar.entity.ThemeEntity;
 
@@ -20,15 +21,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MovieDTO {
-	int movieId;
-	String movieName;
-	Set<Integer> movieTheme;
-	String movieOpDate;
-	double movieScore;
-	String moviePoster;
-	String movieOverview;
-	List<ActorDTO> movieActors;
+	private int movieId;
+	private String movieName;
+	private Set<Integer> movieTheme;
+	private String movieOpDate;
+	private double movieScore;
+	private String moviePoster;
+	private String movieBackdrop;
+	private String movieVideo;
+	private String movieOverview;
+	private List<ActorDTO> movieActors;
 	
 	public MovieDTO(MovieEntity entity) {
 		this.movieId = entity.getMovieId();
@@ -38,6 +42,8 @@ public class MovieDTO {
 		this.movieScore = entity.getMovieScore();
 		this.moviePoster = entity.getMoviePoster();
 		this.movieOverview = entity.getMovieOverview();
+		this.movieVideo = entity.getMovieVideo();
+		this.movieBackdrop = entity.getMovieBackdrop();
 		this.movieActors = entity.getMovieActors().stream().map(ActorDTO::new).collect(Collectors.toList());
 	}
 }

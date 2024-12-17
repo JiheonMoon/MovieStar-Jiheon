@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.korea.moviestar.dto.MovieDTO;
@@ -38,7 +39,6 @@ public class MovieController {
 	
 	@GetMapping("/{movieId}")
 	public ResponseEntity<?> getOneMovie(@PathVariable int movieId){
-		service.getThemes();
 		MovieDTO response = new MovieDTO(service.getMovie(movieId));
 		return ResponseEntity.ok().body(response);
 	}
@@ -66,9 +66,21 @@ public class MovieController {
 	
 	@GetMapping("/theme/{themeId}")
 	public ResponseEntity<?> getThemeMovies(@PathVariable int themeId){
-		service.getThemes();
 		List<MovieThemeDTO> dtos = service.getThemeMovies(themeId);
 		ResponseDTO<MovieThemeDTO> response = ResponseDTO.<MovieThemeDTO>builder().data(dtos).build();
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@GetMapping("/video/{movieId}")
+	public ResponseEntity<?> getVideoLink(@PathVariable int movieId){
+		MovieDTO dto = service.getVideoPath(movieId);
+		return ResponseEntity.ok().body(dto);
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<?> search(@RequestParam String query){
+		List<MovieDTO> dtos = service.searchMovies(query);
+		ResponseDTO<MovieDTO> response = ResponseDTO.<MovieDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);
 	}
 }

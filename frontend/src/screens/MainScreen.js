@@ -72,6 +72,9 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     const [movies, setMovies] = useState({})
     const sectionRef = useRef({})
 
+    // 모달 여부에 따라 장르바 보여줄 지 여부에 대한 상태 관리
+    const [showNav, setShowNav] = useState(true)
+    
     // 검색 관련 상태 관리
     const [searchQuery, setSearchQuery] = useState(""); 
     const [filteredMovies, setFilteredMovies] = useState([]); 
@@ -152,7 +155,7 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
       const section = sectionRef.current[genreId];
       if (section) {
         const offsetTop = section.offsetTop; // section의 위쪽 위치
-        const scrollPosition = offsetTop - 150; // 100px 위로 올리기
+        const scrollPosition = offsetTop - 200; // 100px 위로 올리기
 
       // 원하는 위치로 스크롤
       window.scrollTo({
@@ -182,11 +185,13 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     // 영화 선택 시 모달 오픈 핸들러
     const handleMovieSelect = (movie) => {
       setSelectedMovie(movie);
+      setShowNav(false);
     };
   
     // 영화 모달 닫기 핸들러
     const handleCloseMovieDetail = () => {
       setSelectedMovie(null);
+      setShowNav(true);
     };
 
     // useEffect(() => {
@@ -210,40 +215,42 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
   
     return (
       <div className="main-page">
-        <div className="header-navbar">
-          <header className="main-header">
-            <img src={logo} className="main-logo" onClick={handleLogoClick}/>
-              {/* 영화 검색 입력창 */}
-              <input
-              type="text"
-              placeholder="Search Movies..."
-              onChange={(e) => handleSearch(e.target.value)}
-              />
-              {/* 로그인, 로그아웃 버튼 */}
-              { user ? (
-                <>
-                  <div>
-                    <button onClick={navigateToMyPage} className="mypage-button-main">마이페이지</button>
-                    <button onClick={handleLogout} className="logout-button-main">로그아웃</button>
-                  </div>
-                </>
-              ) : (
-                  <button onClick={navigateToLoginScreen} className="login-button-main">로그인</button>
-              )}
-          </header>
-          <nav className="nav-bar">
-            {genres.map((genre) => (
-              <button
-                key={genre.id}
-                onClick={() => handleNavClick(genre.id)}
-                className="nav-item"
-              >
-                {genre.name}
-              </button>
-            ))}
-          </nav>
-        </div>
-
+        {showNav && (
+          <div className="header-navbar">
+            <header className="main-header">
+              <img src={logo} className="main-logo" onClick={handleLogoClick}/>
+                {/* 영화 검색 입력창 */}
+                <input
+                type="text"
+                placeholder="Search Movies..."
+                onChange={(e) => handleSearch(e.target.value)}
+                />
+                {/* 로그인, 로그아웃 버튼 */}
+                { user ? (
+                  <>
+                    <div>
+                      <button onClick={navigateToMyPage} className="mypage-button-main">마이페이지</button>
+                      <button onClick={handleLogout} className="logout-button-main">로그아웃</button>
+                    </div>
+                  </>
+                ) : (
+                    <button onClick={navigateToLoginScreen} className="login-button-main">로그인</button>
+                )}
+            </header>
+            <nav className="nav-bar">
+              {genres.map((genre) => (
+                <button
+                  key={genre.id}
+                  onClick={() => handleNavClick(genre.id)}
+                  className="nav-item"
+                >
+                  {genre.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+        )}
+        
         {/* 검색 결과 또는 기본 영화 리스트 조건부 렌더링 */}
         {searchQuery && filteredMovies.length > 0 ? (
           <MovieSlider 

@@ -56,7 +56,7 @@ const PwdChangeScreen = () => {
             </header>
                 <h1>비밀번호 변경</h1>
                 <div>
-                    <div>
+                    <div className="input-group">
                         <label>새 비밀번호</label>
                         <input
                             type="text"
@@ -66,7 +66,7 @@ const PwdChangeScreen = () => {
                             placeholder="새 비밀번호 입력"
                         />
                     </div>
-                    <div>
+                    <div className="input-group">
                         <label>새 비밀번호 확인</label>
                         <input
                             type="text"
@@ -76,7 +76,7 @@ const PwdChangeScreen = () => {
                             placeholder="새 비밀번호 다시 입력"
                         />
                     </div>
-                    <button>비밀번호 변경</button>
+                    <button className="login-button">비밀번호 변경</button>
                 </div>
             
         </div>

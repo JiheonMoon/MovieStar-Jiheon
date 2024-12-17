@@ -2,6 +2,7 @@ package com.korea.moviestar.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +23,8 @@ public class MailVerificationEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private String email;
+
 	private String code;
 	private LocalDateTime expiresAt;
+	private String email;
 }

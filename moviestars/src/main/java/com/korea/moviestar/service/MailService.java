@@ -1,6 +1,7 @@
 package com.korea.moviestar.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -79,14 +80,18 @@ public class MailService {
         if (!entity.getCode().equals(inputCode)) {
             throw new RuntimeException("인증 코드가 일치하지 않습니다.");
         }
-        
-        UserEntity user = users.findByUserEmail(email).get();
-        user.setUserPwd(encoder.encode(inputCode));
-        users.save(user);
-        
+
+        // 비밀번호 변경 (예: 인증 코드로 비밀번호 변경)
+        UserEntity user = users.findByUserEmail(email).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        user.setUserPwd(encoder.encode(inputCode));  // 인증 코드로 비밀번호 변경
+        users.save(user);  // DB에 저장
+
+        // 인증 코드 삭제
         repository.delete(entity);
+
         return true;
     }
+
     
     
 }

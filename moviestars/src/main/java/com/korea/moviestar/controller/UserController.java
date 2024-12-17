@@ -166,10 +166,22 @@ public class UserController {
 	}
 	
 	@PostMapping("/verify_email")
-	public ResponseEntity<?> verifyEmail(@RequestParam String email, @RequestParam String code) {
+	public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> requestData) {
+	    // 요청 본문에서 email과 code를 추출
+	    String email = requestData.get("email");
+	    String code = requestData.get("code");
+
+	    // email이나 code가 없을 경우 처리
+	    if (email == null || code == null) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+	            "success", false,
+	            "message", "이메일과 인증 코드를 입력해주세요"
+	        ));
+	    }
+
 	    try {
 	        // 인증 코드가 일치하는지 확인
-	    	boolean isVerified = mails.verifyCode(email, code, passwordEncoder);
+	        boolean isVerified = mails.verifyCode(email, code, passwordEncoder);
 	        if (isVerified) {
 	            // 인증 성공 시 success와 함께 메시지 반환
 	            return ResponseEntity.ok().body(Map.of(
@@ -185,12 +197,15 @@ public class UserController {
 	        }
 	    } catch (Exception e) {
 	        // 예외 발생 시 처리 (예: 만료된 코드, DB 에러 등)
+	        log.error("이메일 인증 실패: ", e);  // 예외 메시지 로깅
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
 	            "success", false,
 	            "message", "서버 오류: " + e.getMessage()
 	        ));
 	    }
 	}
+
+
 
 	
 	

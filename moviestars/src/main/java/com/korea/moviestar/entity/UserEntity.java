@@ -29,6 +29,10 @@ public class UserEntity {
 	private String userNick;
 	private String userEmail;
 	private String userPwd;
+	
+	
+	
+	
 	@ManyToMany
 	@JoinTable(
 			name = "user_like_list",

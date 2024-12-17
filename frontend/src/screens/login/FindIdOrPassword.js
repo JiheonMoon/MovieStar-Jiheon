@@ -10,6 +10,7 @@ const FindId = () => {
     const [pwdEmail, setPwdEmail] = useState('')
     const [takePwdCode,setTakePwdCode] = useState('');
     const [emailCode, setEmailCode] = useState('')
+    const [isLoading, setIsLoading] = useState(false);
 
 
     // 아이디찾기 관련 메세지
@@ -71,10 +72,9 @@ const FindId = () => {
             const data = await response.json();
 
             if (data.success) {
-                setEmailCode(data.code);
                 setPwMessage(data.message || "인증코드를 이메일로 발송했습니다.");
             } else {
-                setPwMessage(data.message || "문제가 발생했습니다");
+                setPwMessage(data.message || "인증코드 발송에 에러가 발생했습니다.");
             }
         } catch (error) {
             setPwMessage("해당 이메일로 등록된 아이디를 찾을 수 없습니다.");
@@ -90,29 +90,29 @@ const FindId = () => {
             return;
         }
 
-        if (takePwdCode !== emailCode) {
-            setPwMessage('입력한 인증 코드가 일치하지 않습니다.');
-            return;
-        }
-        
+        setIsLoading(true);
     
         try {
-            // 서버에 인증 코드 확인 요청
-            const response = await fetch(`/user/verify_email?email=${pwdEmail}&code=${takePwdCode}`, { method: "POST" });
+            const response = await fetch(`/user/verify_email?email=${pwdEmail}&code=${takePwdCode}`,{
+                method:"POST"
+            })
+
             const data = await response.json();
     
-            // 서버 응답에서 인증 성공 여부 확인
-            if (data.success) {
-                setPwMessage(data.message || '이메일 인증 성공');
-                navigate('/ChangePwd');  // 인증이 성공하면 비밀번호 변경 페이지로 이동
+            if (response.ok) {
+                setPwMessage(data || '인증 성공');
+                navigate('/ChangePwd');
             } else {
-                setPwMessage(data.message || '인증 실패');
+                setPwMessage(data.message || '인증코드가 일치하지 않습니다.');
             }
         } catch (error) {
-            console.error("Error finding password:", error);
-            setPwMessage("비밀번호 찾기 중 오류가 발생했습니다.");
+            setPwMessage("서버 오류가 발생했습니다.");
+            console.error("Error verifying code:", error);
+        } finally {
+            setIsLoading(false)
         }
     };
+    
 
     useEffect(() => {
             console.log(pwMessage)
@@ -128,7 +128,7 @@ const FindId = () => {
             <div className="find-body">
                 <div className="find-id-container">
                     <h2>아이디 찾기</h2>
-                    <form onSubmit={handleFindId}>
+                    <form >
                         <div className="input-group">
                             <label htmlFor="email">가입 시 사용한 이메일</label>
                             <input
@@ -140,7 +140,7 @@ const FindId = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="find-id-button">아이디 찾기</button>
+                        <button onSubmit={handleFindId} className="find-id-button">아이디 찾기</button>
                     </form>
                     {message && (
                         <>
@@ -168,7 +168,7 @@ const FindId = () => {
                     )}
 
                     <h2>비밀번호 찾기</h2>
-                    <form onSubmit={handleFindPassword}>
+                    <form >
                         <div className="input-group">
                             <label htmlFor="pwdEmail">이메일 입력</label>
                             <input
@@ -188,7 +188,7 @@ const FindId = () => {
                             {/* 이메일로 인증 코드를 발송한 경우 */}
                             {pwMessage === "인증코드를 이메일로 발송했습니다." && (
                                 <>
-                                    <div className="input-group">
+                                    <div className="input-group">   
                                         <label htmlFor="takePwdCode">인증코드 입력</label>
                                         <input
                                             type="text"

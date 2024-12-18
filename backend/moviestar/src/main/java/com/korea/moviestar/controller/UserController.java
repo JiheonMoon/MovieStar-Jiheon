@@ -89,17 +89,21 @@ public class UserController {
 	            .body(find);
 	}
 	
-//	@GetMapping("/verify-token")
-//	public ResponseEntity<?> getCurrentUser(@CookieValue("token") String token) {
-//	    try {
-//	        String userId = tokenProvider.getUserIdFromToken(token);
-//	        UserDTO user = service.findByUserId(Integer.parseInt(userId));
-//	        return ResponseEntity.ok(user);
-//	    } catch (Exception e) {
-//	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-//	    }
-//	}
-	
+	@GetMapping("/verify-token")
+	public ResponseEntity<?> verifyToken(@CookieValue(value = "token", required = false) String token) {
+		if(token == null || token.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is missing or invalid");
+		}
+		
+		try {
+			// 토큰 검증
+			String userId = tokenProvider.validateAndGetUserId(token);
+			return ResponseEntity.ok().body(Map.of("userId", userId));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+		}
+	}
+
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout() {
 	    ResponseCookie cookie = ResponseCookie.from("token", null)

@@ -122,27 +122,6 @@ public class UserController {
 	                .error("Internal server error")
 	                .build());
 	    }
-
-	    UserDTO find = service.findUser(dto, passwordEncoder);
-
-	    if (find == null || !passwordEncoder.matches(dto.getUserPwd(), find.getUserPwd())) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-	    }
-
-	    // 토큰 생성
-	    UserEntity user = UserService.toEntity(find, movies);
-	    final String token = tokenProvider.create(user);
-
-	    ResponseCookie cookie = ResponseCookie.from("token", token)
-	            .httpOnly(true) // 클라이언트에서 접근 불가
-	            .secure(true)   // HTTPS에서만 전송
-	            .path("/")      // 모든 경로에서 사용 가능
-	            .maxAge(60 * 60 * 24) // 1일
-	            .build();
-
-	    return ResponseEntity.ok()
-	            .header(HttpHeaders.SET_COOKIE, cookie.toString())
-	            .body(find);
 	}
 	
 	@GetMapping("/verify-token")

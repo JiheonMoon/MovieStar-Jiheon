@@ -4,8 +4,6 @@ import { AppContext } from '../context/AppContext';
 import { IoHome } from "react-icons/io5";
 import '../css/main/MyPage.css';
 import logo from "../logo/logo.png"
-import axios from 'axios';
-import { fetchMovieDetails } from '../api/tmdb';
 
 const MyPage = () => {
     const { user, setUser } = useContext(AppContext);
@@ -22,31 +20,7 @@ const MyPage = () => {
     });
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
-    const [movieDetails, setMovieDetails] = useState([]);
 
-    useEffect(() => {
-        axios.get("http://localhost:9090/user/private/mine", {
-            withCredentials: true
-        }).then(async response => {
-            console.log("받아온 유저 데이터:", response.data);
-            setUser(response.data);
-
-            // 영화 ID 목록으로부터 상세 정보 가져오기
-            if (response.data.userLikeList && response.data.userLikeList.length > 0) {
-                try {
-                    const moviePromises = response.data.userLikeList.map(movieId => 
-                        fetchMovieDetails(movieId)
-                    );
-                    const movies = await Promise.all(moviePromises);
-                    setMovieDetails(movies);
-                } catch (error) {
-                    console.error("영화 상세 정보 가져오기 실패:", error);
-                }
-            }
-        }).catch(error => {
-            console.error("유저 데이터 가져오기 실패:", error);
-        });
-    }, []);
     // 로그인되지 않은 경우 리다이렉트
     if (!user) {
         navigate('/login');
@@ -289,33 +263,35 @@ const MyPage = () => {
                     </div>
                 )}
 
-            <div className="liked-movies-section">
-                <h2>좋아요 표시한 영화</h2>
-                {movieDetails.length > 0 ? (
-                    <div className="liked-movies-flex">
-                        {movieDetails.map(movie => (
-                            <div key={movie.id} className="liked-movie-item">
-                                {movie.poster_path ? (
-                                    <img 
-                                        src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                                        alt={movie.title}
-                                        className="movie-poster"
-                                    />
-                                ) : (
-                                    <div className="no-poster-placeholder">
-                                        <span>포스터 없음</span>
-                                    </div>
-                                )}
-                                <p className="movie-title">{movie.title}</p>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p>좋아요 표시한 영화가 없습니다.</p>
-                )}
+<div className="liked-movies-section">
+    <h2>좋아요 표시한 영화</h2>
+    {user.userLikeList && user.userLikeList.length > 0 ? (
+        <div className="liked-movies-flex">
+            {user.userLikeList.map((movie, index) => (
+                <div key={movie.id || index} className="liked-movie-item">
+                    {console.log("Movie data:", movie)} {/* 데이터 확인용 로그 */}
+                    {movie.poster_path ? (
+                        <img 
+                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+                            alt={movie.title}
+                            onError={(e) => {
+                                e.target.onerror = null; 
+                                e.target.src = '대체 이미지 URL';
+                            }} 
+                        />
+                    ) : (
+                        <div className="no-poster">포스터 없음</div>
+                    )}
+                    <p>{movie.title || '제목 없음'}</p>
+                </div>
+            ))}
+        </div>
+    ) : (
+        <p>좋아요 표시한 영화가 없습니다.</p>
+    )}
+</div>
             </div>
         </div>
-    </div>
     );
 };
 

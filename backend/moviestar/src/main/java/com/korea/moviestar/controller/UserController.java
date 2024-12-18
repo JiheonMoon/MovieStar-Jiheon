@@ -1,8 +1,11 @@
 package com.korea.moviestar.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -67,26 +70,58 @@ public class UserController {
 	
 	@PostMapping("/signin")
 	public ResponseEntity<?> signin(@RequestBody UserDTO dto) {
-	    UserDTO find = service.findUser(dto, passwordEncoder);
 
-	    if (find == null || !passwordEncoder.matches(dto.getUserPwd(), find.getUserPwd())) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+	    try {
+	        UserDTO find = service.findUser(dto, passwordEncoder);
+	        if (find == null) {
+	            return ResponseEntity.badRequest().body(ResponseDTO.builder()
+	                    .error("Invalid username or password")
+	                    .build());
+	        }
+
+	        UserEntity user = UserService.toEntity(find, movies);
+	        final String token = tokenProvider.create(user);
+
+	        // 쿠키 설정
+	        ResponseCookie cookie = ResponseCookie.from("token", token)
+	                .httpOnly(true)
+	                .secure(false)
+	                .path("/")
+	                .maxAge(7 * 24 * 60 * 60)
+	                .sameSite("Strict")
+	                .build();
+
+	        // 각 영화의 상세 정보를 포함한 응답 생성
+	        Map<String, Object> userResponse = new HashMap<>();
+	        userResponse.put("userId", user.getUserId());
+	        userResponse.put("userEmail", user.getUserEmail());
+	        userResponse.put("userNick", user.getUserNick());
+	        userResponse.put("userName", user.getUserName());
+
+	        // 영화 정보를 Map으로 변환
+	        Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream()
+	            .map(movie -> {
+	                Map<String, Object> movieInfo = new HashMap<>();
+	                movieInfo.put("id", movie.getMovieId());
+	                movieInfo.put("title", movie.getMovieName());
+	                movieInfo.put("poster_path", movie.getMoviePoster());
+	                movieInfo.put("overview", movie.getMovieOverview());
+	                movieInfo.put("movieOpDate", movie.getMovieOpDate());
+	                movieInfo.put("movieScore", movie.getMovieScore());
+	                return movieInfo;
+	            })
+	            .collect(Collectors.toSet());
+
+	        userResponse.put("userLikeList", likedMovies);
+
+	        return ResponseEntity.ok()
+	                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+	                .body(userResponse);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDTO.builder()
+	                .error("Internal server error")
+	                .build());
 	    }
-
-	    // 토큰 생성
-	    UserEntity user = UserService.toEntity(find, movies);
-	    final String token = tokenProvider.create(user);
-
-	    ResponseCookie cookie = ResponseCookie.from("token", token)
-	            .httpOnly(true) // 클라이언트에서 접근 불가
-	            .secure(true)   // HTTPS에서만 전송
-	            .path("/")      // 모든 경로에서 사용 가능
-	            .maxAge(60 * 60 * 24) // 1일
-	            .build();
-
-	    return ResponseEntity.ok()
-	            .header(HttpHeaders.SET_COOKIE, cookie.toString())
-	            .body(find);
 	}
 	
 	@GetMapping("/verify-token")
@@ -114,6 +149,7 @@ public class UserController {
 	            .build();
 
 	    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body("Logged out");
+
 	}
 	
 	@GetMapping("/find-id")
@@ -166,15 +202,21 @@ public class UserController {
 	
 	
 	@PutMapping("/private/like")
-	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @RequestBody int movieId){
-		UserDTO response = service.addLike(userId, movieId);
-		return ResponseEntity.ok().body(response);
+	public ResponseEntity<?> likeMovie(
+	    @AuthenticationPrincipal String userId, 
+	    @RequestBody Map<String, Integer> request  // movieId를 받을 객체 추가
+	){
+	    UserDTO response = service.addLike(userId, request.get("movieId"));
+	    return ResponseEntity.ok().body(response);
 	}
-	
+
 	@DeleteMapping("/private/dislike")
-	public ResponseEntity<?> dislikeMovie(@AuthenticationPrincipal String userId, @RequestBody int movieId){
-		UserDTO response = service.deleteLike(userId, movieId);
-		return ResponseEntity.ok().body(response);
+	public ResponseEntity<?> dislikeMovie(
+	    @AuthenticationPrincipal String userId, 
+	    @RequestBody Map<String, Integer> request  // movieId를 받을 객체 추가
+	){
+	    UserDTO response = service.deleteLike(userId, request.get("movieId"));
+	    return ResponseEntity.ok().body(response);
 	}
 	
 	@PutMapping("/private/modify")

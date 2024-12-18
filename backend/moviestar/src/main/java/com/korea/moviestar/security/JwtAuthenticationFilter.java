@@ -21,35 +21,47 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter{
-	
-	@Autowired
-	TokenProvider tokenProvider;
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    
+    @Autowired
+    TokenProvider tokenProvider;
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
-		String token = parseBearerToken(request);
-		if(token != null && !token.equalsIgnoreCase("null")) {
-			String userId = tokenProvider.validateAndGetUserId(token);
-			AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, 
-					null,
-					AuthorityUtils.NO_AUTHORITIES// 현재 권한 정보는 제공하지 않음
-					);
-			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		}
-		filterChain.doFilter(request, response);
-	}
-	
-	private String parseBearerToken(HttpServletRequest request) {
-		//Http 요청의 헤더를 파싱해 Bearer 토큰을 반환
-		String bearerToken = request.getHeader("Authorization");
-		
-		// Bearer 토큰 형식일 경우 토큰 값만 반환
-		if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7);
-		}
-		return null;
-	}
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        try {
+            String token = parseCookieToken(request);  // 쿠키에서 토큰 파싱
+            
+            if(token != null && !token.equalsIgnoreCase("null")) {
+                String userId = tokenProvider.validateAndGetUserId(token);
+                log.info("Authenticated user ID : {}", userId);
+                
+                AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userId, 
+                        null,
+                        AuthorityUtils.NO_AUTHORITIES
+                );
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
+            }
+        } catch (Exception e) {
+            log.error("Could not set user authentication in security context", e);
+        }
+        
+        filterChain.doFilter(request, response);
+    }
+    
+    private String parseCookieToken(HttpServletRequest request) {
+        jakarta.servlet.http.Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (jakarta.servlet.http.Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }

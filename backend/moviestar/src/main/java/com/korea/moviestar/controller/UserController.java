@@ -93,13 +93,9 @@ public class UserController {
 	                .sameSite("Strict")
 	                .build();
 
-	        // 사용자 정보 응답
-	        UserDTO response = UserDTO.builder()
-	                .userId(user.getUserId())
-	                .userEmail(user.getUserEmail())
-	                .userNick(user.getUserNick())
-	                .userName(user.getUserName())
-	                .build();
+	        // UserDTO의 fromEntity 메서드를 사용하여 응답 생성
+	        UserDTO response = UserDTO.fromEntity(user);
+	        response.setToken(token); // 토큰 설정 (필요한 경우)
 
 	        log.info("Login successful for user: {}", user.getUserName());
 	        return ResponseEntity.ok()
@@ -164,15 +160,21 @@ public class UserController {
 	
 	
 	@PutMapping("/private/like")
-	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @RequestBody int movieId){
-		UserDTO response = service.addLike(userId, movieId);
-		return ResponseEntity.ok().body(response);
+	public ResponseEntity<?> likeMovie(
+	    @AuthenticationPrincipal String userId, 
+	    @RequestBody Map<String, Integer> request  // movieId를 받을 객체 추가
+	){
+	    UserDTO response = service.addLike(userId, request.get("movieId"));
+	    return ResponseEntity.ok().body(response);
 	}
-	
+
 	@DeleteMapping("/private/dislike")
-	public ResponseEntity<?> dislikeMovie(@AuthenticationPrincipal String userId, @RequestBody int movieId){
-		UserDTO response = service.deleteLike(userId, movieId);
-		return ResponseEntity.ok().body(response);
+	public ResponseEntity<?> dislikeMovie(
+	    @AuthenticationPrincipal String userId, 
+	    @RequestBody Map<String, Integer> request  // movieId를 받을 객체 추가
+	){
+	    UserDTO response = service.deleteLike(userId, request.get("movieId"));
+	    return ResponseEntity.ok().body(response);
 	}
 	
 	@PutMapping("/private/modify")

@@ -101,6 +101,7 @@ const FindId = () => {
     
             if (response.ok) {
                 setPwMessage(data || '인증 성공');
+                alert('인증 성공')
                 navigate('/ChangePwd');
             } else {
                 setPwMessage(data.message || '인증코드가 일치하지 않습니다.');

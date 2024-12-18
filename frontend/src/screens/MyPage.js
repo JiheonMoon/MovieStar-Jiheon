@@ -263,24 +263,33 @@ const MyPage = () => {
                     </div>
                 )}
 
-                <div className="liked-movies-section">
-                    <h2>좋아요 표시한 영화</h2>
-                    {user.userLikeList && user.userLikeList.length > 0 ? (
-                        <div className="liked-movies-flex">
-                            {user.userLikeList.map((movie, index) => (
-                                <div key={movie.id} className="liked-movie-item">
-                                    <img 
-                                        src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
-                                        alt={movie.title} 
-                                    />
-                                    <p>{movie.title}</p>
-                                </div>
-                            ))}
-                        </div>
+<div className="liked-movies-section">
+    <h2>좋아요 표시한 영화</h2>
+    {user.userLikeList && user.userLikeList.length > 0 ? (
+        <div className="liked-movies-flex">
+            {user.userLikeList.map((movie, index) => (
+                <div key={movie.id || index} className="liked-movie-item">
+                    {console.log("Movie data:", movie)} {/* 데이터 확인용 로그 */}
+                    {movie.poster_path ? (
+                        <img 
+                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+                            alt={movie.title}
+                            onError={(e) => {
+                                e.target.onerror = null; 
+                                e.target.src = '대체 이미지 URL';
+                            }} 
+                        />
                     ) : (
-                        <p>좋아요 표시한 영화가 없습니다.</p>
+                        <div className="no-poster">포스터 없음</div>
                     )}
+                    <p>{movie.title || '제목 없음'}</p>
                 </div>
+            ))}
+        </div>
+    ) : (
+        <p>좋아요 표시한 영화가 없습니다.</p>
+    )}
+</div>
             </div>
         </div>
     );

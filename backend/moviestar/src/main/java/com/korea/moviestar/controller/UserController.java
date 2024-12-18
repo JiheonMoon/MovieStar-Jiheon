@@ -72,7 +72,7 @@ public class UserController {
 	    try {
 	        // 사용자 조회 및 비밀번호 확인
 	        UserDTO find = service.findUser(dto, passwordEncoder);
-	        if (find == null || !passwordEncoder.matches(dto.getUserPwd(), find.getUserPwd())) {
+	        if (find == null) {
 	            log.error("Login failed for user: {}", dto.getUserName());
 	            ResponseDTO responseDTO = ResponseDTO.builder()
 	                    .error("Invalid username or password")
@@ -93,7 +93,7 @@ public class UserController {
 	                .sameSite("Strict")
 	                .build();
 
-	        // 사용자 정보를 담은 응답 객체 생성
+	        // 사용자 정보 응답
 	        UserDTO response = UserDTO.builder()
 	                .userId(user.getUserId())
 	                .userEmail(user.getUserEmail())
@@ -103,8 +103,8 @@ public class UserController {
 
 	        log.info("Login successful for user: {}", user.getUserName());
 	        return ResponseEntity.ok()
-	                .header(HttpHeaders.SET_COOKIE, cookie.toString()) // 쿠키 설정
-	                .body(response); // 사용자 정보 전달
+	                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+	                .body(response);
 	    } catch (Exception e) {
 	        log.error("Unexpected error during login for user: {}", dto.getUserName(), e);
 	        ResponseDTO responseDTO = ResponseDTO.builder()

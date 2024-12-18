@@ -71,28 +71,24 @@ const LoginScreen = () => {
   };
 
   // 폼 제출 처리
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
      e.preventDefault()
 
      try {
        const response = await axios.post(
-        "/user/signin",
+        "http://localhost:9090/user/signin", 
         { userName: formData.userName, userPwd: formData.userPwd },
-        { withCredentials: true } // 쿠키 전송 활성화
+        { withCredentials: true }
       )
        if(response.status === 200) {
         const userData = response.data;
-        console.log("로그인 성공:", userData)
-
-        // 사용자 정보 Context에 저장
         setUser({
           userId: userData.userId,
           userEmail: userData.userEmail,
           userNick: userData.userNick,
-          userName: userData.userName
+          userName: userData.userName,
+          userLikeList: [] // 초기 좋아요 목록 추가
         })
-
-        // 로그인 성공 시 메인 화면으로 이동
         alert("로그인 성공")
         navigate("/home")
        }
@@ -100,7 +96,7 @@ const LoginScreen = () => {
        console.error("로그인 실패: ", error)
        setError("아이디 또는 비밀번호가 일치하지 않습니다.")
      }
-  };
+};
 
   return (
     <div className="login-page">

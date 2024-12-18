@@ -9,6 +9,7 @@ import "../css/detail/Review.css"
 import "../css/detail/Modal.css"
 import "../css/detail/Trailer.css"
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
 
 // 출연진 목록 컴포넌트
 const ActorList = ({ actors }) => (
@@ -292,31 +293,39 @@ const MovieDetail = ({ movie, onClose }) => {
 // MovieDetail.js의 handleLikeToggle 함수만 수정 (나머지는 그대로 유지)
 
   // 좋아요 토글 함수 수정
-  const handleLikeToggle = () => {
+  const handleLikeToggle = async () => {
     if (!user) {
-      alert("로그인 후 좋아요를 할 수 있습니다.");
-      return;
+        alert("로그인 후 좋아요를 할 수 있습니다.");
+        return;
     }
 
     try {
-      if (isLiked) {
-        removeLikeMovie(movie.id);
-      } else {
-        const movieData = {
-          id: movie.id,
-          title: movie.title,
-          poster_path: movie.poster_path,
-          release_date: movie.release_date,
-          vote_average: movie.vote_average,
-          overview: movie.overview
-        };
-        addLikeMovie(movieData);
-      }
-      setIsLiked(!isLiked);
+        if (isLiked) {
+            const response = await axios.delete('http://localhost:9090/user/private/dislike', {
+                data: { movieId: movie.id },
+                withCredentials: true
+            });
+            console.log("좋아요 삭제 응답:", response.data);
+            removeLikeMovie(movie.id);
+        } else {
+            const response = await axios.put(
+                'http://localhost:9090/user/private/like', 
+                { movieId: movie.id },
+                { withCredentials: true }
+            );
+            console.log("좋아요 추가 응답:", response.data);
+            addLikeMovie(movie);
+        }
+        setIsLiked(!isLiked);
     } catch (error) {
-      console.error("좋아요 처리 중 오류 발생:", error);
+        console.error("좋아요 처리 중 오류 발생:", error);
+        if (error.response?.status === 401) {
+            alert("로그인이 필요합니다.");
+        } else {
+            alert("좋아요 처리 중 오류가 발생했습니다.");
+        }
     }
-  };
+};
 
   //예고편 검색 함수
   const searchTrailer = async () => {

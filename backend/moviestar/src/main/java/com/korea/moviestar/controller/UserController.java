@@ -1,8 +1,11 @@
 package com.korea.moviestar.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -67,24 +70,18 @@ public class UserController {
 	
 	@PostMapping("/signin")
 	public ResponseEntity<?> signin(@RequestBody UserDTO dto) {
-	    log.info("User login attempt: {}", dto.getUserName());
-
 	    try {
-	        // 사용자 조회 및 비밀번호 확인
 	        UserDTO find = service.findUser(dto, passwordEncoder);
 	        if (find == null) {
-	            log.error("Login failed for user: {}", dto.getUserName());
-	            ResponseDTO responseDTO = ResponseDTO.builder()
+	            return ResponseEntity.badRequest().body(ResponseDTO.builder()
 	                    .error("Invalid username or password")
-	                    .build();
-	            return ResponseEntity.badRequest().body(responseDTO);
+	                    .build());
 	        }
 
-	        // 토큰 생성
 	        UserEntity user = UserService.toEntity(find, movies);
 	        final String token = tokenProvider.create(user);
 
-	        // HttpOnly 쿠키 생성
+	        // 쿠키 설정
 	        ResponseCookie cookie = ResponseCookie.from("token", token)
 	                .httpOnly(true)
 	                .secure(false)
@@ -93,20 +90,36 @@ public class UserController {
 	                .sameSite("Strict")
 	                .build();
 
-	        // UserDTO의 fromEntity 메서드를 사용하여 응답 생성
-	        UserDTO response = UserDTO.fromEntity(user);
-	        response.setToken(token); // 토큰 설정 (필요한 경우)
+	        // 각 영화의 상세 정보를 포함한 응답 생성
+	        Map<String, Object> userResponse = new HashMap<>();
+	        userResponse.put("userId", user.getUserId());
+	        userResponse.put("userEmail", user.getUserEmail());
+	        userResponse.put("userNick", user.getUserNick());
+	        userResponse.put("userName", user.getUserName());
 
-	        log.info("Login successful for user: {}", user.getUserName());
+	        // 영화 정보를 Map으로 변환
+	        Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream()
+	            .map(movie -> {
+	                Map<String, Object> movieInfo = new HashMap<>();
+	                movieInfo.put("id", movie.getMovieId());
+	                movieInfo.put("title", movie.getMovieName());
+	                movieInfo.put("poster_path", movie.getMoviePoster());
+	                movieInfo.put("overview", movie.getMovieOverview());
+	                movieInfo.put("movieOpDate", movie.getMovieOpDate());
+	                movieInfo.put("movieScore", movie.getMovieScore());
+	                return movieInfo;
+	            })
+	            .collect(Collectors.toSet());
+
+	        userResponse.put("userLikeList", likedMovies);
+
 	        return ResponseEntity.ok()
 	                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-	                .body(response);
+	                .body(userResponse);
 	    } catch (Exception e) {
-	        log.error("Unexpected error during login for user: {}", dto.getUserName(), e);
-	        ResponseDTO responseDTO = ResponseDTO.builder()
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDTO.builder()
 	                .error("Internal server error")
-	                .build();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDTO);
+	                .build());
 	    }
 	}
 	

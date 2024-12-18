@@ -71,9 +71,6 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     const [genres, setGenres] = useState([]);
     const [movies, setMovies] = useState({})
     const sectionRef = useRef({})
-
-    // 모달 여부에 따라 장르바 보여줄 지 여부에 대한 상태 관리
-    const [showNav, setShowNav] = useState(true)
     
     // 검색 관련 상태 관리
     const [searchQuery, setSearchQuery] = useState(""); 
@@ -81,6 +78,9 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
     
     // 선택된 영화 모달 상태 관리
     const [selectedMovie, setSelectedMovie] = useState(null);
+
+    // 모달 여부에 따라 장르바 보여줄 지 여부에 대한 상태 관리
+    const [showNav, setShowNav] = useState(true)
 
     // 화면 이동 함수 정의
     const navigate = useNavigate()
@@ -102,6 +102,25 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
         setFilteredMovies([]);
       }
     };
+
+    // 컴포넌트가 처음 렌더링될 때 로그인 상태 확인
+    useEffect(() => {
+      const verifyToken = async () => {
+        try {
+          const response = await axios.get("/user/verify-token", {withCredentials: true})
+          if(response.status === 200) {
+            setUser(response.data)
+          } else {
+            navigate("/login")
+          }
+        } catch (error) {
+          console.error("Token verification failed: ", error)
+          navigate("/login")
+        }
+      }
+
+      verifyToken();
+    }, [navigate, setUser]);
 
     // 로그인 버튼 클릭 시
     const navigateToLoginScreen = () => {

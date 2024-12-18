@@ -290,6 +290,8 @@ const MovieDetail = ({ movie, onClose }) => {
     setVisibleReviews(prev => prev + 3);
   };
 
+// MovieDetail.js의 handleLikeToggle 함수만 수정 (나머지는 그대로 유지)
+
   // 좋아요 토글 함수 수정
   const handleLikeToggle = async () => {
     if (!user) {
@@ -306,12 +308,11 @@ const MovieDetail = ({ movie, onClose }) => {
             console.log("좋아요 삭제 응답:", response.data);
             removeLikeMovie(movie.id);
         } else {
-            console.log("추가하려는 영화 데이터:", movie); // 데이터 확인용 로그
             const response = await axios.put(
                 'http://localhost:9090/user/private/like', 
                 { movieId: movie.id },
                 { withCredentials: true }
-            )
+            );
             console.log("좋아요 추가 응답:", response.data);
             addLikeMovie(movie);
         }

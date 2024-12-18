@@ -209,25 +209,6 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
       setSelectedMovie(null);
       setShowNav(true);
     };
-
-    // useEffect(() => {
-    //   // 새로고침 시 로그인 상태 확인
-    //   const checkLoginStatus = async () => {
-    //     try {
-    //       const response = await axios.get("/user/verify-token", { withCredentials: true }); // 서버에서 토큰 확인 요청
-    //       if (response.status === 200) {
-    //         // 로그인 상태 유지
-    //         const userData = response.data;
-    //         setUser(userData);
-    //       }
-    //     } catch (error) {
-    //       console.error("Token verification failed:", error);
-    //       navigate("/login"); // 토큰이 유효하지 않으면 로그인 페이지로 이동
-    //     }
-    //   };
-  
-    //   checkLoginStatus();
-    // }, [navigate, setUser]);
   
     return (
       <div className="main-page">

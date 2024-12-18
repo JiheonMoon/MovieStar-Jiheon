@@ -71,31 +71,36 @@ const LoginScreen = () => {
   };
 
   // 폼 제출 처리
-const handleSubmit = async (e) => {
-     e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault()
 
-     try {
-       const response = await axios.post(
-        "http://localhost:9090/user/signin", 
-        { userName: formData.userName, userPwd: formData.userPwd },
-        { withCredentials: true }
-      )
-       if(response.status === 200) {
-        const userData = response.data;
-        setUser({
-          userId: userData.userId,
-          userEmail: userData.userEmail,
-          userNick: userData.userNick,
-          userName: userData.userName,
-          userLikeList: [] // 초기 좋아요 목록 추가
-        })
-        alert("로그인 성공")
-        navigate("/home")
-       }
-     } catch (error) {
-       console.error("로그인 실패: ", error)
-       setError("아이디 또는 비밀번호가 일치하지 않습니다.")
-     }
+    try {
+        console.log("로그인 시도:", formData);
+        const response = await axios.post(
+            "http://localhost:9090/user/signin", 
+            { userName: formData.userName, userPwd: formData.userPwd },
+            { withCredentials: true }
+        );
+        if(response.status === 200) {
+            const userData = response.data;
+            console.log("로그인 응답 데이터:", userData);
+            
+            setUser({
+                userId: userData.userId,
+                userEmail: userData.userEmail,
+                userNick: userData.userNick,
+                userName: userData.userName,
+                userLikeList: userData.userLikeList || []
+            });
+            console.log("Context에 저장된 사용자 정보:", userData);
+            
+            alert("로그인 성공")
+            navigate("/home")
+        }
+    } catch (error) {
+        console.error("로그인 실패: ", error)
+        setError("아이디 또는 비밀번호가 일치하지 않습니다.")
+    }
 };
 
   return (

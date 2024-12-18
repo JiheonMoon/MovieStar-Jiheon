@@ -314,7 +314,17 @@ const MovieDetail = ({ movie, onClose }) => {
                 { withCredentials: true }
             );
             console.log("좋아요 추가 응답:", response.data);
-            addLikeMovie(movie);
+            
+            // 필요한 영화 정보를 객체로 만들어서 전달
+            const movieData = {
+                id: movie.id,
+                title: movie.title,
+                poster_path: movie.poster_path,
+                release_date: movie.release_date,
+                vote_average: movie.vote_average,
+                overview: movie.overview
+            };
+            addLikeMovie(movieData);
         }
         setIsLiked(!isLiked);
     } catch (error) {

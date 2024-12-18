@@ -110,12 +110,9 @@ const TopRecommendation = ({ movies,onMovieSelect }) => {
           const response = await axios.get("/user/verify-token", {withCredentials: true})
           if(response.status === 200) {
             setUser(response.data)
-          } else {
-            navigate("/login")
           }
         } catch (error) {
-          console.error("Token verification failed: ", error)
-          navigate("/login")
+          console.error("로그인하지 않은 상태: ", error)
         }
       }
 

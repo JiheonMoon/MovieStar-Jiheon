@@ -63,6 +63,7 @@ const HomePage = () => {
   // 유저 관리 컨텍스트
   const { user, setUser } = useContext(AppContext)
 
+
   // 다양한 영화 리스트 상태 관리
   const [popularMovies, setPopularMovies] = useState([]);
   const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
@@ -77,6 +78,20 @@ const HomePage = () => {
 
   // 선택된 영화 모달 상태 관리
   const [selectedMovie, setSelectedMovie] = useState(null);
+
+    // 컴포넌트가 처음 렌더링될 때 로그인 상태 확인
+//     useEffect(() => {
+//       const verifyToken = async () => {
+//         try {
+//           const response = await axios.get("/user/verify-token", {withCredentials: true})
+//           if(response.status === 200) {
+//             setUser(response.data)
+//           }
+//         } catch (error) {
+//           console.error("로그인하지 않은 상태: ", error)
+//         }
+//       }
+
 
   // 모달 여부에 따라 장르바 보여줄 지 여부에 대한 상태 관리
   const [showNav, setShowNav] = useState(true)

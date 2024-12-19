@@ -11,6 +11,22 @@ const LoginScreen = () => {
     const { setUser } = useContext(AppContext)
     const navigate = useNavigate()
 
+  // const handleLogin = async () => {
+  //   try {
+  //       const response = await axios.post("/api/auth/login", {
+  //           username,
+  //           password,
+  //       })
+  //       alert(response.data.message)
+  //   } catch (error) {
+  //       alert("Login failed. Please check your credentials.")
+  //   }
+  // }
+
+  // const handleSocialLogin = (provider) => {
+  //   window.location.href = `/oauth2/authorization/${provider}`
+  // }
+
   // 로고 클릭 시 메인화면 띄우기
   const handleLogoClick = () => {
     navigate("/home")
@@ -61,7 +77,6 @@ const LoginScreen = () => {
 
   // 폼 제출 처리
   const handleSubmit = async (e) => {
-
     e.preventDefault()
 
     try {
@@ -92,7 +107,6 @@ const LoginScreen = () => {
         setError("아이디 또는 비밀번호가 일치하지 않습니다.")
     }
 };
-
 
   return (
     <div className="login-page">

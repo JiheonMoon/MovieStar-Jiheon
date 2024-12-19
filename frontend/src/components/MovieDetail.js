@@ -312,7 +312,7 @@ const MovieDetail = ({ movie, onClose }) => {
                 'http://localhost:9090/user/private/like', 
                 { movieId: movie.id },
                 { withCredentials: true }
-            )
+            );
             console.log("좋아요 추가 응답:", response.data);
             addLikeMovie(movie);
         }

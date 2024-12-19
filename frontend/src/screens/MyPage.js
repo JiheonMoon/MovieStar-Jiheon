@@ -4,7 +4,6 @@ import { AppContext } from '../context/AppContext';
 import { IoHome } from "react-icons/io5";
 import '../css/main/MyPage.css';
 import logo from "../logo/logo.png"
-import axios from 'axios';
 
 const MyPage = () => {
     const { user, setUser } = useContext(AppContext);
@@ -22,13 +21,6 @@ const MyPage = () => {
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
 
-    useEffect(()=>{
-        axios.get("/user/private/mine").then(
-            response=>{
-                setUser(response.data)
-            }
-        )
-    },[])
     // 로그인되지 않은 경우 리다이렉트
     if (!user) {
         navigate('/login');

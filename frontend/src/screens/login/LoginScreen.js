@@ -29,18 +29,23 @@ const LoginScreen = () => {
   // 네이버 로그인
   const handleNaverLogin = () => {
     const NAVER_CLIENT_ID = process.env.REACT_APP_NAVER_LOGIN_CLIENT_ID; // 클라이언트 ID
-    const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
-    const STATE = "false";
-    // oauth 요청 URL
-    const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
-    // 네이버 로그인 페이지로 리다이렉션
-    window.location.href = NAVER_AUTH_URL;
+        const REDIRECT_URI = 'http://localhost:3000/login/naver'; // Redirect URI
+        const STATE = "someRandomState"; // CSRF 방지를 위한 state 값
+    
+        if (!NAVER_CLIENT_ID) {
+            console.error("NAVER_CLIENT_ID가 설정되지 않았습니다.");
+            alert("네이버 로그인 설정 오류! 클라이언트 ID를 확인해주세요.");
+            return;
+        }
+    
+        const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+        window.location.href = NAVER_AUTH_URL;
   }
 
   // 구글 로그인
   const handleGoogleLogin = () => {
     const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID; // 클라이언트 ID
-    const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
+    const REDIRECT_URI = 'http://localhost:3000/login/google'; // Redirect URI
     const SCOPE = "email profile";
     // oauth 요청 URL
     const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPE}`;

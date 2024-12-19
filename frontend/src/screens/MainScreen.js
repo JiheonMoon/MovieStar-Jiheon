@@ -121,7 +121,7 @@ const HomePage = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const response = await axios.get("/user/verify-token", { withCredentials: true })
+        const response = await axios.get("http://localhost:9090/user/verify-token", { withCredentials: true })
         if (response.status === 200) {
           setUser(response.data)
         } else {

@@ -14,6 +14,7 @@ import "./css/main/Header.css";
 import "./css/main/Slider.css";
 import "./css/main/TopRecommendation.css";
 import "./css/main/FirstPage.css";
+import { GoogleLogin, NaverLogin } from "./screens/login/SocialLogin.js";
 
 // Layout 설정 컴포넌트
 const Layout = ({ children }) => {
@@ -73,6 +74,8 @@ const App = () => {
                         <Route path="/find" element={<FindIdOrPassword />} />
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/mypage" element={<Mypage />} />
+                        <Route path="/login/google" element = {<GoogleLogin/>}/>
+                        <Route path="/login/naver" element = {<NaverLogin/>}/>
                     </Routes>
                 </Layout>
             </Router>

@@ -56,6 +56,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
       </div>
     );
   };
+
   
   // 메인 홈페이지 컴포넌트
   const HomePage = () => {
@@ -86,6 +87,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
     // 로고 클릭 시 메인화면 띄우기(추후 마이페이지에서 활용)
     const handleLogoClick = () => {
       navigate("/home")
+
     }
 
     // 로그인 버튼 클릭 시

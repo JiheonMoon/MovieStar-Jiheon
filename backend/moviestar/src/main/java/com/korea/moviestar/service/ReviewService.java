@@ -39,6 +39,7 @@ public class ReviewService {
 		return null;
 	}
 	
+	// 특정 영화의 리뷰 조회
 	public List<ReviewDTO> findByMovieId(int movieId){
 		Optional<MovieEntity> origin = movies.findById(movieId);
 		if(origin.isPresent()) {
@@ -48,6 +49,7 @@ public class ReviewService {
 		return null;
 	}
 	
+	// 리뷰 등록
 	public ReviewDTO create(String userId, ReviewDTO dto) {
 		int user = Integer.parseInt(userId);
 		Optional<UserEntity> originUser = users.findById(user);

@@ -40,6 +40,7 @@ public class ReviewController {
 		return ResponseEntity.ok().body(response);
 	}
 	
+	// 특정 영화의 리뷰 조회(로그인하지 않아도 가능)
 	@GetMapping("/{movieId}")
 	public ResponseEntity<?> reviewByMovieId(@PathVariable int movieId){
 		List<ReviewDTO> dtos = service.findByMovieId(movieId);
@@ -47,6 +48,7 @@ public class ReviewController {
 		return ResponseEntity.ok().body(response);
 	}
 	
+	// 리뷰 등록(로그인한 유저만 가능)
 	@PostMapping("/private/write")
 	public ResponseEntity<?> writeReview(@AuthenticationPrincipal String userId, @RequestBody ReviewDTO dto){
 		ReviewDTO response = service.create(userId, dto);

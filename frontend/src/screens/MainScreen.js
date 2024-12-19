@@ -76,7 +76,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
     
     // 선택된 영화 모달 상태 관리
     const [selectedMovie, setSelectedMovie] = useState(null);
-
+    
     // 모달 여부에 따라 장르바 보여줄 지 여부에 대한 상태 관리
     const [showNav, setShowNav] = useState(true)
 

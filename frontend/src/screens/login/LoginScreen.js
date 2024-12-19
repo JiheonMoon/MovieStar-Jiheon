@@ -56,7 +56,6 @@ const LoginScreen = () => {
 
   // 폼 제출 처리
   const handleSubmit = async (e) => {
-
     e.preventDefault()
 
     try {
@@ -87,7 +86,6 @@ const LoginScreen = () => {
         setError("아이디 또는 비밀번호가 일치하지 않습니다.")
     }
 };
-
 
   return (
     <div className="login-page">

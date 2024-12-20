@@ -70,6 +70,65 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> signin(@RequestBody UserDTO dto) {
+<<<<<<< HEAD
+	    try {
+	        if (dto == null) {
+	            log.error("Received DTO is null");
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("DTO is null");
+	        }
+
+	        // 사용자 정보 찾기
+	        UserDTO find = service.findUser(dto, passwordEncoder);
+	        if (find == null || !passwordEncoder.matches(dto.getUserPwd(), find.getUserPwd())) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+	        }
+
+	        // 사용자 엔티티 생성 및 토큰 생성
+	        UserEntity user = UserService.toEntity(find, movies);
+	        final String token = tokenProvider.create(user);
+
+	        // 쿠키 설정
+	        ResponseCookie cookie = ResponseCookie.from("token", token)
+	                .httpOnly(true) // 클라이언트에서 접근 불가
+	                .secure(false)  // HTTP만 가능 (실제 운영에서는 true로 설정)
+	                .path("/")      // 모든 경로에서 사용 가능
+	                .maxAge(7 * 24 * 60 * 60) // 7일
+	                .sameSite("Strict") // SameSite 설정
+	                .build();
+
+	        // 사용자 정보 응답
+	        Map<String, Object> userResponse = new HashMap<>();
+	        userResponse.put("userId", user.getUserId());
+	        userResponse.put("userEmail", user.getUserEmail());
+	        userResponse.put("userNick", user.getUserNick());
+	        userResponse.put("userName", user.getUserName());
+
+	        // 영화 정보를 Map으로 변환
+	        Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream().map(movie -> {
+	            Map<String, Object> movieInfo = new HashMap<>();
+	            movieInfo.put("id", movie.getMovieId());
+	            movieInfo.put("title", movie.getMovieName());
+	            movieInfo.put("poster_path", movie.getMoviePoster());
+	            movieInfo.put("overview", movie.getMovieOverview());
+	            movieInfo.put("movieOpDate", movie.getMovieOpDate());
+	            movieInfo.put("movieScore", movie.getMovieScore());
+	            return movieInfo;
+	        }).collect(Collectors.toSet());
+
+	        userResponse.put("userLikeList", likedMovies);
+
+	        return ResponseEntity.ok()
+	                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+	                .body(userResponse);
+	    } catch (Exception e) {
+	        log.error("Error during signin", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("Internal server error");
+	    }
+	}
+
+
+=======
 
 		try {
 			UserDTO find = service.findUser(dto, passwordEncoder);
@@ -113,6 +172,7 @@ public class UserController {
 		}
 	}
 
+>>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
 	@PostMapping("/naver_signin")
 	public ResponseEntity<?> naverLogin(@RequestParam String code, @RequestParam String state) {
 		try {
@@ -242,6 +302,49 @@ public class UserController {
 
 	@PostMapping("/request_verification")
 	public ResponseEntity<?> requestVerification(@RequestParam String email) {
+<<<<<<< HEAD
+	    try {
+	    	mails.sendVerificationCode(email);
+		    return ResponseEntity.ok().body(Map.of(
+		    		"success", true,
+		    		"message","인증코드를 이메일로 발송했습니다."
+		    		));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(Map.of(
+		            "success", false,
+		            "message", "인증코드 발송에 에러가 발생했습니다."
+					));
+		}
+		
+	}
+
+	@PostMapping("/verify_email")
+	public ResponseEntity<Map<String, String>> verifyEmail(@RequestParam String email, @RequestParam String code) {
+	    Map<String, String> response = new HashMap<>();
+	    
+	    try {
+	        boolean isVerified = mails.verifyCode(email, code, passwordEncoder);
+
+	        if (isVerified) {
+	            response.put("status", "success");
+	            response.put("message", "인증 성공");
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("status", "error");
+	            response.put("message", "인증코드가 일치하지 않습니다.");
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	        }
+	    } catch (RuntimeException e) {
+	        response.put("status", "error");
+	        response.put("message", "인증 처리 중 오류가 발생했습니다: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	    } catch (Exception e) {
+	        // 다른 예외 처리
+	        response.put("status", "error");
+	        response.put("message", "서버 오류: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
+=======
 		mails.sendVerificationCode(email);
 		return ResponseEntity.ok().body("인증 코드가 전송되었습니다");
 	}
@@ -252,6 +355,7 @@ public class UserController {
 			return ResponseEntity.ok().body("이메일 인증 성공");
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 실패");
+>>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
 	}
 
 	@PutMapping("/private/like")
@@ -285,6 +389,34 @@ public class UserController {
 	}
 
 	@PutMapping("/modifyPwd")
+<<<<<<< HEAD
+	public ResponseEntity<?> modifyPwd(@RequestParam String email, @RequestBody UserDTO dto){
+		try {
+			log.info(dto.toString());
+			String newPwd = passwordEncoder.encode(dto.getUserPwd());
+			UserDTO updatedUser = service.updatePwd(email, newPwd);
+			
+	        // 비밀번호 변경 후 새로운 토큰 발급
+	        UserEntity user = UserService.toEntity(updatedUser, movies);
+	        log.info("newUser:" + user.toString());
+	        final String newToken = tokenProvider.create(user);  // 새로운 토큰 생성
+
+	        // 새로운 토큰을 쿠키로 설정하여 클라이언트에 전달
+	        ResponseCookie cookie = ResponseCookie.from("token", newToken)
+		            .httpOnly(true) // 클라이언트에서 접근 불가
+		            .secure(true)   // HTTPS에서만 전송
+		            .path("/")      // 모든 경로에서 사용 가능
+		            .maxAge(60 * 60 * 24) // 1일
+		            .build();
+
+		    return ResponseEntity.ok()
+		            .header(HttpHeaders.SET_COOKIE, cookie.toString())
+		            .body(user);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+		
+=======
 	public ResponseEntity<?> modifyPwd(@RequestParam String email, @RequestBody String pwd) {
 		try {
 			String newPwd = passwordEncoder.encode(pwd);
@@ -294,6 +426,7 @@ public class UserController {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 
+>>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
 	}
 
 }

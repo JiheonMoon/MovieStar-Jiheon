@@ -8,6 +8,8 @@ import LoginScreen from "./screens/login/LoginScreen.js";
 import FindIdOrPassword from "./screens/login/FindIdOrPassword.js";
 import Signup from "./screens/login/Signup.js";
 import Mypage from "./screens/MyPage.js";
+import PwdChangeScreen from "./screens/login/PwdChangeScreen.js";
+
 
 import "./App.css";
 import "./css/main/Header.css";
@@ -93,6 +95,8 @@ const App = () => {
                         <Route path="/mypage" element={<Mypage />} />
                         <Route path="/login/google" element = {<GoogleLogin/>}/>
                         <Route path="/login/naver" element = {<NaverLogin/>}/>
+                        <Route path="/ChangePwd" element={<PwdChangeScreen />} />
+
                     </Routes>
                 </Layout>
             </Router>

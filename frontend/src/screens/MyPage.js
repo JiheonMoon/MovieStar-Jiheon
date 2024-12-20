@@ -177,7 +177,7 @@ const MyPage = () => {
                     </button>
                     <button 
                         className={activeTab === 'password' ? 'active' : ''}
-                        onClick={() => setActiveTab('password')}
+                        onClick={() => navigate('/ChangePwd')}
                     >
                         비밀번호 변경
                     </button>

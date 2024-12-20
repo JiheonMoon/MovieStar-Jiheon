@@ -79,14 +79,16 @@ const ReviewItem = ({
   updateReview,
   cancelEdit,
   username
-}) => (
+}) => {
+
+  return (
   <li className="review-item">
     <div className="review-item-container">
       <span className="review-user">{item.userNick}</span>
       <StarRating rating={item.reviewRating} size={15} readOnly />
       <span className="review-text">{item.reviewContent}</span>
       <span className="review-date">{formatDate(item.reviewDate)}</span>
-      {username === item.userId && (
+      {username === item.userNick && (
         <div className="review-actions">
           <button className="review-edit-button" onClick={() => onEdit(item)}>
             수정
@@ -128,7 +130,9 @@ const ReviewItem = ({
       </div>
     )}
   </li>
-);
+  )
+};
+
 
 // 리뷰 리스트 컴포넌트
 // const ReviewList = ({

@@ -70,6 +70,7 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> signin(@RequestBody UserDTO dto) {
+<<<<<<< HEAD
 	    try {
 	        if (dto == null) {
 	            log.error("Received DTO is null");
@@ -127,6 +128,51 @@ public class UserController {
 	}
 
 
+=======
+
+		try {
+			UserDTO find = service.findUser(dto, passwordEncoder);
+			if (find == null) {
+				return ResponseEntity.badRequest()
+						.body(ResponseDTO.builder().error("Invalid username or password").build());
+			}
+
+			UserEntity user = UserService.toEntity(find, movies);
+			final String token = tokenProvider.create(user);
+
+			// 쿠키 설정
+			ResponseCookie cookie = ResponseCookie.from("token", token).httpOnly(true).secure(false).path("/")
+					.maxAge(7 * 24 * 60 * 60).sameSite("Strict").build();
+
+			// 각 영화의 상세 정보를 포함한 응답 생성
+			Map<String, Object> userResponse = new HashMap<>();
+			userResponse.put("userId", user.getUserId());
+			userResponse.put("userEmail", user.getUserEmail());
+			userResponse.put("userNick", user.getUserNick());
+			userResponse.put("userName", user.getUserName());
+
+			// 영화 정보를 Map으로 변환
+			Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream().map(movie -> {
+				Map<String, Object> movieInfo = new HashMap<>();
+				movieInfo.put("id", movie.getMovieId());
+				movieInfo.put("title", movie.getMovieName());
+				movieInfo.put("poster_path", movie.getMoviePoster());
+				movieInfo.put("overview", movie.getMovieOverview());
+				movieInfo.put("movieOpDate", movie.getMovieOpDate());
+				movieInfo.put("movieScore", movie.getMovieScore());
+				return movieInfo;
+			}).collect(Collectors.toSet());
+
+			userResponse.put("userLikeList", likedMovies);
+
+			return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(userResponse);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(ResponseDTO.builder().error("Internal server error").build());
+		}
+	}
+
+>>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
 	@PostMapping("/naver_signin")
 	public ResponseEntity<?> naverLogin(@RequestParam String code, @RequestParam String state) {
 		try {
@@ -256,6 +302,7 @@ public class UserController {
 
 	@PostMapping("/request_verification")
 	public ResponseEntity<?> requestVerification(@RequestParam String email) {
+<<<<<<< HEAD
 	    try {
 	    	mails.sendVerificationCode(email);
 		    return ResponseEntity.ok().body(Map.of(
@@ -297,6 +344,18 @@ public class UserController {
 	        response.put("message", "서버 오류: " + e.getMessage());
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	    }
+=======
+		mails.sendVerificationCode(email);
+		return ResponseEntity.ok().body("인증 코드가 전송되었습니다");
+	}
+
+	@PostMapping("/verify_email")
+	public ResponseEntity<?> verifyEmail(@RequestParam String email, @RequestParam String code) {
+		if (mails.verifyCode(email, code, passwordEncoder)) {
+			return ResponseEntity.ok().body("이메일 인증 성공");
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 실패");
+>>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
 	}
 
 	@PutMapping("/private/like")
@@ -330,6 +389,7 @@ public class UserController {
 	}
 
 	@PutMapping("/modifyPwd")
+<<<<<<< HEAD
 	public ResponseEntity<?> modifyPwd(@RequestParam String email, @RequestBody UserDTO dto){
 		try {
 			log.info(dto.toString());
@@ -356,6 +416,17 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 		
+=======
+	public ResponseEntity<?> modifyPwd(@RequestParam String email, @RequestBody String pwd) {
+		try {
+			String newPwd = passwordEncoder.encode(pwd);
+			UserDTO response = service.updatePwd(email, newPwd);
+			return ResponseEntity.ok().body(response);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+
+>>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
 	}
 
 }

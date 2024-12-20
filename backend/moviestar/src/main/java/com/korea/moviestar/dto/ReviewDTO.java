@@ -23,6 +23,7 @@ public class ReviewDTO {
 	private int reviewRating;
 	private String reviewContent;
 	private Date reviewDate;
+	private String userNick;
 	
 	public ReviewDTO(ReviewEntity entity) {
 		this.reviewId = entity.getReviewId();
@@ -31,6 +32,7 @@ public class ReviewDTO {
 		this.reviewRating = entity.getReviewRating();
 		this.reviewContent = entity.getReviewContent();
 		this.reviewDate = entity.getReviewDate();
+		this.userNick = entity.getUser().getUserNick();	
 	}
 	
 	public static ReviewEntity toEntity(ReviewDTO dto, UserEntity user, MovieEntity movie) {

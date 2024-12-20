@@ -10,6 +10,7 @@ import Signup from "./screens/login/Signup.js";
 import Mypage from "./screens/MyPage.js";
 import PwdChangeScreen from "./screens/login/PwdChangeScreen.js";
 
+
 import "./App.css";
 import "./css/main/Header.css";
 import "./css/main/Slider.css";
@@ -95,6 +96,7 @@ const App = () => {
                         <Route path="/login/google" element = {<GoogleLogin/>}/>
                         <Route path="/login/naver" element = {<NaverLogin/>}/>
                         <Route path="/ChangePwd" element={<PwdChangeScreen />} />
+
                     </Routes>
                 </Layout>
             </Router>

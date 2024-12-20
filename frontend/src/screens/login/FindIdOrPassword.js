@@ -158,8 +158,7 @@ const FindId = () => {
                             )}
                         </>
                     )}
-
-<h2>비밀번호 찾기</h2>
+  <h2>비밀번호 찾기</h2>
                     <form >
                         <div className="input-group">
                             <label htmlFor="pwdEmail">이메일 입력</label>

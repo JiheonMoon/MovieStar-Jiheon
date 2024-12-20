@@ -192,7 +192,7 @@ public class UserController {
 					.body(ResponseDTO.builder().error("Internal server error").build());
 		}
 	}
-
+	
 	@GetMapping("/verify-token")
 	public ResponseEntity<?> verifyToken(@CookieValue(value = "token", required = false) String token) {
 		if (token == null || token.isEmpty()) {

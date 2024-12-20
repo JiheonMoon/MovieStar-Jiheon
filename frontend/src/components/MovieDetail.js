@@ -225,6 +225,11 @@ const MovieDetail = ({ movie, onClose }) => {
       return;
     }
     
+    if(!reviewContent) {
+      alert("리뷰 내용을 입력해주세요.")
+      return;
+    }
+
     const newReview = {
       movieId : movie.id,
       reviewRating,
@@ -232,22 +237,33 @@ const MovieDetail = ({ movie, onClose }) => {
     };
 
     try {
-      if(window.confirm("리뷰를 등록하시겠습니까?")) {
         const response = await axios.post(
           "http://localhost:9090/review/private/write",
           newReview,
-          { withCredentials: true}
+          { withCredentials: true }
         )
-        setReviewList((prev) => [response.data, ...prev])
-        setReviewContent("")
-        setReviewRate(5)
+
+        if(response.status === 200) {
+          alert("리뷰가 등록되었습니다.")
+          setReviewList((prev) => [response.data, ...prev])
+          setReviewContent("")
+          setReviewRate(5)
   
-        // 새 리뷰 추가 시 더보기 상태 초기화
-        setVisibleReviews(3);
+          // 새 리뷰 추가 시 더보기 상태 초기화
+          setVisibleReviews(3);
+        }
+      } catch (error) {
+        console.log(error.response?.data)
+        console.error("리뷰 작성 실패:", error.response?.data)
+
+        const errorMessage = error.response?.data?.message
+      
+        if (errorMessage === "이미 이 영화에 리뷰를 작성했습니다.") {
+          alert("이미 이 영화에 리뷰를 작성했습니다.")
+        } else {
+          alert("리뷰 등록 중 오류가 발생했습니다.")
+        }
       }
-    } catch (error) {
-      console.error("리뷰 등록 실패:", error)
-    }
   };
 
   const handleRemove = async (reviewId) => {
@@ -258,7 +274,7 @@ const MovieDetail = ({ movie, onClose }) => {
           { withCredentials: true }
         )
 
-        if (response.status = 200) {
+        if (response.status === 200) {
           alert("리뷰가 삭제되었습니다.")
           setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId))
           // 삭제 후 더보기 상태 조정

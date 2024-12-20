@@ -128,6 +128,10 @@ h2 {
   background-color: #b20710; /* 버튼 호버 시 더 어두운 빨강 */
 }
 
+.error-message {
+  text-align: center;
+}
+
 .social-login-section {
   margin-top: 20px;
   text-align: center;

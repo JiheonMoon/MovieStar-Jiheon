@@ -45,18 +45,23 @@ const LoginScreen = () => {
   // 네이버 로그인
   const handleNaverLogin = () => {
     const NAVER_CLIENT_ID = process.env.REACT_APP_NAVER_LOGIN_CLIENT_ID; // 클라이언트 ID
-    const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
-    const STATE = "false";
-    // oauth 요청 URL
-    const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
-    // 네이버 로그인 페이지로 리다이렉션
-    window.location.href = NAVER_AUTH_URL;
+        const REDIRECT_URI = 'http://localhost:3000/login/naver'; // Redirect URI
+        const STATE = "someRandomState"; // CSRF 방지를 위한 state 값
+    
+        if (!NAVER_CLIENT_ID) {
+            console.error("NAVER_CLIENT_ID가 설정되지 않았습니다.");
+            alert("네이버 로그인 설정 오류! 클라이언트 ID를 확인해주세요.");
+            return;
+        }
+    
+        const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+        window.location.href = NAVER_AUTH_URL;
   }
 
   // 구글 로그인
   const handleGoogleLogin = () => {
     const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID; // 클라이언트 ID
-    const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
+    const REDIRECT_URI = 'http://localhost:3000/login/google'; // Redirect URI
     const SCOPE = "email profile";
     // oauth 요청 URL
     const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPE}`;
@@ -72,35 +77,36 @@ const LoginScreen = () => {
 
   // 폼 제출 처리
   const handleSubmit = async (e) => {
-     e.preventDefault()
+    e.preventDefault()
 
-     try {
-       const response = await axios.post(
-        "/user/signin",
-        { userName: formData.userName, userPwd: formData.userPwd },
-        { withCredentials: true } // 쿠키 전송 활성화
-      )
-       if(response.status === 200) {
-        const userData = response.data;
-        console.log("로그인 성공:", userData)
-
-        // 사용자 정보 Context에 저장
-        setUser({
-          userId: userData.userId,
-          userEmail: userData.userEmail,
-          userNick: userData.userNick,
-          userName: userData.userName
-        })
-
-        // 로그인 성공 시 메인 화면으로 이동
-        alert("로그인 성공")
-        navigate("/home")
-       }
-     } catch (error) {
-       console.error("로그인 실패: ", error)
-       setError("아이디 또는 비밀번호가 일치하지 않습니다.")
-     }
-  };
+    try {
+        console.log("로그인 시도:", formData);
+        const response = await axios.post(
+            "http://localhost:9090/user/signin", 
+            { userName: formData.userName, userPwd: formData.userPwd },
+            { withCredentials: true }
+        );
+        if(response.status === 200) {
+            const userData = response.data;
+            console.log("로그인 응답 데이터:", userData);
+            
+            setUser({
+                userId: userData.userId,
+                userEmail: userData.userEmail,
+                userNick: userData.userNick,
+                userName: userData.userName,
+                userLikeList: userData.userLikeList || []
+            });
+            console.log("Context에 저장된 사용자 정보:", userData);
+            
+            alert("로그인 성공")
+            navigate("/home")
+        }
+    } catch (error) {
+        console.error("로그인 실패: ", error)
+        setError("아이디 또는 비밀번호가 일치하지 않습니다.")
+    }
+};
 
   return (
     <div className="login-page">

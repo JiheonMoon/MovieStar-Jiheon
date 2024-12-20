@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../../css/login/FindIdOrPassword.css";
 import logo from "../../logo/logo.png"
 
-
 const FindId = () => {
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
     const [pwdEmail, setPwdEmail] = useState('')
     const [takePwdCode,setTakePwdCode] = useState('');
-    const [emailCode, setEmailCode] = useState('')
     const [isLoading, setIsLoading] = useState(false);
-
 
     // 아이디찾기 관련 메세지
     const [message, setMessage] = useState('');
@@ -52,8 +48,6 @@ const FindId = () => {
         }
     };
 
-    
-    
     const sendEmail = async (e) => {
         e.preventDefault();
 
@@ -100,6 +94,10 @@ const FindId = () => {
             const data = await response.json();
     
             if (response.ok) {
+                 // 인증 성공 후, 토큰 발급 및 쿠키 저장
+                if (data.token) {
+                    document.cookie = `token=${data.token}; path=/; secure; HttpOnly`; // 토큰을 쿠키에 저장
+                }
                 setPwMessage(data || '인증 성공');
                 alert('인증 성공')
                 navigate('/ChangePwd');
@@ -113,13 +111,6 @@ const FindId = () => {
             setIsLoading(false)
         }
     };
-    
-
-    useEffect(() => {
-            console.log(pwMessage)
-
-    }, [pwMessage]);
-
 
     return (
         <div className="find-page">
@@ -129,7 +120,7 @@ const FindId = () => {
             <div className="find-body">
                 <div className="find-id-container">
                     <h2>아이디 찾기</h2>
-                    <form >
+                    <form onSubmit={handleFindId}>
                         <div className="input-group">
                             <label htmlFor="email">가입 시 사용한 이메일</label>
                             <input
@@ -141,7 +132,7 @@ const FindId = () => {
                                 required
                             />
                         </div>
-                        <button onSubmit={handleFindId} className="find-id-button">아이디 찾기</button>
+                        <button type="submit" className="find-id-button">아이디 찾기</button>
                     </form>
                     {message && (
                         <>
@@ -168,7 +159,7 @@ const FindId = () => {
                         </>
                     )}
 
-                    <h2>비밀번호 찾기</h2>
+<h2>비밀번호 찾기</h2>
                     <form >
                         <div className="input-group">
                             <label htmlFor="pwdEmail">이메일 입력</label>

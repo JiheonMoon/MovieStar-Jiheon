@@ -9,6 +9,7 @@ import "../css/detail/Review.css"
 import "../css/detail/Modal.css"
 import "../css/detail/Trailer.css"
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
 
 // 출연진 목록 컴포넌트
 const ActorList = ({ actors }) => (
@@ -64,6 +65,10 @@ const ReviewForm = ({ reviewRating, setReviewRate, reviewContent, setReviewConte
   </div>
 );
 
+const formatDate = (isoString) => {
+  return moment(isoString).format("YY/MM/DD HH:mm")
+}
+
 // 리뷰 아이템 컴포넌트
 const ReviewItem = ({
   item,
@@ -74,14 +79,16 @@ const ReviewItem = ({
   updateReview,
   cancelEdit,
   username
-}) => (
+}) => {
+
+  return (
   <li className="review-item">
     <div className="review-item-container">
-      <span className="review-user">{item.userId}</span>
+      <span className="review-user">{item.userNick}</span>
       <StarRating rating={item.reviewRating} size={15} readOnly />
       <span className="review-text">{item.reviewContent}</span>
-      <span className="review-date">{item.reviewDate}</span>
-      {username === item.userId && (
+      <span className="review-date">{formatDate(item.reviewDate)}</span>
+      {username === item.userNick && (
         <div className="review-actions">
           <button className="review-edit-button" onClick={() => onEdit(item)}>
             수정
@@ -123,33 +130,8 @@ const ReviewItem = ({
       </div>
     )}
   </li>
-);
-
-// 리뷰 리스트 컴포넌트
-// const ReviewList = ({
-//   reviews,
-//   onEdit,
-//   onRemove,
-//   editable,
-//   editState,
-//   updateReview,
-//   cancelEdit,
-// }) => (
-//   <ul className="review-list">
-//     {reviews.map((item) => (
-//       <ReviewItem
-//         key={item.id}
-//         item={item}
-//         onEdit={onEdit}
-//         onRemove={onRemove}
-//         editable={editable}
-//         editState={editState}
-//         updateReview={updateReview}
-//         cancelEdit={cancelEdit}
-//       />
-//     ))}
-//   </ul>
-// );
+  )
+};
 
 //트레일러 모달 컴포넌트
 const TrailerModal = ({trailerUrl,onClose}) => {
@@ -221,40 +203,70 @@ const MovieDetail = ({ movie, onClose }) => {
 
   const averageRating = calculateAverageRating(reviewList);
 
-  const addReview = () => {
+  // 리뷰 가져오기
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:9090/review/${movie.id}`)
+        console.log("Fetched Reviews:", response.data.data)
+        const reviews = Array.isArray(response.data.data) ? response.data.data : []
+        setReviewList(reviews)
+      } catch (error) {
+        console.error("리뷰 로드 실패:", error)
+      }
+    }
+    fetchReviews()
+  }, [movie.id])
+  
+
+  const addReview = async () => {
     if (!user) {
-      alert("로그인한 유저만 리뷰를 등록 가능합니다")
+      alert("로그인한 유저만 리뷰를 등록할 수 있습니다.")
       return;
     }
     
     const newReview = {
-      reviewId: reviewList.length + 1,
-      userId: user.userNick,
+      movieId : movie.id,
       reviewRating,
       reviewContent,
-      reviewDate: moment().format("MM/DD HH:mm"),
     };
-    if (!reviewContent) {
-      alert("리뷰 내용을 입력해주세요")
-      return;
-    }
-    if (window.confirm("등록 하시겠습니까?")) {
-      setReviewList((prev) => [newReview, ...prev]);
 
-      setReviewContent("");
-      setReviewRate(5);
-
-      // 새 리뷰 추가 시 더보기 상태 초기화
-      setVisibleReviews(3);
+    try {
+      if(window.confirm("리뷰를 등록하시겠습니까?")) {
+        const response = await axios.post(
+          "http://localhost:9090/review/private/write",
+          newReview,
+          { withCredentials: true}
+        )
+        setReviewList((prev) => [response.data, ...prev])
+        setReviewContent("")
+        setReviewRate(5)
+  
+        // 새 리뷰 추가 시 더보기 상태 초기화
+        setVisibleReviews(3);
+      }
+    } catch (error) {
+      console.error("리뷰 등록 실패:", error)
     }
   };
 
-  const handleRemove = (reviewId) => {
-    if (window.confirm("삭제 하시겠습니까?")) {
-      setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId));
+  const handleRemove = async (reviewId) => {
+    try {
+      if (window.confirm("정말 삭제하시겠습니까?")) {
+        const response = await axios.delete(
+          `http://localhost:9090/review/private/remove/${reviewId}`,
+          { withCredentials: true }
+        )
 
-      // 삭제 후 더보기 상태 조정
-      setVisibleReviews(Math.min(visibleReviews, reviewList.length - 1));
+        if (response.status = 200) {
+          alert("리뷰가 삭제되었습니다.")
+          setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId))
+          // 삭제 후 더보기 상태 조정
+          setVisibleReviews(Math.min(visibleReviews, reviewList.length - 1));
+        }
+      }  
+    } catch(error) {
+      console.error("리뷰 삭제 중 오류 발생:", error)
     }
   };
 
@@ -264,18 +276,33 @@ const MovieDetail = ({ movie, onClose }) => {
     setEditState({ reviewId: item.reviewId, reviewRating: item.reviewRating, reviewContent: item.reviewContent });
   };
 
-  const updateReview = () => {
-    if (window.confirm("수정 하시겠습니까?")) {
-      setReviewList((prev) =>
-        prev.map((item) =>
-          item.reviewId === editState.reviewId
-            ? { ...item, reviewRating: editState.reviewRating, reviewContent: editState.reviewContent }
-            : item
+  const updateReview = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:9090/review/private/modify/${editState.reviewId}`,
+        {
+          reviewContent: editState.reviewContent,
+          reviewRating: editState.reviewRating,
+        },
+        { widthCredentials: true }
+      )
+      
+      if (response.status === 200) {
+        alert("리뷰가 수정되었습니다.")
+        setReviewList((prev) =>
+          prev.map((item) =>
+            item.reviewId === editState.reviewId
+              ? { ...item, ...response.data }
+              : item
+          )
         )
-      );
-      setEditable(false);
 
-      setEditState({ reviewId: -1, reviewRating: 5, reviewContent: "" });
+        setEditable(false)
+
+        setEditState({ reviewId: -1, reviewRating: 5, reviewContent: ""})
+      }
+    } catch (error) {
+      console.error("리뷰 수정 중 오류 발생:", error)
     }
   };
 
@@ -292,31 +319,39 @@ const MovieDetail = ({ movie, onClose }) => {
 // MovieDetail.js의 handleLikeToggle 함수만 수정 (나머지는 그대로 유지)
 
   // 좋아요 토글 함수 수정
-  const handleLikeToggle = () => {
+  const handleLikeToggle = async () => {
     if (!user) {
-      alert("로그인 후 좋아요를 할 수 있습니다.");
-      return;
+        alert("로그인 후 좋아요를 할 수 있습니다.");
+        return;
     }
 
     try {
-      if (isLiked) {
-        removeLikeMovie(movie.id);
-      } else {
-        const movieData = {
-          id: movie.id,
-          title: movie.title,
-          poster_path: movie.poster_path,
-          release_date: movie.release_date,
-          vote_average: movie.vote_average,
-          overview: movie.overview
-        };
-        addLikeMovie(movieData);
-      }
-      setIsLiked(!isLiked);
+        if (isLiked) {
+            const response = await axios.delete('http://localhost:9090/user/private/dislike', {
+                data: { movieId: movie.id },
+                withCredentials: true
+            });
+            console.log("좋아요 삭제 응답:", response.data);
+            removeLikeMovie(movie.id);
+        } else {
+            const response = await axios.put(
+                'http://localhost:9090/user/private/like', 
+                { movieId: movie.id },
+                { withCredentials: true }
+            );
+            console.log("좋아요 추가 응답:", response.data);
+            addLikeMovie(movie);
+        }
+        setIsLiked(!isLiked);
     } catch (error) {
-      console.error("좋아요 처리 중 오류 발생:", error);
+        console.error("좋아요 처리 중 오류 발생:", error);
+        if (error.response?.status === 401) {
+            alert("로그인이 필요합니다.");
+        } else {
+            alert("좋아요 처리 중 오류가 발생했습니다.");
+        }
     }
-  };
+};
 
   //예고편 검색 함수
   const searchTrailer = async () => {

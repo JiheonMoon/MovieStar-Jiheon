@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
@@ -10,12 +10,12 @@ import "../../css/main/ChangePwd.css"
 
 const PwdChangeScreen = () => {
     const navigate = useNavigate();
-    // const {user, setUser} = useContext(AppContext)
 
     const [email,setEmail] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
+    const {setUser} = useContext(AppContext)
 
     const emailCheck = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/
     const passwordCheck = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -49,15 +49,29 @@ const PwdChangeScreen = () => {
             try {
                 const response = await axios.put(
                     `/user/modifyPwd?email=${email}`, 
-                    { pwd: newPassword },
+                    {userPwd: newPassword},
                     {   
-                        headers: {'Content-Type': 'application/json', },
+                        headers:
+                        {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                         },
                         withCredentials: true,
                     }
                 );
+
+                console.log("서버 응답:", response);
                 if (response.status === 200) {
                     console.log('비밀번호가 변경되었습니다.');
                     alert("비밀번호가 변경되었습니다.");
+                    const userData = response.data;
+                    setUser({
+                        userId: userData.userId,
+                        userEmail: userData.userEmail,
+                        userNick: userData.userNick,
+                        userName: userData.userName,
+                      });
+                
                     navigate('/Home');
                 } else {
                     setErrorMessage(response.data.message || '비밀번호 변경에 실패했습니다.');

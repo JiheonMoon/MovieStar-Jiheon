@@ -15,6 +15,7 @@ import "./css/main/Header.css";
 import "./css/main/Slider.css";
 import "./css/main/TopRecommendation.css";
 import "./css/main/FirstPage.css";
+import { GoogleLogin, NaverLogin } from "./screens/login/SocialLogin.js";
 
 // Layout 설정 컴포넌트
 const Layout = ({ children }) => {
@@ -33,8 +34,21 @@ const Layout = ({ children }) => {
 
 // 앱의 루트 컴포넌트
 const App = () => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        // 초기 상태를 localStorage에서 가져옴
+        const savedUser = localStorage.getItem('currentUser');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
     const [reviews, setReviews] = useState([]);
+
+    // user 상태가 변경될 때마다 localStorage 업데이트
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('currentUser');
+        }
+    }, [user]);
 
     // 좋아요 여부 확인 함수
     const isMovieLiked = (movieId) => {
@@ -44,13 +58,17 @@ const App = () => {
     // 좋아요 추가 함수
     const addLikeMovie = (movie) => {
         const updatedLikes = [...(user.userLikeList || []), movie];
-        setUser({ ...user, userLikeList: updatedLikes });
+        const updatedUser = { ...user, userLikeList: updatedLikes };
+        setUser(updatedUser);
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     };
 
     // 좋아요 제거 함수
     const removeLikeMovie = (movieId) => {
         const updatedLikes = user.userLikeList.filter((movie) => movie.id !== movieId);
-        setUser({ ...user, userLikeList: updatedLikes });
+        const updatedUser = { ...user, userLikeList: updatedLikes };
+        setUser(updatedUser);
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     };
 
     return (
@@ -74,6 +92,8 @@ const App = () => {
                         <Route path="/find" element={<FindIdOrPassword />} />
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/mypage" element={<Mypage />} />
+                        <Route path="/login/google" element = {<GoogleLogin/>}/>
+                        <Route path="/login/naver" element = {<NaverLogin/>}/>
                         <Route path="/ChangePwd" element={<PwdChangeScreen />} />
                     </Routes>
                 </Layout>

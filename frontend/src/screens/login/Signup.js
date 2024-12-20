@@ -14,10 +14,9 @@ const Signup = () => {
   })
 
   const [message, setMessage] = useState("")
-  // 중복된 아이디로 로그인 시도할 경우
+  
+  // 중복된 아이디로 회원가입 시도할 경우
   const [userNameError, setUserNameError] = useState("")
-  const [userNickError, setUserNickError] = useState("")
-  const [userEmailError, setUserEmailError] = useState("")
 
   const [disabled, setDisabled] = useState(true)
 
@@ -58,7 +57,7 @@ const Signup = () => {
       setDisabled(false)
     }
   }, [formData])
-
+  
   const handleLogoClick = () => {
     navigate("/Home")
   }
@@ -70,34 +69,35 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-      try {
-        const response = await fetch("/user/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
+    try {
+      // 회원가입 요청
+      const response = await fetch("/user/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-        if(!response.ok) {
-          const errorData = await response.json()
-          if(errorData.message) {
-            setMessage(errorData.message)
-          }
-          return;
+      if(!response.ok) {
+        const errorData = await response.json()
+        if(errorData.message) {
+          setMessage(errorData.message)
         }
-
-        const data = await response.json()
-
-        if (!data.success) {
-          setMessage(data.message)
-          return;
-        } 
-          alert("회원가입 완료");
-          navigate("/login");
-      } catch(error) {
-        console.error("Error during signup:", error)
-        setMessage("회원가입 중 오류가 발생했습니다.")
+        return;
       }
+
+      const data = await response.json()
+
+      if (!data.success) {
+        setMessage(data.message)
+        return;
+      } 
+        alert("회원가입 완료");
+        navigate("/login");
+    } catch(error) {
+      console.error("Error during signup:", error)
+      setMessage("회원가입 중 오류가 발생했습니다.")
     }
+  }
 
   return (
       <div className="signup-page">
@@ -137,8 +137,6 @@ const Signup = () => {
                     value={value}
                   />
                   {userNameError && <p style={{ color: "red", fontSize: "0.8rem"}}>{userNameError}</p>}
-                  {userNickError && <p style={{ color: "red", fontSize: "0.8rem"}}>{userNickError}</p>}
-                  {userEmailError && <p style={{ color: "red", fontSize: "0.8rem"}}>{userEmailError}</p>}
                 </label>
               )
             })}

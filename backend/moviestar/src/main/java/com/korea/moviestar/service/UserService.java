@@ -15,10 +15,9 @@ import com.korea.moviestar.entity.UserEntity;
 import com.korea.moviestar.repo.MovieRepository;
 import com.korea.moviestar.repo.UserRepository;
 
-<<<<<<< HEAD
+
 import jakarta.transaction.Transactional;
-=======
->>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -161,7 +160,7 @@ public class UserService {
         return null;
     }
     
-<<<<<<< HEAD
+
     @Transactional
 	public UserDTO updatePwd(String userEmail, String pwd) {
 		UserDTO dto = findByEmail(userEmail);
@@ -181,13 +180,7 @@ public class UserService {
 	    // 업데이트된 사용자 정보를 저장하고 DTO로 반환
 	    return new UserDTO(repository.save(userEntity));
 	}
-=======
-    public UserDTO updatePwd(String userEmail, String newPwd) {
-        UserDTO dto = findByEmail(userEmail);
-        dto.setUserPwd(newPwd);
-        return new UserDTO(repository.save(toEntity(dto, movies))).hidePwd();
-    }
->>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
+
     
     public static UserEntity toEntity(UserDTO dto, MovieRepository movies) {
         return UserEntity.builder()

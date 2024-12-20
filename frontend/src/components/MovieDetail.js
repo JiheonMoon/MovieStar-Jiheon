@@ -222,31 +222,50 @@ const MovieDetail = ({ movie, onClose }) => {
 
   const averageRating = calculateAverageRating(reviewList);
 
-  const addReview = () => {
+  // 리뷰 가져오기
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:9090/review/${movie.id}`)
+        console.log("Fetched Reviews:", response.data.data)
+        const reviews = Array.isArray(response.data.data) ? response.data.data : []
+        console.log("Fetched Reviews:", reviews)
+        setReviewList(reviews)
+      } catch (error) {
+        console.error("리뷰 로드 실패:", error)
+      }
+    }
+    fetchReviews()
+  }, [movie.id])
+  
+
+  const addReview = async () => {
     if (!user) {
-      alert("로그인한 유저만 리뷰를 등록 가능합니다")
+      alert("로그인한 유저만 리뷰를 등록할 수 있습니다.")
       return;
     }
     
     const newReview = {
-      reviewId: reviewList.length + 1,
-      userId: user.userNick,
+      movieId : movie.id,
       reviewRating,
       reviewContent,
-      reviewDate: moment().format("MM/DD HH:mm"),
+      //reviewDate: moment().format("MM/DD HH:mm"),
     };
-    if (!reviewContent) {
-      alert("리뷰 내용을 입력해주세요")
-      return;
-    }
-    if (window.confirm("등록 하시겠습니까?")) {
-      setReviewList((prev) => [newReview, ...prev]);
 
-      setReviewContent("");
-      setReviewRate(5);
+    try {
+      const response = await axios.post(
+        "http://localhost:9090/review/private/write",
+        newReview,
+        { withCredentials: true}
+      )
+      setReviewList((prev) => [response.data, ...prev])
+      setReviewContent("")
+      setReviewRate(5)
 
       // 새 리뷰 추가 시 더보기 상태 초기화
       setVisibleReviews(3);
+    } catch (error) {
+      console.error("리뷰 등록 실패:", error)
     }
   };
 

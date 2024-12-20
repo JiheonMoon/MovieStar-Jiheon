@@ -56,6 +56,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
       </div>
     );
   };
+
   
   // 메인 홈페이지 컴포넌트
   const HomePage = () => {
@@ -76,6 +77,9 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
     
     // 선택된 영화 모달 상태 관리
     const [selectedMovie, setSelectedMovie] = useState(null);
+    
+    // 모달 여부에 따라 장르바 보여줄 지 여부에 대한 상태 관리
+    const [showNav, setShowNav] = useState(true)
 
     // 화면 이동 함수 정의
     const navigate = useNavigate()
@@ -83,6 +87,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
     // 로고 클릭 시 메인화면 띄우기(추후 마이페이지에서 활용)
     const handleLogoClick = () => {
       navigate("/home")
+
     }
 
     // 로그인 버튼 클릭 시
@@ -174,44 +179,59 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
     // 영화 선택 시 모달 오픈 핸들러
     const handleMovieSelect = (movie) => {
       setSelectedMovie(movie);
+      setShowNav(false)
     };
   
     // 영화 모달 닫기 핸들러
     const handleCloseMovieDetail = () => {
       setSelectedMovie(null);
+      setShowNav(true)
     };
-  
-
     
     return (
       <div className="main-page">
-          <header className="main-header">
-            <img src={logo} className="main-logo" onClick={handleLogoClick} />
-            {/* 영화 검색 입력창 */}
-            <input
-              type="text"
-              className="search-bar"
-              placeholder="Search Movies..."
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-            {/* 로그인, 로그아웃 버튼 */}
-            <div className="button-group">
-              {user ? (
-                <>
-                  <button onClick={navigateToMyPage} className="mypage-button button">
-                    마이페이지
+        {showNav && (
+          <div className="header-navbar">
+            <header className="main-header">
+              <img src={logo} className="main-logo" onClick={handleLogoClick} />
+              {/* 영화 검색 입력창 */}
+              <input
+                type="text"
+                className="search-bar"
+                placeholder="Search Movies..."
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+              {/* 로그인, 로그아웃 버튼 */}
+              <div className="button-group">
+                {user ? (
+                  <>
+                    <button onClick={navigateToMyPage} className="mypage-button-main">
+                      마이페이지
+                    </button>
+                    <button onClick={handleLogout} className="logout-button-main">
+                      로그아웃
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={navigateToLoginScreen} className="login-button-main">
+                    로그인
                   </button>
-                  <button onClick={handleLogout} className="logout-button button">
-                    로그아웃
-                  </button>
-                </>
-              ) : (
-                <button onClick={navigateToLoginScreen} className="login-button button">
-                  로그인
+                )}
+              </div>
+            </header>
+            <nav className="nav-bar">
+              {genres.map((genre) => (
+                <button
+                  key={genre.id}
+                  onClick={() => handleNavClick(genre.id)}
+                  className="nav-item"
+                >
+                  {genre.name}
                 </button>
-              )}
-            </div>
-          </header>
+              ))}
+            </nav>
+          </div>
+        )}
 
         {/* 검색 결과 또는 기본 영화 리스트 조건부 렌더링 */}
         {searchQuery && filteredMovies.length > 0 ? (
@@ -227,19 +247,6 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
               movies={popularMovies} 
               onMovieSelect={handleMovieSelect} 
             />
-            
-              <nav className="nav-bar">
-                {genres.map((genre) => (
-                  <button
-                    key={genre.id}
-                    onClick={() => handleNavClick(genre.id)}
-                    className="nav-item"
-                  >
-                    {genre.name}
-                  </button>
-                ))}
-              </nav>
-
             <MovieSlider 
               title="인기 영화" 
               movies={popularMovies} 

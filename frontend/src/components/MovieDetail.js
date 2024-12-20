@@ -78,7 +78,7 @@ const ReviewItem = ({
 }) => (
   <li className="review-item">
     <div className="review-item-container">
-      <span className="review-user">{item.userId}</span>
+      <span className="review-user">{item.userNick}</span>
       <StarRating rating={item.reviewRating} size={15} readOnly />
       <span className="review-text">{item.reviewContent}</span>
       <span className="review-date">{item.reviewDate}</span>
@@ -229,7 +229,6 @@ const MovieDetail = ({ movie, onClose }) => {
         const response = await axios.get(`http://localhost:9090/review/${movie.id}`)
         console.log("Fetched Reviews:", response.data.data)
         const reviews = Array.isArray(response.data.data) ? response.data.data : []
-        console.log("Fetched Reviews:", reviews)
         setReviewList(reviews)
       } catch (error) {
         console.error("리뷰 로드 실패:", error)

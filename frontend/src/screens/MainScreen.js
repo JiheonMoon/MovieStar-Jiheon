@@ -279,7 +279,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
         {/* 영화 선택 시 모달 렌더링 */}
         {selectedMovie && (
           <MovieDetail 
-            movie={selectedMovie} 
+            movieId={selectedMovie.id} 
             onClose={handleCloseMovieDetail} 
           />
         )}

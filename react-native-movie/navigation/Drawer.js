@@ -6,7 +6,7 @@ import MainScreen from "../screen/MainScreen";
 import DetailScreen from "../screen/DetailScreen";
 import LoginScreen from "../screen/LoginScreen";
 import SignupScreen from "../screen/SignupScreen";
-import FindIdScreen from "../component/FIndId";
+import FindIdScreen from "../component/FindId";
 import FindPwdScreen from "../component/FindPwd";
 import LikeScreen from "../screen/LikeScreen";
 import MypageScreen from "../screen/MypageScreen";

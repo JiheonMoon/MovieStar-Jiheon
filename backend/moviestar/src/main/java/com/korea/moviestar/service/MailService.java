@@ -1,11 +1,7 @@
 package com.korea.moviestar.service;
 
 import java.time.LocalDateTime;
-<<<<<<< HEAD
 import java.util.List;
-=======
->>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
-
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -74,7 +70,6 @@ public class MailService {
     }
     
     public boolean verifyCode(String email, String inputCode, PasswordEncoder encoder) {
-<<<<<<< HEAD
         // 여러 개의 인증 요청이 있을 수 있으므로, List로 받아옵니다.
         List<MailVerificationEntity> entities = repository.findByEmail(email);
 
@@ -104,26 +99,6 @@ public class MailService {
 
         // 처리한 인증 요청 삭제
         repository.delete(entity);
-
-=======
-        MailVerificationEntity entity = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("인증 요청이 없습니다."));
-
-        if (entity.getExpiresAt().isBefore(LocalDateTime.now())) {
-        	repository.delete(entity);
-            throw new RuntimeException("인증 코드가 만료되었습니다.");
-        }
-
-        if (!entity.getCode().equals(inputCode)) {
-            throw new RuntimeException("인증 코드가 일치하지 않습니다.");
-        }
-        
-        UserEntity user = users.findByUserEmail(email).get();
-        user.setUserPwd(encoder.encode(inputCode));
-        users.save(user);
-        
-        repository.delete(entity);
->>>>>>> 7763f4933ed4f003a847e547c01e59a882790ffb
         return true;
     }
     

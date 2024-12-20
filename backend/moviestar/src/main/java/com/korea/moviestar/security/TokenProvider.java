@@ -10,10 +10,14 @@ import org.springframework.stereotype.Service;
 import com.korea.moviestar.entity.UserEntity;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 @Service
 public class TokenProvider {
@@ -50,8 +54,16 @@ public class TokenProvider {
                     .getBody();
 
             return claims.getSubject(); // 토큰에서 사용자 ID 반환
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("Invalid JWT token", e);
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("JWT 토큰이 만료되었습니다.");
+        } catch (UnsupportedJwtException e) {
+            throw new RuntimeException("지원되지 않는 JWT 토큰입니다.");
+        } catch (MalformedJwtException e) {
+            throw new RuntimeException("JWT 형식이 잘못되었습니다.");
+        } catch (SignatureException e) {
+            throw new RuntimeException("JWT 서명이 유효하지 않습니다.");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("JWT 토큰이 비어 있거나 잘못되었습니다.");
         }
     }
 }

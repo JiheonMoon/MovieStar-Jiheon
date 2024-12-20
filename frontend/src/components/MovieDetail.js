@@ -65,6 +65,10 @@ const ReviewForm = ({ reviewRating, setReviewRate, reviewContent, setReviewConte
   </div>
 );
 
+const formatDate = (isoString) => {
+  return moment(isoString).format("YY/MM/DD HH:mm")
+}
+
 // 리뷰 아이템 컴포넌트
 const ReviewItem = ({
   item,
@@ -81,7 +85,7 @@ const ReviewItem = ({
       <span className="review-user">{item.userNick}</span>
       <StarRating rating={item.reviewRating} size={15} readOnly />
       <span className="review-text">{item.reviewContent}</span>
-      <span className="review-date">{item.reviewDate}</span>
+      <span className="review-date">{formatDate(item.reviewDate)}</span>
       {username === item.userId && (
         <div className="review-actions">
           <button className="review-edit-button" onClick={() => onEdit(item)}>
@@ -248,7 +252,6 @@ const MovieDetail = ({ movie, onClose }) => {
       movieId : movie.id,
       reviewRating,
       reviewContent,
-      //reviewDate: moment().format("MM/DD HH:mm"),
     };
 
     try {

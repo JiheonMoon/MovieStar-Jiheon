@@ -57,3 +57,18 @@
     font-size: 14px;
     text-align: center;
 }
+
+/* ChangePwd.css */
+.button {
+    background-color: #007bff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}

@@ -92,9 +92,8 @@ const PwdChangeScreen = () => {
             <header className="main-header">
                 <img src={logo} className="main-logo" onClick={()=>navigate('/Home')}/>
                 <div>
-                    <button
-                        onClick={()=>navigate('/Home')}>
-                        <IoHome/>
+                    <button className="button" onClick={() => navigate('/Home')}>
+                        <IoHome />
                     </button>
                 </div>
             </header>

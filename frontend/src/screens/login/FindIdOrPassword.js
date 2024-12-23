@@ -5,7 +5,9 @@ import logo from "../../logo/logo.png"
 
 const FindId = () => {
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
+    const [pwdEmail, setPwdEmail] = useState('')
+    const [takePwdCode,setTakePwdCode] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     // 아이디찾기 관련 메세지
     const [message, setMessage] = useState('');
@@ -46,10 +48,68 @@ const FindId = () => {
         }
     };
 
-    const handleFindPassword = (e) => {
+    const sendEmail = async (e) => {
         e.preventDefault();
-        // 서버 요청 또는 로직 추가
-        setPwMessage("ㅎㅇ")
+
+        if (!pwdEmail) {
+            setPwMessage('이메일을 입력해주세요');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/user/request_verification?email=${pwdEmail}`, { method: 'POST' });
+
+            if (!response.ok) {
+                throw new Error("이메일 전송 실패");
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                setPwMessage(data.message || "인증코드를 이메일로 발송했습니다.");
+            } else {
+                setPwMessage(data.message || "인증코드 발송에 에러가 발생했습니다.");
+            }
+        } catch (error) {
+            setPwMessage("해당 이메일로 등록된 아이디를 찾을 수 없습니다.");
+            console.error("Error sending email:", error);
+        }
+    };
+
+    const handleFindPassword = async (e) => {
+        e.preventDefault();
+    
+        if (!takePwdCode) {
+            setPwMessage('인증코드를 입력해주세요');
+            return;
+        }
+
+        setIsLoading(true);
+    
+        try {
+            const response = await fetch(`/user/verify_email?email=${pwdEmail}&code=${takePwdCode}`,{
+                method:"POST"
+            })
+
+            const data = await response.json();
+    
+            if (response.ok) {
+                 // 인증 성공 후, 토큰 발급 및 쿠키 저장
+                if (data.token) {
+                    document.cookie = `token=${data.token}; path=/; secure; HttpOnly`; // 토큰을 쿠키에 저장
+                }
+                setPwMessage(data || '인증 성공');
+                alert('인증 성공')
+                navigate('/ChangePwd');
+            } else {
+                setPwMessage(data.message || '인증코드가 일치하지 않습니다.');
+            }
+        } catch (error) {
+            setPwMessage("서버 오류가 발생했습니다.");
+            console.error("Error verifying code:", error);
+        } finally {
+            setIsLoading(false)
+        }
     };
 
     return (
@@ -98,23 +158,61 @@ const FindId = () => {
                             )}
                         </>
                     )}
-
-                    <h2>비밀번호 찾기</h2>
-                    <form onSubmit={handleFindPassword}>
+  <h2>비밀번호 찾기</h2>
+                    <form >
                         <div className="input-group">
-                            <label htmlFor="username">아이디</label>
+                            <label htmlFor="pwdEmail">이메일 입력</label>
                             <input
-                                type="username"
-                                id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="아이디를 입력하세요"
+                                type="pwdEmail"
+                                id="pwdEmail"
+                                value={pwdEmail}
+                                onChange={(e) => setPwdEmail(e.target.value)}
+                                placeholder="이메일을 입력하세요"
                                 required
                             />
-                            <button type="submit" className="find-password-button">비밀번호 찾기</button>
+                            <button onClick={sendEmail} type="button" className="find-password-button">임시 비밀번호 받기</button>
                         </div>
                     </form>
-                    {pwMessage && <p>{pwMessage}</p>}
+                    {pwMessage && (
+                        <>
+                            <p className="result-message">{pwMessage}</p>
+                            {/* 이메일로 인증 코드를 발송한 경우 */}
+                            {pwMessage === "인증코드를 이메일로 발송했습니다." && (
+                                <>
+                                    <div className="input-group">   
+                                        <label htmlFor="takePwdCode">인증코드 입력</label>
+                                        <input
+                                            type="text"
+                                            id="takePwdCode"
+                                            value={takePwdCode}
+                                            onChange={(e) => setTakePwdCode(e.target.value)}
+                                            placeholder="이메일로 받은 인증코드를 입력하세요"
+                                            required
+                                        />
+                                        <button
+                                            className="login-button-inFindID"
+                                            onClick={handleFindPassword}
+                                        >
+                                            인증코드확인
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                            {pwMessage !== "인증코드를 이메일로 발송했습니다." &&(
+                                <>
+                                    <div className="additional-buttons">
+                                        <button
+                                            className="signup-button-inFindID"
+                                            onClick={() => navigate('/signup')}
+                                        >
+                                            회원가입하기
+                                        </button>
+                                    </div>
+                                    
+                                </>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </div>

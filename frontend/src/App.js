@@ -53,7 +53,7 @@ const App = () => {
 
     // 좋아요 여부 확인 함수
     const isMovieLiked = (movieId) => {
-        return user?.userLikeList?.some((movie) => movie.id === movieId);
+        return user?.userLikeList?.some((movie) => movie.movieId === movieId);
     };
 
     // 좋아요 추가 함수
@@ -66,7 +66,7 @@ const App = () => {
 
     // 좋아요 제거 함수
     const removeLikeMovie = (movieId) => {
-        const updatedLikes = user.userLikeList.filter((movie) => movie.id !== movieId);
+        const updatedLikes = user.userLikeList.filter((movie) => movie.movieId !== movieId);
         const updatedUser = { ...user, userLikeList: updatedLikes };
         setUser(updatedUser);
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));

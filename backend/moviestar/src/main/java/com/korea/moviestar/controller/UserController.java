@@ -298,21 +298,17 @@ public class UserController {
 	    }
 	}
 
-	@PutMapping("/private/like")
-	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @RequestBody Map<String, Integer> request // movieId를
-																															// 받을
-																															// 객체
-																															// 추가
-	) {
-		UserDTO response = service.addLike(userId, request.get("movieId"));
+	@PutMapping("/private/like/{movieId}")
+	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @PathVariable int movieId) {
+		UserDTO response = service.addLike(userId, movieId);
 		return ResponseEntity.ok().body(response);
 	}
 
-	@DeleteMapping("/private/dislike")
+	@DeleteMapping("/private/dislike/{movieId}")
 	public ResponseEntity<?> dislikeMovie(@AuthenticationPrincipal String userId,
-			@RequestBody Map<String, Integer> request // movieId를 받을 객체 추가
+			@PathVariable int movieId
 	) {
-		UserDTO response = service.deleteLike(userId, request.get("movieId"));
+		UserDTO response = service.deleteLike(userId, movieId);
 		return ResponseEntity.ok().body(response);
 	}
 

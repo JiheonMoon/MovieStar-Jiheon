@@ -17,7 +17,9 @@ export const fetchPopularMovies = async () => {
 export const searchMovies = async (query) => {
   try {
     const response = await axios.get("http://localhost:9090/movie/search?query=" + query);
-
+    if(!response.data.data){
+      return []
+    }
     return response.data.data;  // 데이터를 반환
   } catch (error) {
     console.error("Error searching for movies:", error);

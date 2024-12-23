@@ -300,6 +300,7 @@ public class UserController {
 
 	@PutMapping("/private/like/{movieId}")
 	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @PathVariable int movieId) {
+		log.info("userId : "+userId);
 		UserDTO response = service.addLike(userId, movieId);
 		return ResponseEntity.ok().body(response);
 	}
@@ -313,10 +314,9 @@ public class UserController {
 	}
 
 	@PutMapping("/private/modify")
-	public ResponseEntity<?> modifyUser(@RequestBody UserDTO dto) {
+	public ResponseEntity<?> modifyUser(@AuthenticationPrincipal String userId, @RequestBody UserDTO dto) {
 		try {
-			dto.setUserPwd(passwordEncoder.encode(dto.getUserPwd()));
-			UserDTO response = service.update(dto);
+			UserDTO response = service.update(userId, dto);
 			return ResponseEntity.ok().body(response);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());

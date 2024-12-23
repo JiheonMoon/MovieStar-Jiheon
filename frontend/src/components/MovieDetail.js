@@ -211,7 +211,7 @@ const MovieDetail = ({ movieId, onClose }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:9090/review/${movie.id}`)
+        const response = await axios.get(`http://localhost:9090/review/${movieId}`)
         console.log("Fetched Reviews:", response.data.data)
         const reviews = Array.isArray(response.data.data) ? response.data.data : []
         setReviewList(reviews)
@@ -220,7 +220,7 @@ const MovieDetail = ({ movieId, onClose }) => {
       }
     }
     fetchReviews()
-  }, [movie.id])
+  }, [movieId])
   
 
   const addReview = async () => {

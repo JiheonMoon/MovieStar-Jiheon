@@ -105,10 +105,12 @@ public class UserController {
 	        // 영화 정보를 Map으로 변환
 	        Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream().map(movie -> {
 	            Map<String, Object> movieInfo = new HashMap<>();
+
 	            movieInfo.put("movieId", movie.getMovieId());
 	            movieInfo.put("movieName", movie.getMovieName());
 	            movieInfo.put("moviePoster", movie.getMoviePoster());
 	            movieInfo.put("movieOverview", movie.getMovieOverview());
+
 	            movieInfo.put("movieOpDate", movie.getMovieOpDate());
 	            movieInfo.put("movieScore", movie.getMovieScore());
 	            return movieInfo;

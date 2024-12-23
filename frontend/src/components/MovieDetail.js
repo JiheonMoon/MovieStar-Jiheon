@@ -360,7 +360,7 @@ const MovieDetail = ({ movieId, onClose }) => {
   //예고편 검색 함수
   const searchTrailer = async () => {
     try {
-        const trailer = await searchYouTubeTrailer(`${movie.title} 예고편`);
+        const trailer = await searchYouTubeTrailer(`${movie.movieName} 예고편`);
         if (trailer) {
             const embedUrl = `https://www.youtube.com/embed/${trailer.id.videoId}`;
             setTrailerUrl(embedUrl);

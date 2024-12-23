@@ -331,22 +331,23 @@ const MovieDetail = ({ movieId, onClose }) => {
 
     try {
         if (isLiked) {
-            const response = await axios.delete('http://localhost:9090/user/private/dislike', {
-                data: { movieId: movie.id },
+            const response = await axios.delete('http://localhost:9090/user/private/dislike/'+movieId,{
                 withCredentials: true
             });
             console.log("좋아요 삭제 응답:", response.data);
-            removeLikeMovie(movie.id);
+            removeLikeMovie(movieId);
         } else {
             const response = await axios.put(
-                'http://localhost:9090/user/private/like', 
-                { movieId: movie.id },
+                'http://localhost:9090/user/private/like/'+movieId, 
+                null,
                 { withCredentials: true }
             );
             console.log("좋아요 추가 응답:", response.data);
             addLikeMovie(movie);
         }
+        console.log(!isLiked)
         setIsLiked(!isLiked);
+        
     } catch (error) {
         console.error("좋아요 처리 중 오류 발생:", error);
         if (error.response?.status === 401) {

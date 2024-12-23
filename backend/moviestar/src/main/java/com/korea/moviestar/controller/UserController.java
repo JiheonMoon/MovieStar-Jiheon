@@ -105,10 +105,10 @@ public class UserController {
 	        // 영화 정보를 Map으로 변환
 	        Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream().map(movie -> {
 	            Map<String, Object> movieInfo = new HashMap<>();
-	            movieInfo.put("id", movie.getMovieId());
-	            movieInfo.put("title", movie.getMovieName());
-	            movieInfo.put("poster_path", movie.getMoviePoster());
-	            movieInfo.put("overview", movie.getMovieOverview());
+	            movieInfo.put("movieId", movie.getMovieId());
+	            movieInfo.put("movieName", movie.getMovieName());
+	            movieInfo.put("moviePoster", movie.getMoviePoster());
+	            movieInfo.put("movieOverview", movie.getMovieOverview());
 	            movieInfo.put("movieOpDate", movie.getMovieOpDate());
 	            movieInfo.put("movieScore", movie.getMovieScore());
 	            return movieInfo;
@@ -147,15 +147,15 @@ public class UserController {
 
 			// 영화 정보를 Map으로 변환
 			Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream().map(movie -> {
-				Map<String, Object> movieInfo = new HashMap<>();
-				movieInfo.put("id", movie.getMovieId());
-				movieInfo.put("title", movie.getMovieName());
-				movieInfo.put("poster_path", movie.getMoviePoster());
-				movieInfo.put("overview", movie.getMovieOverview());
-				movieInfo.put("movieOpDate", movie.getMovieOpDate());
-				movieInfo.put("movieScore", movie.getMovieScore());
-				return movieInfo;
-			}).collect(Collectors.toSet());
+	            Map<String, Object> movieInfo = new HashMap<>();
+	            movieInfo.put("movieId", movie.getMovieId());
+	            movieInfo.put("movieName", movie.getMovieName());
+	            movieInfo.put("moviePoster", movie.getMoviePoster());
+	            movieInfo.put("movieOverview", movie.getMovieOverview());
+	            movieInfo.put("movieOpDate", movie.getMovieOpDate());
+	            movieInfo.put("movieScore", movie.getMovieScore());
+	            return movieInfo;
+	        }).collect(Collectors.toSet());
 
 			userResponse.put("userLikeList", likedMovies);
 
@@ -187,15 +187,15 @@ public class UserController {
 
 			// 영화 정보를 Map으로 변환
 			Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream().map(movie -> {
-				Map<String, Object> movieInfo = new HashMap<>();
-				movieInfo.put("id", movie.getMovieId());
-				movieInfo.put("title", movie.getMovieName());
-				movieInfo.put("poster_path", movie.getMoviePoster());
-				movieInfo.put("overview", movie.getMovieOverview());
-				movieInfo.put("movieOpDate", movie.getMovieOpDate());
-				movieInfo.put("movieScore", movie.getMovieScore());
-				return movieInfo;
-			}).collect(Collectors.toSet());
+	            Map<String, Object> movieInfo = new HashMap<>();
+	            movieInfo.put("movieId", movie.getMovieId());
+	            movieInfo.put("movieName", movie.getMovieName());
+	            movieInfo.put("moviePoster", movie.getMoviePoster());
+	            movieInfo.put("movieOverview", movie.getMovieOverview());
+	            movieInfo.put("movieOpDate", movie.getMovieOpDate());
+	            movieInfo.put("movieScore", movie.getMovieScore());
+	            return movieInfo;
+	        }).collect(Collectors.toSet());
 
 			userResponse.put("userLikeList", likedMovies);
 
@@ -298,21 +298,17 @@ public class UserController {
 	    }
 	}
 
-	@PutMapping("/private/like")
-	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @RequestBody Map<String, Integer> request // movieId를
-																															// 받을
-																															// 객체
-																															// 추가
-	) {
-		UserDTO response = service.addLike(userId, request.get("movieId"));
+	@PutMapping("/private/like/{movieId}")
+	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @PathVariable int movieId) {
+		UserDTO response = service.addLike(userId, movieId);
 		return ResponseEntity.ok().body(response);
 	}
 
-	@DeleteMapping("/private/dislike")
+	@DeleteMapping("/private/dislike/{movieId}")
 	public ResponseEntity<?> dislikeMovie(@AuthenticationPrincipal String userId,
-			@RequestBody Map<String, Integer> request // movieId를 받을 객체 추가
+			@PathVariable int movieId
 	) {
-		UserDTO response = service.deleteLike(userId, request.get("movieId"));
+		UserDTO response = service.deleteLike(userId, movieId);
 		return ResponseEntity.ok().body(response);
 	}
 

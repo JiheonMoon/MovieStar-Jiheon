@@ -268,12 +268,12 @@ const MyPage = () => {
     {user.userLikeList && user.userLikeList.length > 0 ? (
         <div className="liked-movies-flex">
             {user.userLikeList.map((movie, index) => (
-                <div key={movie.id || index} className="liked-movie-item">
+                <div key={movie.movieId || index} className="liked-movie-item">
                     {console.log("Movie data:", movie)} {/* 데이터 확인용 로그 */}
-                    {movie.poster_path ? (
+                    {movie.moviePoster ? (
                         <img 
-                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
-                            alt={movie.title}
+                            src={`https://image.tmdb.org/t/p/w200${movie.moviePoster}`} 
+                            alt={movie.movieName}
                             onError={(e) => {
                                 e.target.onerror = null; 
                                 e.target.src = '대체 이미지 URL';
@@ -282,7 +282,7 @@ const MyPage = () => {
                     ) : (
                         <div className="no-poster">포스터 없음</div>
                     )}
-                    <p>{movie.title || '제목 없음'}</p>
+                    <p>{movie.movieName || '제목 없음'}</p>
                 </div>
             ))}
         </div>

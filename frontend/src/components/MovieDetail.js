@@ -230,7 +230,7 @@ const MovieDetail = ({ movieId, onClose }) => {
     }
     
     const newReview = {
-      movieId : movie.id,
+      movieId,
       reviewRating,
       reviewContent,
     };

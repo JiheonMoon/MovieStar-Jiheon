@@ -85,16 +85,30 @@ const PwdChangeScreen = () => {
         }
     };
 
-        
+    const navigateToHome = () => {
+        navigate("/Home")
+    }
 
 
     return(
         <div className="pwd-page">
-            <header className="main-header">
-                <img src={logo} className="main-logo" onClick={()=>navigate('/Home')}/>
-                <div>
-                    <button className="button" onClick={() => navigate('/Home')}>
-                        <IoHome />
+            <header className="mypage-header">
+                <img src={logo} className="signup-logo" onClick={navigateToHome} />
+                <div className="home-button-container">
+                    <button
+                        className="home-button"
+                        onClick={navigateToHome}
+                    >
+                        <IoHome /> 홈
+                    </button>
+                    <button
+                        className="logout-button"
+                        onClick={() => {
+                        setUser(null);
+                        navigate('/login');
+                        }}
+                    >
+                        로그아웃
                     </button>
                 </div>
             </header>

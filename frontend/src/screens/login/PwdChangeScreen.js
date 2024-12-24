@@ -70,6 +70,7 @@ const PwdChangeScreen = () => {
                         userEmail: userData.userEmail,
                         userNick: userData.userNick,
                         userName: userData.userName,
+                        userLikeList: userData.userLikeList || []
                       });
                 
                     navigate('/Home');

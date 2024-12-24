@@ -5,7 +5,8 @@ import { IoHome } from "react-icons/io5";
 import logo from "../../logo/logo.png"
 import axios from "axios";
 
-import "../../css/main/ChangePwd.css"
+import "../../css/main/ChangePwd.css" 
+
 
 const PwdChangeScreen = () => {
     const navigate = useNavigate();
@@ -89,24 +90,15 @@ const PwdChangeScreen = () => {
 
     return(
         <div className="pwd-page">
-            <header className="mypage-header">
-                <img src={logo} className="mypage-logo" onClick={()=>navigate('/Home')}/>
-                <div className="home-button-container">
-                    <button className="home-button" onClick={() => navigate('/Home')}>
-                        <IoHome /> 홈
-                    </button>
-                    <button
-                        className="logout-button"
-                        onClick={() => {
-                        setUser(null);
-                        navigate('/login');
-                        }}
-                    >
-                        로그아웃
+            <header className="main-header">
+                <img src={logo} className="main-logo" onClick={()=>navigate('/Home')}/>
+                <div>
+                    <button className="button" onClick={() => navigate('/Home')}>
+                        <IoHome />
                     </button>
                 </div>
             </header>
-                <div className="input-box">
+                <div className="input-boxs">
                     <h1 className="h1s">비밀번호 변경</h1>
                     <div className="input-groups">
                         <label>이메일</label>
@@ -138,7 +130,7 @@ const PwdChangeScreen = () => {
                             placeholder="새 비밀번호 다시 입력"
                         />
                     </div>
-                    <button className="pwdChange-buttons" onClick={handleSubmit}>
+                    <button className="login-buttons" onClick={handleSubmit}>
                         비밀번호 변경
                     </button>
                     {errorMessage && <div className="error-messages">{errorMessage}</div>}

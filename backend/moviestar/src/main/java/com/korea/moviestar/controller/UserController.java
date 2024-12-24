@@ -72,7 +72,6 @@ public class UserController {
 	public ResponseEntity<?> signin(@RequestBody UserDTO dto) {
 	    try {
 	        if (dto == null) {
-	            log.error("Received DTO is null");
 	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("DTO is null");
 	        }
 
@@ -120,7 +119,6 @@ public class UserController {
 	                .header(HttpHeaders.SET_COOKIE, cookie.toString())
 	                .body(userResponse);
 	    } catch (Exception e) {
-	        log.error("Error during signin", e);
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 	                .body("Internal server error");
 	    }
@@ -300,7 +298,6 @@ public class UserController {
 
 	@PutMapping("/private/like/{movieId}")
 	public ResponseEntity<?> likeMovie(@AuthenticationPrincipal String userId, @PathVariable int movieId) {
-		log.info("userId : "+userId);
 		UserDTO response = service.addLike(userId, movieId);
 		return ResponseEntity.ok().body(response);
 	}
@@ -327,13 +324,11 @@ public class UserController {
 	@PutMapping("/modifyPwd")
 	public ResponseEntity<?> modifyPwd(@RequestParam String email, @RequestBody UserDTO dto){
 		try {
-
 			String newPwd = passwordEncoder.encode(dto.getUserPwd());
 			UserDTO updatedUser = service.updatePwd(email, newPwd);
 			
 	        // 비밀번호 변경 후 새로운 토큰 발급
 	        UserEntity user = UserService.toEntity(updatedUser, movies);
-
 	        final String newToken = tokenProvider.create(user);  // 새로운 토큰 생성
 
 	        // 새로운 토큰을 쿠키로 설정하여 클라이언트에 전달
@@ -343,28 +338,10 @@ public class UserController {
 		            .path("/")      // 모든 경로에서 사용 가능
 		            .maxAge(60 * 60 * 24) // 1일
 		            .build();
-	        
-	        Map<String, Object> userResponse = new HashMap<>();
-			userResponse.put("userId", user.getUserId());
-			userResponse.put("userEmail", user.getUserEmail());
-			userResponse.put("userNick", user.getUserNick());
-			userResponse.put("userName", user.getUserName());
 
-			// 영화 정보를 Map으로 변환
-			Set<Map<String, Object>> likedMovies = user.getUserLikeList().stream().map(movie -> {
-	            Map<String, Object> movieInfo = new HashMap<>();
-	            movieInfo.put("movieId", movie.getMovieId());
-	            movieInfo.put("movieName", movie.getMovieName());
-	            movieInfo.put("moviePoster", movie.getMoviePoster());
-	            movieInfo.put("movieOverview", movie.getMovieOverview());
-	            movieInfo.put("movieOpDate", movie.getMovieOpDate());
-	            movieInfo.put("movieScore", movie.getMovieScore());
-	            return movieInfo;
-	        }).collect(Collectors.toSet());
-
-			userResponse.put("userLikeList", likedMovies);
-
-			return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(userResponse);
+		    return ResponseEntity.ok()
+		            .header(HttpHeaders.SET_COOKIE, cookie.toString())
+		            .body(user);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}

@@ -4,39 +4,6 @@
     align-items: center;
 }
 
-.changePwd-header {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #000;
-    padding: 15px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 3px solid #ddd;
-}
-
-.changePwd-header-logo {
-    max-width: 200px;
-    width: auto;
-    height: auto;
-    cursor: pointer;
-    margin-left: 20px;
-}
-
-.pwdChange-buttons {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-sizing: border-box;
-}
-
 .h1s {
     padding: 20px;
     margin-bottom: 40px;
@@ -44,12 +11,12 @@
     text-align: center;
 }
 
-.input-box {
+.input-boxs {
     background-color: #353535;
     padding: 90px;
     border-radius: 10px;
     width: 650px;
-    margin-top: 170px;
+    margin-top: 100px;
     box-sizing: border-box;
 }
 
@@ -71,10 +38,37 @@
     box-sizing: border-box;
 }
 
+.login-buttons {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
 .error-messages {
     margin-top: 30px;
     color: red;
     margin-bottom: 15px;
     font-size: 14px;
     text-align: center;
+}
+
+/* ChangePwd.css */
+.button {
+    background-color: #007bff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
 }

@@ -166,12 +166,15 @@ public class UserService {
 		if (dto == null) {
 	        throw new RuntimeException("해당 이메일로 등록된 사용자를 찾을 수 없습니다.");
 	    }
+		// 새 비밀번호를 로그로 출력해서 확인
+	    log.info("New password: " + pwd);
 	    
 	    // 비밀번호 설정
 	    dto.setUserPwd(pwd);  
 
 	    // 저장된 엔티티의 비밀번호 확인
 	    UserEntity userEntity = toEntity(dto, movies);
+	    log.info("Saved user entity password: " + userEntity.getUserPwd());
 
 	    // 업데이트된 사용자 정보를 저장하고 DTO로 반환
 	    return new UserDTO(repository.save(userEntity));

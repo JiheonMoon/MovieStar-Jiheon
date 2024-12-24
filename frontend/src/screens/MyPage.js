@@ -116,7 +116,7 @@ const MyPage = () => {
     return (
         <div className="mypage-container">
             <header className="mypage-header">
-                <img src={logo} className="mypage-logo" onClick={handleLogoClick} />
+                <img src={logo} className="signup-logo" onClick={handleLogoClick} />
                 <div className="home-button-container">
                     <button
                         className="home-button"

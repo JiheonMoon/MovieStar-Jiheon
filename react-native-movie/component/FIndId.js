@@ -1,22 +1,34 @@
 import React,{useState } from "react";
 import { View,Text,TextInput,TouchableOpacity,StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import axios from "axios";
 
 const FindIdScreen = () => {
     const [email,setEmail] = useState("")
     const [message,setMessage] = useState("")
     const navigation = useNavigation();
 
-    const handleFindId = (e) => {
-        e.preventDefault();
-        if (email === "example@example.com") {
-            setMessage("회원님의 아이디는 exampleUser 입니다.");
-        } else {
-            setEmail('')
-            setMessage("입력하신 정보와 일치하는 아이디가 없습니다.");
+    const handleFindId = async() => {
+        if(!email){
+            setMessage("이메일을 입력해주세요")
+            return;
         }
-    };
+
+        try {
+            const response = await axios.get(`http://192.168.3.22:9090/user/find-id`, {
+              params: { email },
+            });
+      
+            if (response.data.success) {
+              setMessage(`회원님의 아이디는 ${response.data.userName}입니다.`); // 성공 시 아이디 표시
+            } else {
+              setMessage(response.data.message); // 실패 시 에러 메시지 표시
+            }
+          } catch (error) {
+            console.error("아이디 찾기 오류:", error);
+            setMessage("아이디 찾기 중 오류가 발생했습니다.");
+          }
+        };
 
 
     return(
@@ -24,7 +36,7 @@ const FindIdScreen = () => {
             <View style={styles.container}>
                 <View style={styles.contentcontainer}>
                     <View style={styles.header}>
-                        <TouchableOpacity  onPress={() => navigation.navigate('Login')}>
+                        <TouchableOpacity  onPress={() => navigation.navigate('LoginStack')}>
                             <Text style={styles.backButton}>←</Text>
                         </TouchableOpacity>
                         <Text style={styles.titlecontent}>아이디 찾기</Text>
@@ -78,7 +90,7 @@ const styles = StyleSheet.create({
     },
     content:{
         color:'#fff',
-        fontSize:12,
+        fontSize:14,
         marginBottom:5,
         marginTop:35
     },
@@ -88,7 +100,7 @@ const styles = StyleSheet.create({
         paddingLeft:55, 
     },
     input: {
-        fontSize:10,
+        fontSize:12,
         color:'#fff',
         height: 40,
         borderColor: 'white',

@@ -4,6 +4,8 @@ import { View, TouchableOpacity, Text, TextInput,Button, StyleSheet,KeyboardAvoi
 import { Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
+
 
 const LoginScreen = () => {
     const [formData, setFormData] = useState({ userName: "", userPwd: "" });
@@ -27,15 +29,6 @@ const LoginScreen = () => {
         Linking.openURL(NAVER_AUTH_URL).catch(err => console.error("Failed to open URL:", err))
     };
 
-
-    // 카카오 로그인
-    const handleKakaoLogin = () => {
-        const Rest_api_key = Config.REACT_APP_KAKAO_LOGIN_API_KEY;
-        const REDIRECT_URI = 'http://localhost:9090/oauth';
-        const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-        Linking.openURL(KAKAO_AUTH_URL).catch(err => console.error("Failed to open URL:", err))
-    };
-
     // 구글 로그인
     const handleGoogleLogin = () => {
         const GOOGLE_CLIENT_ID = Config.REACT_APP_GOOGLE_LOGIN_CLIENT_ID;
@@ -48,19 +41,31 @@ const LoginScreen = () => {
     // 폼 제출 처리
     const handleSubmit = async () => {
         try {
-            // AsyncStorage에서 모든 사용자 정보 가져오기
-            const storedUsers = await AsyncStorage.getItem('users');
-            const users = storedUsers ? JSON.parse(storedUsers) : [];
+            const response = await axios.post(
+                "http://192.168.3.22:9090/user/signin",
+                {
+                    userName: formData.userName,
+                    userPwd: formData.userPwd
+                },
+                { withCredentials: true } 
+            );
 
-            // 입력된 userName에 해당하는 사용자 찾기
-            const parsedUser = users.find(user => user.userName === formData.userName);
-
-            if (parsedUser && parsedUser.userPwd === formData.userPwd) {
-                // 로그인 성공 시
-                setUser(parsedUser);
-                navigation.navigate("Home");
+            if (response.status === 200) {
+                const userData = response.data;
+                console.log("로그인 응답 데이터:", userData);
+                setUser({
+                    userId: userData.userId,
+                    userEmail: userData.userEmail,
+                    userNick: userData.userNick,
+                    userName: userData.userName,
+                    userLikeList: userData.userLikeList || []
+                });
+                console.log("Context에 저장된 사용자 정보:", userData);
+                
+                alert("로그인 성공")
+                navigation.navigate("Home"); 
             } else {
-                setFormData({ userName: "", userPwd: "" })
+                setFormData({ userName: "", userPwd: "" });
                 setError("아이디 또는 비밀번호가 일치하지 않습니다.");
             }
         } catch (err) {
@@ -116,9 +121,6 @@ const LoginScreen = () => {
                                     <TouchableOpacity onPress={handleNaverLogin}>
                                         <Text style={styles.naverbutton}>네이버 로그인</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity  onPress={handleKakaoLogin}>
-                                        <Text style={styles.kakaobutton}>카카오 로그인</Text>
-                                    </TouchableOpacity>
                                     <TouchableOpacity  onPress={handleGoogleLogin}>
                                         <Text style={styles.googlebutton}>구글 로그인</Text>
                                     </TouchableOpacity>
@@ -129,10 +131,7 @@ const LoginScreen = () => {
                     {/* 링크 섹션 */}
                     <View style={styles.Link}>
                         <TouchableOpacity onPress={() => navigation.navigate("FindId")}>
-                            <Text style={styles.Linktext}>아이디 찾기</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate("FindPassword")}>
-                            <Text style={styles.Linktext}>비밀번호 찾기</Text>
+                            <Text style={styles.Linktext}>아이디/비밀번호 찾기</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
                             <Text style={styles.Linktext}>회원가입</Text>

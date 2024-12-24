@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Button, Alert, StyleSheet, ActivityIndicator,TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,7 @@ const Signup = () => {
     userPwdCheck: "",
     userNick: "",
     userName: "",
-    userLikeList: [],
+    userLikeList: []
   });
 
   const [message, setMessage] = useState("");
@@ -52,47 +53,37 @@ const Signup = () => {
         if (!disabled) {
             setLoading(true); // 로딩 시작
             try {
-                const newUser = {
-                userName: formData.userName,
-                userPwd: formData.userPwd,
-                userEmail: formData.userEmail,
-                userNick: formData.userNick,
-                userLikeList: [],
-                };
-
-                const existingUsers = await AsyncStorage.getItem('users');
-                const users = existingUsers ? JSON.parse(existingUsers) : [];
-                
-                if (users.some(user => user.userEmail === formData.userEmail)) {
-                    setMessage("이미 등록된 이메일입니다.");
-                    setDisabled(true);
-                    return;
-                }
-
-                // Save new user
-                users.push(newUser);
-                await AsyncStorage.setItem('users', JSON.stringify(users));
-
-                // Success message
-                Alert.alert("회원가입 완료");
-                navigation.navigate("LoginStack"); // 로그인 화면으로 이동
-
-                // Clear form data
-                setFormData({
-                    userEmail: "",
-                    userPwd: "",
-                    userPwdCheck: "",
-                    userNick: "",
-                    userName: "",
-                    userLikeList: [],
+                const response = await axios.post("http://192.168.3.22:9090/user/signup",formData,{
+                  headers: {
+                    'Accept': 'application/json',
+                    "Content-Type": "application/json",
+                  }
                 });
-
-            } catch (error) {
+                                     
+                console.log("Response:", response);
+        
+                if (response.status === 200 && response.data.success) {
+                  Alert.alert("회원가입 완료");
+                  navigation.navigate("LoginStack"); // 로그인 화면으로 이동
+                } else {
+                  setMessage(response.message || "회원가입 실패");
+                }
+        
+                setFormData({
+                  userEmail: "",
+                  userPwd: "",
+                  userPwdCheck: "",
+                  userNick: "",
+                  userName: "",
+                  userLikeList: []
+                });
+        
+              } catch (error) {
                 console.error(error);
-                Alert.alert("회원가입 오류", "회원가입에 실패했습니다.");
-            } finally {
+                Alert.alert("회원가입 오류 : ", error.message);
+              } finally {
                 setLoading(false); // 로딩 종료
-            }
+              }
         }
   };
 

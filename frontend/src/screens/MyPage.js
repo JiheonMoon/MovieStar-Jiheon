@@ -4,6 +4,7 @@ import { AppContext } from '../context/AppContext';
 import { IoHome } from "react-icons/io5";
 import '../css/main/MyPage.css';
 import logo from "../logo/logo.png"
+import axios from 'axios';
 
 const MyPage = () => {
     const { user, setUser } = useContext(AppContext);
@@ -94,50 +95,19 @@ const MyPage = () => {
                 userEmail: formData.userEmail
             }));
 
+            axios.put("http://localhost:9090/user/private/modify",
+                {userName: formData.newUserName,
+                userNick: formData.userNick,
+                userEmail: formData.userEmail},
+                {
+                    withCredentials: true
+                })
+
             setMessage('프로필이 성공적으로 업데이트되었습니다.');
             setMessageType('success');
         }
     };
 
-    const updatePassword = () => {
-        if (!validatePasswordUpdate()) return;
-
-        // 로컬 스토리지의 사용자 정보 업데이트
-        const storageKey = Object.keys(localStorage).find(
-            key => JSON.parse(localStorage.getItem(key)).userName === user.userName
-        );
-
-        if (storageKey) {
-            const storedUser = JSON.parse(localStorage.getItem(storageKey));
-            
-            // 현재 비밀번호 확인
-            if (storedUser.userPwd !== formData.currentPassword) {
-                setMessage('현재 비밀번호가 일치하지 않습니다.');
-                setMessageType('error');
-                return;
-            }
-
-            // 새로운 정보로 업데이트
-            const updatedUser = {
-                ...storedUser,
-                userPwd: formData.newPassword
-            };
-
-            // 로컬 스토리지 업데이트
-            localStorage.setItem(storageKey, JSON.stringify(updatedUser));
-
-            // 입력 필드 초기화
-            setFormData(prev => ({
-                ...prev,
-                currentPassword: '',
-                newPassword: '',
-                confirmNewPassword: ''
-            }));
-
-            setMessage('비밀번호가 성공적으로 변경되었습니다.');
-            setMessageType('success');
-        }
-    };
 
     const handleLogoClick = () => {
         navigate("/home")
@@ -146,7 +116,7 @@ const MyPage = () => {
     return (
         <div className="mypage-container">
             <header className="mypage-header">
-                <img src={logo} className="signup-logo" onClick={handleLogoClick} />
+                <img src={logo} className="mypage-logo" onClick={handleLogoClick} />
                 <div className="home-button-container">
                     <button
                         className="home-button"
@@ -177,7 +147,7 @@ const MyPage = () => {
                     </button>
                     <button 
                         className={activeTab === 'password' ? 'active' : ''}
-                        onClick={() => setActiveTab('password')}
+                        onClick={() => navigate('/ChangePwd')}
                     >
                         비밀번호 변경
                     </button>
@@ -220,42 +190,7 @@ const MyPage = () => {
                     </div>
                 )}
 
-                {activeTab === 'password' && (
-                    <div className="password-edit-section">
-                        <h2>비밀번호 변경</h2>
-                        <div className="input-group">
-                            <label>현재 비밀번호</label>
-                            <input
-                                type="password"
-                                name="currentPassword"
-                                value={formData.currentPassword}
-                                onChange={handleInputChange}
-                                placeholder="현재 비밀번호 입력"
-                            />
-                        </div>
-                        <div className="input-group">
-                            <label>새 비밀번호</label>
-                            <input
-                                type="password"
-                                name="newPassword"
-                                value={formData.newPassword}
-                                onChange={handleInputChange}
-                                placeholder="새 비밀번호 입력"
-                            />
-                        </div>
-                        <div className="input-group">
-                            <label>새 비밀번호 확인</label>
-                            <input
-                                type="password"
-                                name="confirmNewPassword"
-                                value={formData.confirmNewPassword}
-                                onChange={handleInputChange}
-                                placeholder="새 비밀번호 다시 입력"
-                            />
-                        </div>
-                        <button onClick={updatePassword}>비밀번호 변경</button>
-                    </div>
-                )}
+                
 
                 {message && (
                     <div className={`message ${messageType}`}>
@@ -268,12 +203,12 @@ const MyPage = () => {
     {user.userLikeList && user.userLikeList.length > 0 ? (
         <div className="liked-movies-flex">
             {user.userLikeList.map((movie, index) => (
-                <div key={movie.id || index} className="liked-movie-item">
+                <div key={movie.movieId || index} className="liked-movie-item">
                     {console.log("Movie data:", movie)} {/* 데이터 확인용 로그 */}
-                    {movie.poster_path ? (
+                    {movie.moviePoster ? (
                         <img 
-                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
-                            alt={movie.title}
+                            src={`https://image.tmdb.org/t/p/w200${movie.moviePoster}`} 
+                            alt={movie.movieName}
                             onError={(e) => {
                                 e.target.onerror = null; 
                                 e.target.src = '대체 이미지 URL';
@@ -282,7 +217,7 @@ const MyPage = () => {
                     ) : (
                         <div className="no-poster">포스터 없음</div>
                     )}
-                    <p>{movie.title || '제목 없음'}</p>
+                    <p>{movie.movieName || '제목 없음'}</p>
                 </div>
             ))}
         </div>

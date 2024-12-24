@@ -1,9 +1,7 @@
 package com.korea.moviestar.controller;
 
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,24 +48,12 @@ public class ReviewController {
 		return ResponseEntity.ok().body(response);
 	}
 	
-	// 리뷰 작성(로그인해야 가능)
+	// 리뷰 등록(로그인한 유저만 가능)
 	@PostMapping("/private/write")
-	public ResponseEntity<?> writeReview(@AuthenticationPrincipal String userId, @RequestBody ReviewDTO dto) {
-	    try {
-	        // 서비스에서 중복 검사를 포함한 리뷰 작성 처리
-	        ReviewDTO response = service.create(userId, dto);
-	        return ResponseEntity.ok().body(response);
-	    } catch (RuntimeException e) {
-	        // 중복 리뷰 예외 처리
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                .body(Map.of("message", e.getMessage()));
-	    } catch (Exception e) {
-	        // 기타 예외 처리
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body(Map.of("message", "리뷰 등록 중 문제가 발생했습니다.", "error", e.getMessage()));
-	    }
+	public ResponseEntity<?> writeReview(@AuthenticationPrincipal String userId, @RequestBody ReviewDTO dto){
+		ReviewDTO response = service.create(userId, dto);
+		return ResponseEntity.ok().body(response);
 	}
-
 	
 	@PutMapping("/private/modify/{reviewId}")
 	public ResponseEntity<?> modifyReview(@PathVariable int reviewId, @RequestBody ReviewDTO dto){

@@ -15,6 +15,9 @@ import com.korea.moviestar.entity.UserEntity;
 import com.korea.moviestar.repo.MovieRepository;
 import com.korea.moviestar.repo.UserRepository;
 
+
+import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,7 +89,6 @@ public class UserService {
             
             if(origin.isPresent()) {
                 UserEntity entity = origin.get();
-                log.info("Found user entity: {}", entity);
                 
                 Set<MovieEntity> newList = entity.getUserLikeList();
                 if(newList == null) {
@@ -130,8 +132,8 @@ public class UserService {
         }
     }
     
-    public UserDTO update(UserDTO dto) {
-        Optional<UserEntity> origin = repository.findById(dto.getUserId());
+    public UserDTO update(String userId, UserDTO dto) {
+        Optional<UserEntity> origin = repository.findById(Integer.parseInt(userId));
         if(origin.isPresent()) {
             UserEntity entity = origin.get();
             // 아이디 중복 확인
@@ -152,16 +154,29 @@ public class UserService {
             entity.setUserName(dto.getUserName());
             entity.setUserNick(dto.getUserNick());
             entity.setUserEmail(dto.getUserEmail());
-            return new UserDTO(repository.save(entity)).hidePwd();
+            return new UserDTO(repository.save(entity));
         }
         return null;
     }
     
-    public UserDTO updatePwd(String userEmail, String newPwd) {
-        UserDTO dto = findByEmail(userEmail);
-        dto.setUserPwd(newPwd);
-        return new UserDTO(repository.save(toEntity(dto, movies))).hidePwd();
-    }
+
+    @Transactional
+	public UserDTO updatePwd(String userEmail, String pwd) {
+		UserDTO dto = findByEmail(userEmail);
+		if (dto == null) {
+	        throw new RuntimeException("해당 이메일로 등록된 사용자를 찾을 수 없습니다.");
+	    }
+	    
+	    // 비밀번호 설정
+	    dto.setUserPwd(pwd);  
+
+	    // 저장된 엔티티의 비밀번호 확인
+	    UserEntity userEntity = toEntity(dto, movies);
+
+	    // 업데이트된 사용자 정보를 저장하고 DTO로 반환
+	    return new UserDTO(repository.save(userEntity));
+	}
+
     
     public static UserEntity toEntity(UserDTO dto, MovieRepository movies) {
         return UserEntity.builder()

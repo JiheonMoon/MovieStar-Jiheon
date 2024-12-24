@@ -15,15 +15,15 @@ import axios from "axios";
 const ActorList = ({ actors }) => (
   <div className="actor-list">
     <ul>
-      {actors.map((actor) => (
-        <li key={actor.id}>
+      {actors.slice(0,10).map((actor, index) => (
+        <li key={index}>
           <img
-            src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
+            src={`https://image.tmdb.org/t/p/w200${actor.actorImage}`}
             alt={actor.name}
             onError={(e) => (e.target.style.display = "none")} // 이미지가 없을 경우 숨김 처리
             style={{ borderRadius: "50%", width: "45px", height: "50px", marginRight: "10px" }}
           />
-          {actor.name} - {actor.character}
+          {actor.actorName} - {actor.actorRole}
         </li>
       ))}
     </ul>
@@ -167,11 +167,12 @@ const calculateAverageRating = (reviews) => {
 };
 
 // 메인 MovieDetail 컴포넌트
-const MovieDetail = ({ movie, onClose }) => {
+const MovieDetail = ({ movieId, onClose }) => {
   const { user, addLikeMovie, removeLikeMovie, isMovieLiked } = useContext(AppContext);
 
 
   const [actor, setActor] = useState([]); 
+  const [movie, setMovie] = useState(null)
   const [reviewRating, setReviewRate] = useState(5);
   const [reviewContent, setReviewContent] = useState("");
   const [reviewList, setReviewList] = useState([]);
@@ -184,22 +185,25 @@ const MovieDetail = ({ movie, onClose }) => {
 
   const [isLiked, setIsLiked] = useState(false);
   
+
   // 좋아요 상태 동기화
   useEffect(() => {
-    if (user && movie) {
-        setIsLiked(isMovieLiked(movie.id));
+    if (user && movieId) {
+        setIsLiked(isMovieLiked(movieId));
     }
-}, [user, movie, isMovieLiked]);
+}, [user, movieId, isMovieLiked]);
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      const castData = await fetchMovieCredits(movie.id); // 출연진 정보 가져오기
-      setActor(castData.cast.slice(0, 10)); // 최대 10명의 출연진 정보 표시
-    };
 
-    fetchDetails();
-    console.log(user)
-  }, [movie]);
+    axios.get(`http://localhost:9090/movie/${movieId}`)
+      .then((response) =>{
+        
+        setMovie(response.data)
+        setActor(response.data.movieActors)
+        console.log(response.data)
+      })
+    
+  }, [movieId]);
 
   const averageRating = calculateAverageRating(reviewList);
 
@@ -207,7 +211,7 @@ const MovieDetail = ({ movie, onClose }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:9090/review/${movie.id}`)
+        const response = await axios.get(`http://localhost:9090/review/${movieId}`)
         console.log("Fetched Reviews:", response.data.data)
         const reviews = Array.isArray(response.data.data) ? response.data.data : []
         setReviewList(reviews)
@@ -216,7 +220,7 @@ const MovieDetail = ({ movie, onClose }) => {
       }
     }
     fetchReviews()
-  }, [movie.id])
+  }, [movieId])
   
 
   const addReview = async () => {
@@ -225,45 +229,29 @@ const MovieDetail = ({ movie, onClose }) => {
       return;
     }
     
-    if(!reviewContent) {
-      alert("리뷰 내용을 입력해주세요.")
-      return;
-    }
-
     const newReview = {
-      movieId : movie.id,
+      movieId,
       reviewRating,
       reviewContent,
     };
 
     try {
+      if(window.confirm("리뷰를 등록하시겠습니까?")) {
         const response = await axios.post(
           "http://localhost:9090/review/private/write",
           newReview,
-          { withCredentials: true }
+          { withCredentials: true}
         )
-
-        if(response.status === 200) {
-          alert("리뷰가 등록되었습니다.")
-          setReviewList((prev) => [response.data, ...prev])
-          setReviewContent("")
-          setReviewRate(5)
+        setReviewList((prev) => [response.data, ...prev])
+        setReviewContent("")
+        setReviewRate(5)
   
-          // 새 리뷰 추가 시 더보기 상태 초기화
-          setVisibleReviews(3);
-        }
-      } catch (error) {
-        console.log(error.response?.data)
-        console.error("리뷰 작성 실패:", error.response?.data)
-
-        const errorMessage = error.response?.data?.message
-      
-        if (errorMessage === "이미 이 영화에 리뷰를 작성했습니다.") {
-          alert("이미 이 영화에 리뷰를 작성했습니다.")
-        } else {
-          alert("리뷰 등록 중 오류가 발생했습니다.")
-        }
+        // 새 리뷰 추가 시 더보기 상태 초기화
+        setVisibleReviews(3);
       }
+    } catch (error) {
+      console.error("리뷰 등록 실패:", error)
+    }
   };
 
   const handleRemove = async (reviewId) => {
@@ -274,7 +262,7 @@ const MovieDetail = ({ movie, onClose }) => {
           { withCredentials: true }
         )
 
-        if (response.status === 200) {
+        if (response.status = 200) {
           alert("리뷰가 삭제되었습니다.")
           setReviewList((prev) => prev.filter((item) => item.reviewId !== reviewId))
           // 삭제 후 더보기 상태 조정
@@ -343,22 +331,23 @@ const MovieDetail = ({ movie, onClose }) => {
 
     try {
         if (isLiked) {
-            const response = await axios.delete('http://localhost:9090/user/private/dislike', {
-                data: { movieId: movie.id },
+            const response = await axios.delete('http://localhost:9090/user/private/dislike/'+movieId,{
                 withCredentials: true
             });
             console.log("좋아요 삭제 응답:", response.data);
-            removeLikeMovie(movie.id);
+            removeLikeMovie(movieId);
         } else {
             const response = await axios.put(
-                'http://localhost:9090/user/private/like', 
-                { movieId: movie.id },
+                'http://localhost:9090/user/private/like/'+movieId, 
+                null,
                 { withCredentials: true }
             );
             console.log("좋아요 추가 응답:", response.data);
             addLikeMovie(movie);
         }
+        console.log(!isLiked)
         setIsLiked(!isLiked);
+        
     } catch (error) {
         console.error("좋아요 처리 중 오류 발생:", error);
         if (error.response?.status === 401) {
@@ -372,7 +361,7 @@ const MovieDetail = ({ movie, onClose }) => {
   //예고편 검색 함수
   const searchTrailer = async () => {
     try {
-        const trailer = await searchYouTubeTrailer(`${movie.title} 예고편`);
+        const trailer = await searchYouTubeTrailer(`${movie.movieName} 예고편`);
         if (trailer) {
             const embedUrl = `https://www.youtube.com/embed/${trailer.id.videoId}`;
             setTrailerUrl(embedUrl);
@@ -401,7 +390,7 @@ const MovieDetail = ({ movie, onClose }) => {
         <div className="modal-movie-container">
           <div className="modal-movie-poster-container">
             <img
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              src={`https://image.tmdb.org/t/p/w500${movie.moviePoster}`}
               alt={movie.title}
               className="modal-movie-poster"
             />
@@ -419,7 +408,7 @@ const MovieDetail = ({ movie, onClose }) => {
 
           <div className="modal-movie-details">
             <h1>
-              {movie.title}
+              {movie.movieName}
               {user && (
                 <button
                   onClick={handleLikeToggle}
@@ -435,12 +424,12 @@ const MovieDetail = ({ movie, onClose }) => {
                 </button>
               )}
             </h1>
-            <p>{movie.overview}</p>
+            <p>{movie.movieOverview}</p>
             <p>
-              <strong>개봉일:</strong> {movie.release_date}
+              <strong>개봉일:</strong> {movie.movieOpDate}
             </p>
             <p>
-              <strong>평점:</strong> {movie.vote_average}
+              <strong>평점:</strong> {movie.movieScore}
             </p>
             <h3>출연진</h3>
             {/* 출연진 목록 추가 */}

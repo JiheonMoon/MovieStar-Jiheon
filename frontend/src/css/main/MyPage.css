@@ -17,12 +17,19 @@
     border-bottom: 3px solid #ddd;
   }
 
+.mypage-logo {
+    max-width: 200px;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+}
+
 /* 홈 버튼 스타일 */
 .home-button-container {
     display: flex;
     justify-content: flex-end; /* 오른쪽 정렬 */
     gap: 10px; /* 버튼 간 간격 */
-    margin-right: 30px;
+    margin-right: 50px;
   }
   
   .home-button {

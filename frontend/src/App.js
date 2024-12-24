@@ -8,6 +8,8 @@ import LoginScreen from "./screens/login/LoginScreen.js";
 import FindIdOrPassword from "./screens/login/FindIdOrPassword.js";
 import Signup from "./screens/login/Signup.js";
 import Mypage from "./screens/MyPage.js";
+import PwdChangeScreen from "./screens/login/PwdChangeScreen.js";
+
 
 import "./App.css";
 import "./css/main/Header.css";
@@ -51,7 +53,7 @@ const App = () => {
 
     // 좋아요 여부 확인 함수
     const isMovieLiked = (movieId) => {
-        return user?.userLikeList?.some((movie) => movie.id === movieId);
+        return user?.userLikeList?.some((movie) => movie.movieId === movieId);
     };
 
     // 좋아요 추가 함수
@@ -64,7 +66,7 @@ const App = () => {
 
     // 좋아요 제거 함수
     const removeLikeMovie = (movieId) => {
-        const updatedLikes = user.userLikeList.filter((movie) => movie.id !== movieId);
+        const updatedLikes = user.userLikeList.filter((movie) => movie.movieId !== movieId);
         const updatedUser = { ...user, userLikeList: updatedLikes };
         setUser(updatedUser);
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
@@ -93,6 +95,8 @@ const App = () => {
                         <Route path="/mypage" element={<Mypage />} />
                         <Route path="/login/google" element = {<GoogleLogin/>}/>
                         <Route path="/login/naver" element = {<NaverLogin/>}/>
+                        <Route path="/ChangePwd" element={<PwdChangeScreen />} />
+
                     </Routes>
                 </Layout>
             </Router>

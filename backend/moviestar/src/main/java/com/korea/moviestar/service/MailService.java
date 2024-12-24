@@ -1,7 +1,7 @@
 package com.korea.moviestar.service;
 
 import java.time.LocalDateTime;
-
+import java.util.List;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -70,22 +70,34 @@ public class MailService {
     }
     
     public boolean verifyCode(String email, String inputCode, PasswordEncoder encoder) {
-        MailVerificationEntity entity = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("인증 요청이 없습니다."));
+        // 여러 개의 인증 요청이 있을 수 있으므로, List로 받아옵니다.
+        List<MailVerificationEntity> entities = repository.findByEmail(email);
 
-        if (entity.getExpiresAt().isBefore(LocalDateTime.now())) {
-        	repository.delete(entity);
-            throw new RuntimeException("인증 코드가 만료되었습니다.");
+        // 인증 요청이 없으면 예외 처리
+        if (entities.isEmpty()) {
+            throw new RuntimeException("인증 요청이 없습니다.");
         }
 
+        // 유효한 인증 요청을 찾아서 처리 (유효 기간이 아직 남아있는 요청)
+        MailVerificationEntity entity = entities.stream()
+                .filter(e -> e.getExpiresAt().isAfter(LocalDateTime.now())) // 만료되지 않은 요청만 필터링
+                .findFirst() // 첫 번째 유효한 요청을 선택
+                .orElseThrow(() -> new RuntimeException("유효한 인증 코드가 없습니다."));
+
+        // 인증 코드가 일치하는지 확인
         if (!entity.getCode().equals(inputCode)) {
             throw new RuntimeException("인증 코드가 일치하지 않습니다.");
         }
-        
-        UserEntity user = users.findByUserEmail(email).get();
+
+        // 사용자가 존재하는지 확인
+        UserEntity user = users.findByUserEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+
+        // 사용자의 비밀번호를 인증 코드로 변경 (여기서는 예시로 코드와 비밀번호를 일치시키는 방식)
         user.setUserPwd(encoder.encode(inputCode));
         users.save(user);
-        
+
+        // 처리한 인증 요청 삭제
         repository.delete(entity);
         return true;
     }

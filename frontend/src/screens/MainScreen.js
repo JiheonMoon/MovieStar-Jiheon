@@ -36,20 +36,20 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
       {/* 모든 추천 영화를 렌더링하지만 현재 인덱스의 영화만 활성화 */}
       {movies.map((movie, index) => (
         <div
-          key={movie.id}
+          key={movie.movieId}
           className={`top-recommendation ${index === currentIndex ? "active" : "inactive"
             }`}
             onClick={() => onMovieSelect(movie)} // 영화 클릭 시 모달 오픈
             >
               {/* 영화 배경 이미지 */}
               <img
-                src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
-                alt={movie.title}
+                src={`https://image.tmdb.org/t/p/w500${movie.movieBackdrop}`}
+                alt={movie.movieName}
                 className="top-recommendation-poster"
               />
               <div className="recommendation-info">
-                <h2>{movie.title}</h2>
-                <p>{movie.overview}</p>
+                <h2>{movie.movieName}</h2>
+                <p>{movie.movieOverview}</p>
             </div>
           </div>
         ))}
@@ -124,24 +124,31 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
       fetchMovies();
     }, []);
 
-    // 장르 목록 가져오기
-      useEffect(() => {
-        const loadGenres = async () => {
-          const genreList = await fetchGenres();
-          setGenres(genreList);
+    useEffect(() => {
+      // 장르 목록을 가져옵니다
+      fetchGenres().then((genreList) => {
 
-          // 각 장르의 영화 가져오기
-          genreList.forEach(async (genre) => {
-            const moviesByGenre = await fetchMoviesByGenre(genre.id);
-            setMovies((prevMovies) => ({
-              ...prevMovies,
-              [genre.id]: moviesByGenre
-            }));
+        setGenres(genreList); // 장르 목록을 상태로 설정
+    
+        // 각 장르의 영화 가져오기
+        genreList.forEach((genre) => {
+
+          fetchMoviesByGenre(genre.themeId).then((moviesByGenre) => {
+
+            if (moviesByGenre) {
+              setMovies((prevMovies) => ({
+                ...prevMovies,
+                [genre.themeId]: moviesByGenre, // 장르별 영화 상태 업데이트
+              }));
+            } else {
+              console.log(`No movies found for genre: ${genre.themeId}`);
+            }
           });
-        };
-
-        loadGenres();
-      }, []);
+        });
+      }).catch((error) => {
+        console.error("Error fetching genres:", error);
+      });
+    }, []);
 
           const handleNavClick = (genreId) => {
             fetchMoviesByGenre(genreId).then((movies) => {
@@ -222,11 +229,11 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
             <nav className="nav-bar">
               {genres.map((genre) => (
                 <button
-                  key={genre.id}
-                  onClick={() => handleNavClick(genre.id)}
+                  key={genre.themeId}
+                  onClick={() => handleNavClick(genre.themeId)}
                   className="nav-item"
                 >
-                  {genre.name}
+                  {genre.themeName}
                 </button>
               ))}
             </nav>
@@ -264,10 +271,10 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
             />
             <div className="genre-movie-list">
               {genres.map((genre) => (
-                <div key={genre.id} ref={(el) => (sectionRef.current[genre.id] = el)}>
+                <div key={genre.themeId} ref={(el) => (sectionRef.current[genre.themeId] = el)}>
                   <MovieSlider
-                    title={genre.name}
-                    movies={movies[genre.id] || []}
+                    title={genre.themeName}
+                    movies={movies[genre.themeId] || []}
                     onMovieSelect={handleMovieSelect}
                   />
                 </div>
@@ -279,7 +286,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
         {/* 영화 선택 시 모달 렌더링 */}
         {selectedMovie && (
           <MovieDetail 
-            movie={selectedMovie} 
+            movieId={selectedMovie.movieId} 
             onClose={handleCloseMovieDetail} 
           />
         )}

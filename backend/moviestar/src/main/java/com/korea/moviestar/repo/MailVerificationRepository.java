@@ -1,6 +1,7 @@
 package com.korea.moviestar.repo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,8 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface MailVerificationRepository extends JpaRepository<MailVerificationEntity, Integer>{
-	Optional<MailVerificationEntity> findByEmail(String email);
+	List<MailVerificationEntity> findByEmail(String email);
+
 	
 	@Modifying
     @Transactional

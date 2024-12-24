@@ -11,36 +11,10 @@ const LoginScreen = () => {
     const { setUser } = useContext(AppContext)
     const navigate = useNavigate()
 
-  // const handleLogin = async () => {
-  //   try {
-  //       const response = await axios.post("/api/auth/login", {
-  //           username,
-  //           password,
-  //       })
-  //       alert(response.data.message)
-  //   } catch (error) {
-  //       alert("Login failed. Please check your credentials.")
-  //   }
-  // }
-
-  // const handleSocialLogin = (provider) => {
-  //   window.location.href = `/oauth2/authorization/${provider}`
-  // }
-
   // 로고 클릭 시 메인화면 띄우기
   const handleLogoClick = () => {
     navigate("/home")
   }
-
-  // // 카카오 로그인
-  // const handleKakaoLogin = () => {
-  //   const Rest_api_key = process.env.REACT_APP_KAKAO_LOGIN_API_KEY; // REST API KEY
-  //   const REDIRECT_URI = 'http://localhost:9090/oauth'; // Redirect URI
-  //   // oauth 요청 URL
-  //   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-  //   // 카카오 로그인 페이지로 리다이렉션
-  //   window.location.href = KAKAO_AUTH_URL;
-  // }
 
   // 네이버 로그인
   const handleNaverLogin = () => {

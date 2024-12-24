@@ -4,6 +4,8 @@ import { View, TouchableOpacity, Text, TextInput,Button, StyleSheet,KeyboardAvoi
 import { Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
+
 
 const LoginScreen = () => {
     const [formData, setFormData] = useState({ userName: "", userPwd: "" });
@@ -48,19 +50,31 @@ const LoginScreen = () => {
     // 폼 제출 처리
     const handleSubmit = async () => {
         try {
-            // AsyncStorage에서 모든 사용자 정보 가져오기
-            const storedUsers = await AsyncStorage.getItem('users');
-            const users = storedUsers ? JSON.parse(storedUsers) : [];
+            const response = await axios.post(
+                "http://192.168.3.22:9090/user/signin",
+                {
+                    userName: formData.userName,
+                    userPwd: formData.userPwd
+                },
+                { withCredentials: true } 
+            );
 
-            // 입력된 userName에 해당하는 사용자 찾기
-            const parsedUser = users.find(user => user.userName === formData.userName);
-
-            if (parsedUser && parsedUser.userPwd === formData.userPwd) {
-                // 로그인 성공 시
-                setUser(parsedUser);
-                navigation.navigate("Home");
+            if (response.status === 200) {
+                const userData = response.data;
+                console.log("로그인 응답 데이터:", userData);
+                setUser({
+                    userId: userData.userId,
+                    userEmail: userData.userEmail,
+                    userNick: userData.userNick,
+                    userName: userData.userName,
+                    userLikeList: userData.userLikeList || []
+                });
+                console.log("Context에 저장된 사용자 정보:", userData);
+                
+                alert("로그인 성공")
+                navigation.navigate("Home"); 
             } else {
-                setFormData({ userName: "", userPwd: "" })
+                setFormData({ userName: "", userPwd: "" });
                 setError("아이디 또는 비밀번호가 일치하지 않습니다.");
             }
         } catch (err) {

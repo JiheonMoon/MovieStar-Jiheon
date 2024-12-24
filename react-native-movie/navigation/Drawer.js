@@ -8,6 +8,7 @@ import LoginScreen from "../screen/LoginScreen";
 import SignupScreen from "../screen/SignupScreen";
 import FindIdScreen from "../component/FindId";
 import FindPwdScreen from "../component/FindPwd";
+import PwdChangeScreen from "../component/ChangePwd";
 import LikeScreen from "../screen/LikeScreen";
 import MypageScreen from "../screen/MypageScreen";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
@@ -35,7 +36,7 @@ const StackDetailNavigator = () => {
   
   const StackLoginNavigator = () => {
     return (
-      <Stack.Navigator>
+      <Stack.Navigator >
         <Stack.Screen name="LoginStack" component={LoginScreen} 
             options={{ headerShown: false}} />
         <Stack.Screen name="Signup" component={SignupScreen} 
@@ -44,9 +45,12 @@ const StackDetailNavigator = () => {
             options={{ headerShown: false}} />
         <Stack.Screen name="FindPassword" component={FindPwdScreen} 
             options={{ headerShown: false}}/>
+        <Stack.Screen name="ChangePwd" component={PwdChangeScreen} 
+            options={{ headerShown: false}}/>
       </Stack.Navigator>
     );
   };
+
 
 
 
@@ -57,7 +61,10 @@ const DrawerNavigator = () => {
 
     // 로그인 버튼 클릭 시
     const navigateToLoginScreen = () => {
-        navigation.navigate("Login") // LoginScreen으로 이동
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+        });
     }
     
     // 로그아웃 버튼 클릭 시
@@ -86,6 +93,7 @@ const DrawerNavigator = () => {
     const labelHandleLike = () => {
         navigation.navigate('Like')
     }
+
 
     return(
         <Drawer.Navigator initialRouteName="Main"
@@ -130,7 +138,10 @@ const DrawerNavigator = () => {
                         headerTitle:() => {
                             const navigation = useNavigation();
                             return(
-                            <TouchableOpacity onPress={()=>navigation.navigate('Home')}>
+                            <TouchableOpacity onPress={()=>navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Home' }],
+                            })}>
                                 <Image
                                     source={require('../images/logo.png')}
                                     style={styles.logo}
@@ -156,7 +167,10 @@ const DrawerNavigator = () => {
                     headerTitle:() => {
                         const navigation = useNavigation();
                         return(
-                            <TouchableOpacity onPress={()=>navigation.navigate('Home')}>
+                            <TouchableOpacity onPress={()=>navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Home' }],
+                            })}>
                                 <Image
                                     source={require('../images/logo.png')}
                                     style={styles.logo}
@@ -199,7 +213,10 @@ const DrawerNavigator = () => {
                     headerTitle:() => {
                         const navigation = useNavigation();
                         return(
-                        <TouchableOpacity onPress={()=>navigation.navigate('Home')}>
+                        <TouchableOpacity onPress={()=>navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Home' }],
+                        })}>
                             <Image
                                 source={require('../images/logo.png')}
                                 style={styles.logo}
@@ -244,7 +261,10 @@ const DrawerNavigator = () => {
                     headerTitle:() => {
                         const navigation = useNavigation();
                         return(
-                        <TouchableOpacity onPress={()=>navigation.navigate('Home')}>
+                        <TouchableOpacity onPress={()=>navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Home' }],
+                        })}>
                             <Image
                                 source={require('../images/logo.png')}
                                 style={styles.logo}

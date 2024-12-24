@@ -5,6 +5,7 @@ import axios from "axios";
 export const fetchPopularMovies = async () => {
   try {
     const response = await axios.get("http://localhost:9090/movie/popular");
+
     return response.data.data;  // 데이터를 반환
   } catch (error) {
     console.error("Error searching for movies:", error);

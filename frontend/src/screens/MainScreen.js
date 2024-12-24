@@ -201,7 +201,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
           <div className="header-navbar">
             <header className="main-header">
               <img src={logo} className="main-logo" onClick={handleLogoClick} />
-              {/* 영화 검색 입력창 */}
+              {/* 영화 검색 입력창 */} 
               <input
                 type="text"
                 className="search-bar"

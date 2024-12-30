@@ -95,7 +95,7 @@ const MyPage = () => {
                 userEmail: formData.userEmail
             }));
 
-            axios.put("http://localhost:9090/user/private/modify",
+            axios.put("http://localhost:5000/user/private/modify",
                 {userName: formData.newUserName,
                 userNick: formData.userNick,
                 userEmail: formData.userEmail},

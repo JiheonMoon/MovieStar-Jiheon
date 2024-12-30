@@ -56,7 +56,7 @@ const LoginScreen = () => {
     try {
         console.log("로그인 시도:", formData);
         const response = await axios.post(
-            "http://localhost:9090/user/signin", 
+            "http://localhost:5000/user/signin", 
             { userName: formData.userName, userPwd: formData.userPwd },
             { withCredentials: true }
         );

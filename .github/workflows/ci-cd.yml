@@ -107,6 +107,10 @@ jobs:
           exit 1
         fi
 
+    - name: Debug SSH Connection
+      run: |
+        ssh -o StrictHostKeyChecking=no -v ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'echo "SSH Connection Successful"'
+
     - name: Deploy to Amazon Linux Server
       env:
         DB_URL: ${{ secrets.DB_URL }}

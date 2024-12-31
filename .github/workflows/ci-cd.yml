@@ -91,7 +91,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: backend-build
-        path: backend/moviestar/build/libs/moviestar-0.0.1-SNAPSHOT.jar
+        path: backend/moviestar/build/libs/
 
     - name: Add SSH key
       uses: webfactory/ssh-agent@v0.5.3

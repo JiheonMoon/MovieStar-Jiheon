@@ -53,10 +53,11 @@ jobs:
     - name: Build backend
       run: |
         cd backend
+        cd moviestar
         ./gradlew clean build
 
     - name: Upload backend build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: backend-build
-        path: backend/build/libs/moviestar-0.0.1-SNAPSHOT.jar
+        path: backend/moviestar/build/libs/moviestar-0.0.1-SNAPSHOT.jar

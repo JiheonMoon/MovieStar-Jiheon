@@ -90,6 +90,11 @@ jobs:
         with:
           name: backend-build
           path: backend/moviestar/build/libs/moviestar-0.0.1-SNAPSHOT.jar
+      
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Deploy to Amazon Linux Server
         env:

@@ -47,6 +47,9 @@ jobs:
         distribution: 'corretto'
         java-version: '17'
 
+    - name: Set Gradlew Permissions
+      run: chmod +x backend/gradlew
+
     - name: Build backend
       run: |
         cd backend

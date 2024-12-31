@@ -121,10 +121,10 @@ jobs:
         NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
       run: |
         echo "Step 1: Clean existing deployment on the server"
-        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'rm -rf /home/ec2-user/app/frontend/build/* /home/ec2-user/app/backend/moviestar-0.0.1-SNAPSHOT.jar'
-
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'rm -rf ~/app/frontend/* ~/app/backend/moviestar-0.0.1-SNAPSHOT.jar'
+        
         echo "Step 2: Upload frontend build files"
-        scp -o StrictHostKeyChecking=no -r frontend/build/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/app/frontend/build/
+        scp -o StrictHostKeyChecking=no -r frontend/build/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/app/frontend/
 
         echo "Step 3: Upload backend JAR file"
         scp -o StrictHostKeyChecking=no backend/moviestar/build/libs/moviestar-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/app/backend/

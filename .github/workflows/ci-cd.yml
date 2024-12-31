@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Install dependencies and build frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+    - name: Upload frontend build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: frontend-build
+        path: frontend/build

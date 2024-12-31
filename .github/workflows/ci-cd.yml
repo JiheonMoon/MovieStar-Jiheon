@@ -48,12 +48,11 @@ jobs:
         java-version: '17'
 
     - name: Set Gradlew Permissions
-      run: chmod +x backend/gradlew
+      run: chmod +x backend/moviestar/gradlew
 
     - name: Build backend
       run: |
-        cd backend
-        cd moviestar
+        cd backend/moviestar
         ./gradlew clean build
 
     - name: Upload backend build artifacts

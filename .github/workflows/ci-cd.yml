@@ -148,12 +148,13 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'nohup java -jar ~/app/backend/moviestar-0.0.1-SNAPSHOT.jar > ~/logs/spring-boot.log 2>&1 &'
 
         echo "Step 6.5: Set environment variables on the server"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-        echo "export REACT_APP_TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> ~/.bashrc &&
-        echo "export REACT_APP_YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> ~/.bashrc &&
-        echo "export REACT_APP_NAVER_LOGIN_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> ~/.bashrc &&
-        echo "export REACT_APP_GOOGLE_LOGIN_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> ~/.bashrc &&
-        source ~/.bashrc
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          echo "export REACT_APP_TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> ~/.bashrc
+          echo "export REACT_APP_YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> ~/.bashrc
+          echo "export REACT_APP_NAVER_LOGIN_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> ~/.bashrc
+          echo "export REACT_APP_GOOGLE_LOGIN_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> ~/.bashrc
+          source ~/.bashrc
+        EOF
         
         echo "Step 7: Restart the Nginx server to serve the updated frontend"
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'

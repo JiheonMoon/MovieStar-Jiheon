@@ -6,6 +6,7 @@ import logo from "../../logo/logo.png"
 import axios from "axios";
 
 import "../../css/main/ChangePwd.css" 
+import { API_BASE_URL } from "../../api/api-config";
 
 
 const PwdChangeScreen = () => {
@@ -52,7 +53,7 @@ const PwdChangeScreen = () => {
         if (handleChangePassword()) {
             try {
                 const response = await axios.put(
-                    `/user/modifyPwd?email=${email}`, 
+                    `${API_BASE_URL}/user/modifyPwd?email=${email}`, 
                     {userPwd: newPassword},
                     {   
                         headers:

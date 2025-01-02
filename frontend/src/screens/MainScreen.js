@@ -201,10 +201,12 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
         // 검색어가 있으면 영화 검색 API 호출
         const searchResults = await searchMovies(searchQuery);
         setFilteredMovies(searchResults);
+        if(!searchResults){
+          alert("검색어가 제목에 포함된 영화가 존재하지 않습니다")
+        }
       } else {
         // 검색어가 없으면 검색 결과 초기화
         setFilteredMovies([]);
-        alert("검색어가 포함된 영화가 존재하지 않습니다")
       }
     };
   

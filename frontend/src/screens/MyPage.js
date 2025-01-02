@@ -118,13 +118,14 @@ const MyPage = () => {
                         userNick: formData.userNick,
                         userEmail: formData.userEmail
                     }));
+                    setMessage('프로필이 성공적으로 업데이트되었습니다.');
+                    setMessageType('success');
                 }).catch((error) => {
                     setMessage(error)
                     setMessageType('error')
                 })
 
-            setMessage('프로필이 성공적으로 업데이트되었습니다.');
-            setMessageType('success');
+
         }
     };
 

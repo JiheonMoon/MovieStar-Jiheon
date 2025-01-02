@@ -196,15 +196,15 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
           };
 
     // 영화 검색 핸들러
-    const handleSearch = async (query) => {
-      setSearchQuery(query);
-      if (query) {
+    const handleSearch = async () => {
+      if (searchQuery) {
         // 검색어가 있으면 영화 검색 API 호출
-        const searchResults = await searchMovies(query);
+        const searchResults = await searchMovies(searchQuery);
         setFilteredMovies(searchResults);
       } else {
         // 검색어가 없으면 검색 결과 초기화
         setFilteredMovies([]);
+        alert("검색어가 포함된 영화가 존재하지 않습니다")
       }
     };
   
@@ -227,12 +227,16 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
             <header className="main-header">
               <img src={logo} className="main-logo" onClick={handleLogoClick} />
               {/* 영화 검색 입력창 */} 
+              <div style={{display: "flex", flexDirection:"row", alignItems:"center", justifyContent:"center", width:"60%"}}>
               <input
                 type="text"
                 className="search-bar"
                 placeholder="Search Movies..."
-                onChange={(e) => handleSearch(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
+              <button className="mypage-button-main" onClick={handleSearch}>검색</button>
+              </div>
               {/* 로그인, 로그아웃 버튼 */}
               <div className="button-group">
                 {user ? (
@@ -266,7 +270,7 @@ const TopRecommendation = ({ movies, onMovieSelect }) => {
         )}
 
         {/* 검색 결과 또는 기본 영화 리스트 조건부 렌더링 */}
-        {searchQuery && filteredMovies.length > 0 ? (
+        { filteredMovies.length > 0 ? (
           <MovieSlider 
             title="검색 결과" 
             movies={filteredMovies} 

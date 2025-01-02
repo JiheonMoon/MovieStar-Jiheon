@@ -257,7 +257,7 @@ const HomePage = () => {
               )}
             </div>
           </header>
-          {filteredMovies ||
+          { (!searchQuery || filteredMovies.length === 0) &&
             (<nav className="nav-bar">
               {genres.map((genre) => (
                 <button

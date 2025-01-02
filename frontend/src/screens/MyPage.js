@@ -37,16 +37,16 @@ const MyPage = () => {
     const handleLogout = () => {
 
         axios.post(`${API_BASE_URL}/user/logout`, {}, { withCredentials: true })
-          .then(() => {
-            setUser(null) // 사용자 로그아웃 처리
-            alert("로그아웃 처리되었습니다")
-          }).catch((error) => {
-            console.log(error)
-            setUser(null) // 사용자 로그아웃 처리
-    
-          })
-    
-      }
+            .then(() => {
+                setUser(null) // 사용자 로그아웃 처리
+                alert("로그아웃 처리되었습니다")
+            }).catch((error) => {
+                console.log(error)
+                setUser(null) // 사용자 로그아웃 처리
+
+            })
+
+    }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -90,7 +90,7 @@ const MyPage = () => {
 
         if (storageKey) {
             const storedUser = JSON.parse(localStorage.getItem(storageKey));
-            
+
             // 새로운 정보로 업데이트
             const updatedUser = {
                 ...storedUser,
@@ -99,23 +99,28 @@ const MyPage = () => {
                 userEmail: formData.userEmail
             };
 
-            // 로컬 스토리지 업데이트
-            localStorage.setItem(storageKey, JSON.stringify(updatedUser));
-
-            // 컨텍스트 사용자 정보 업데이트
-            setUser(prev => ({
-                ...prev,
-                userName: formData.newUserName,
-                userNick: formData.userNick,
-                userEmail: formData.userEmail
-            }));
-
             axios.put(`${API_BASE_URL}/user/private/modify`,
-                {userName: formData.newUserName,
-                userNick: formData.userNick,
-                userEmail: formData.userEmail},
+                {
+                    userName: formData.newUserName,
+                    userNick: formData.userNick,
+                    userEmail: formData.userEmail
+                },
                 {
                     withCredentials: true
+                }).then(() => {
+                    // 로컬 스토리지 업데이트
+                    localStorage.setItem(storageKey, JSON.stringify(updatedUser));
+
+                    // 컨텍스트 사용자 정보 업데이트
+                    setUser(prev => ({
+                        ...prev,
+                        userName: formData.newUserName,
+                        userNick: formData.userNick,
+                        userEmail: formData.userEmail
+                    }));
+                }).catch((error) => {
+                    setMessage(error)
+                    setMessageType('error')
                 })
 
             setMessage('프로필이 성공적으로 업데이트되었습니다.');
@@ -151,13 +156,13 @@ const MyPage = () => {
             <div className="mypage-body">
                 <h1>마이페이지</h1>
                 <div className="mypage-tabs">
-                    <button 
+                    <button
                         className={activeTab === 'profile' ? 'active' : ''}
                         onClick={() => setActiveTab('profile')}
                     >
                         프로필 수정
                     </button>
-                    <button 
+                    <button
                         className={activeTab === 'password' ? 'active' : ''}
                         onClick={() => navigate('/ChangePwd')}
                     >
@@ -201,7 +206,7 @@ const MyPage = () => {
                     </div>
                 )}
 
-                
+
 
                 {message && (
                     <div className={`message ${messageType}`}>
@@ -209,32 +214,32 @@ const MyPage = () => {
                     </div>
                 )}
 
-<div className="liked-movies-section">
-    <h2>좋아요 표시한 영화</h2>
-    {user.userLikeList && user.userLikeList.length > 0 ? (
-        <div className="liked-movies-flex">
-            {user.userLikeList.map((movie, index) => (
-                <div key={movie.movieId || index} className="liked-movie-item">
-                    {movie.moviePoster ? (
-                        <img 
-                            src={`https://image.tmdb.org/t/p/w200${movie.moviePoster}`} 
-                            alt={movie.movieName}
-                            onError={(e) => {
-                                e.target.onerror = null; 
-                                e.target.src = '대체 이미지 URL';
-                            }} 
-                        />
+                <div className="liked-movies-section">
+                    <h2>좋아요 표시한 영화</h2>
+                    {user.userLikeList && user.userLikeList.length > 0 ? (
+                        <div className="liked-movies-flex">
+                            {user.userLikeList.map((movie, index) => (
+                                <div key={movie.movieId || index} className="liked-movie-item">
+                                    {movie.moviePoster ? (
+                                        <img
+                                            src={`https://image.tmdb.org/t/p/w200${movie.moviePoster}`}
+                                            alt={movie.movieName}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = '대체 이미지 URL';
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="no-poster">포스터 없음</div>
+                                    )}
+                                    <p>{movie.movieName || '제목 없음'}</p>
+                                </div>
+                            ))}
+                        </div>
                     ) : (
-                        <div className="no-poster">포스터 없음</div>
+                        <p>좋아요 표시한 영화가 없습니다.</p>
                     )}
-                    <p>{movie.movieName || '제목 없음'}</p>
                 </div>
-            ))}
-        </div>
-    ) : (
-        <p>좋아요 표시한 영화가 없습니다.</p>
-    )}
-</div>
             </div>
         </div>
     );

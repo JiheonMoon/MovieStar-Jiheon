@@ -23,6 +23,26 @@ const MyPage = () => {
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
 
+    useEffect(() => {
+        if (!user) {
+            navigate("/home")
+        } else {
+            axios.get(`${API_BASE_URL}/user/secure-data`, { withCredentials: true })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 401) {
+                        console.log("Invalid token, logging out...");
+                        // 로그아웃 처리
+                        handleLogout();
+                    } else {
+                        console.log("Error: ", error.response.data);
+                    }
+                })
+        }
+    }, [])
+
     // 로그인되지 않은 경우 리다이렉트
     if (!user) {
         navigate('/login');

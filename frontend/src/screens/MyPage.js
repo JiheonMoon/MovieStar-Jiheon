@@ -37,7 +37,7 @@ const MyPage = () => {
                         // 로그아웃 처리
                         handleLogout();
                     } else {
-                        console.log("Error: ", error.response.data);
+                        console.log("Error: ", error.message);
                     }
                 })
         }
@@ -141,7 +141,7 @@ const MyPage = () => {
                     setMessage('프로필이 성공적으로 업데이트되었습니다.');
                     setMessageType('success');
                 }).catch((error) => {
-                    setMessage(error.data)
+                    setMessage(error.response.data)
                     setMessageType('error')
                 })
 

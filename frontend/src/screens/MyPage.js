@@ -34,6 +34,20 @@ const MyPage = () => {
         navigate("/home");
     };
 
+    const handleLogout = () => {
+
+        axios.post(`${API_BASE_URL}/user/logout`, {}, { withCredentials: true })
+          .then(() => {
+            setUser(null) // 사용자 로그아웃 처리
+            alert("로그아웃 처리되었습니다")
+          }).catch((error) => {
+            console.log(error)
+            setUser(null) // 사용자 로그아웃 처리
+    
+          })
+    
+      }
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -127,10 +141,7 @@ const MyPage = () => {
                     </button>
                     <button
                         className="logout-button"
-                        onClick={() => {
-                        setUser(null);
-                        navigate('/login');
-                        }}
+                        onClick={handleLogout}
                     >
                         로그아웃
                     </button>
@@ -163,8 +174,7 @@ const MyPage = () => {
                                 type="text"
                                 name="newUserName"
                                 value={formData.newUserName}
-                                onChange={handleInputChange}
-                                placeholder="새 아이디 입력"
+                                readOnly
                             />
                         </div>
                         <div className="input-group">

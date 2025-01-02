@@ -174,7 +174,7 @@ const MyPage = () => {
                                 type="text"
                                 name="newUserName"
                                 value={formData.newUserName}
-                                readOnly
+                                readonly
                             />
                         </div>
                         <div className="input-group">

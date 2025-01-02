@@ -65,9 +65,7 @@ const PwdChangeScreen = () => {
                     }
                 );
 
-                console.log("서버 응답:", response);
                 if (response.status === 200) {
-                    console.log('비밀번호가 변경되었습니다.');
                     alert("비밀번호가 변경되었습니다.");
                     const userData = response.data;
                     setUser({

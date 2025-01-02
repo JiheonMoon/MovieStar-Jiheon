@@ -205,7 +205,6 @@ const MyPage = () => {
         <div className="liked-movies-flex">
             {user.userLikeList.map((movie, index) => (
                 <div key={movie.movieId || index} className="liked-movie-item">
-                    {console.log("Movie data:", movie)} {/* 데이터 확인용 로그 */}
                     {movie.moviePoster ? (
                         <img 
                             src={`https://image.tmdb.org/t/p/w200${movie.moviePoster}`} 

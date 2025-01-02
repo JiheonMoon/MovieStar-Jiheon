@@ -55,7 +55,6 @@ const LoginScreen = () => {
     e.preventDefault()
 
     try {
-        console.log("로그인 시도:", formData);
         const response = await axios.post(
             `${API_BASE_URL}/user/signin`, 
             { userName: formData.userName, userPwd: formData.userPwd },
@@ -63,7 +62,6 @@ const LoginScreen = () => {
         );
         if(response.status === 200) {
             const userData = response.data;
-            console.log("로그인 응답 데이터:", userData);
             
             setUser({
                 userId: userData.userId,
@@ -72,7 +70,6 @@ const LoginScreen = () => {
                 userName: userData.userName,
                 userLikeList: userData.userLikeList || []
             });
-            console.log("Context에 저장된 사용자 정보:", userData);
             
             alert("로그인 성공")
             navigate("/home")

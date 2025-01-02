@@ -125,7 +125,7 @@ public class MovieService {
 	}
 
 	// 1시간마다 자동 갱신
-	@Scheduled(cron = "0 10 0/1 * * *")
+	@Scheduled(cron = "0 20 0/1 * * *")
 	@Transactional
 	public List<PopularDTO> saveAndGetPopular() {
 		populars.truncatePopular();// 테이블 비우기

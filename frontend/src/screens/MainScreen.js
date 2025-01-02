@@ -175,6 +175,10 @@ const HomePage = () => {
     });
   }, []);
 
+  useEffect(() =>{
+    !searchQuery&&setFilteredMovies([])
+  },[searchQuery])
+
   const handleNavClick = (genreId) => {
     fetchMoviesByGenre(genreId).then((movies) => {
       setMovies((prevMovies) => ({

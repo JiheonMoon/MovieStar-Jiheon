@@ -167,7 +167,7 @@ const MyPage = () => {
                     </button>
                     <button
                         className={activeTab === 'password' ? 'active' : ''}
-                        onClick={() => navigate('/ChangePwd')}
+                        onClick={() => navigate('/ChangePwd', { state: { userEmail: user.userEmail } })}
                     >
                         비밀번호 변경
                     </button>

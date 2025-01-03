@@ -107,15 +107,7 @@ const PwdChangeScreen = () => {
                     >
                         <IoHome /> 홈
                     </button>
-                    <button
-                        className="logout-button"
-                        onClick={() => {
-                        setUser(null);
-                        navigate('/login');
-                        }}
-                    >
-                        로그아웃
-                    </button>
+                    
                 </div>
             </header>
             <div className="input-boxs">

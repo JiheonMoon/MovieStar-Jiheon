@@ -101,7 +101,7 @@ const FindId = () => {
                 }
                 setPwMessage(data || '인증 성공');
                 alert('인증 성공')
-                navigate('/ChangePwd');
+                navigate('/ChangePwd', { state: { userEmail: email } });
             } else {
                 setPwMessage(data.message || '인증코드가 일치하지 않습니다.');
             }
